@@ -368,13 +368,13 @@
           <input id="email" type="email" autocomplete="email" placeholder="name@company.com" />
         </div>
         <div class="field full">
-          <label for="pregnant">For massage safety: Are you currently pregnant?</label>
+          <label for="pregnant">Do you have any medical condition concern?</label>
           <select id="pregnant" required>
             <option value="">Select an answer</option>
             <option value="No">No</option>
             <option value="Yes">Yes</option>
-            <option value="Discuss privately">I prefer to discuss this privately with the therapist</option>
           </select>
+          <input id="pregnantDetail" placeholder="Tell me what it is..." style="margin-top:8px;display:none" />
           <small style="color:var(--muted);line-height:1.45">This answer is shared only with the assigned therapist and authorized Knead NYC admin.</small>
         </div>
       </div>
@@ -691,9 +691,12 @@ window.keepBooking=function(){
 async function reserve(){
   const first=$('firstName').value.trim();
   const last=$('lastInitial').value.trim().slice(0,1).toUpperCase();
-  const email=$('email').value.trim(); const pregnancy=$('pregnant').value;
+  const email=$('email').value.trim(); const pregnantAnswer=$('pregnant').value;
+  const pregnantDetail=$('pregnantDetail').value.trim();
   if(!first || !last || !email || !email.includes('@')) return alert('Please enter your name and a valid work email.');
-  if(!pregnancy) return alert('Please answer the pregnancy safety question.');
+  if(!pregnantAnswer) return alert('Please answer the medical condition question.');
+  if(pregnantAnswer==='Yes' && !pregnantDetail) return alert('Please tell us about your medical condition.');
+  const pregnancy = pregnantAnswer==='Yes' ? `Yes: ${pregnantDetail}` : 'No';
   if(!rescheduleMode){
     const prior=await findBookingByEmail(email);
     if(prior){ existingBooking=prior; showExistingNotice(prior); return; }
@@ -724,7 +727,7 @@ async function reserve(){
   const lead=rescheduled?`Your time has been changed. `:``;
   $('confirmationText').innerHTML=`${lead}${esc(first)} ${esc(last)}. is booked for <strong>${clock(startVal)}</strong> on ${esc(prettyDate(state.event.date))}. Please arrive five minutes early.<br><br><strong>Screenshot this screen now — no confirmation email is sent.</strong>`;
   $('success').style.display='block'; $('selectionSummary').style.display='none';
-  $('firstName').value=''; $('lastInitial').value=''; $('email').value=''; $('pregnant').value='';
+  $('firstName').value=''; $('lastInitial').value=''; $('email').value=''; $('pregnant').value=''; $('pregnantDetail').value=''; $('pregnantDetail').style.display='none';
 }
 
 function renderTherapistLinks(){
@@ -759,7 +762,7 @@ function renderRoster(){
     if(!b) return `<div class="roster-item"><div class="time">${clock(s.start)}</div><div class="person"><strong>Available</strong><small>Open appointment</small></div></div>`;
     const statuses=['Arrived','Completed','No-show'];
     return `<div class="roster-item"><div class="time">${clock(s.start)}</div>
-      <div class="person"><strong>${esc(b.first||'Booked')} ${esc(b.last||'')}.</strong><small>${esc(b.email||'')} · Pregnancy: ${esc(b.pregnancy||'Not recorded')} · ${esc(b.attendance||'Scheduled')}</small></div>
+      <div class="person"><strong>${esc(b.first||'Booked')} ${esc(b.last||'')}.</strong><small>${esc(b.email||'')} · Medical: ${esc(b.pregnancy||'Not recorded')} · ${esc(b.attendance||'Scheduled')}</small></div>
       <div class="status-actions">${statuses.map(st=>`<button class="mini ${b.attendance===st?'active':''}" onclick="setStatus('${b.id}','${st}')">${st}</button>`).join('')}</div></div>`;
   });
   $('roster').innerHTML=rows.length?rows.join(''):`<div class="empty">No schedule has been created.</div>`;
@@ -1113,6 +1116,11 @@ $('tiShowArchived').addEventListener('change',e=>{ tiShowArchived=e.target.check
 ['tiFirst','tiLast','tiPhone','tiEmail'].forEach(id=>$(id).addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); tiSubmit(); } }));
 $('book').addEventListener('click',reserve);
 $('email').addEventListener('blur',checkExisting);
+$('pregnant').addEventListener('change',()=>{
+  const show=$('pregnant').value==='Yes';
+  $('pregnantDetail').style.display=show?'block':'none';
+  if(!show) $('pregnantDetail').value='';
+});
 $('therapistSelect').addEventListener('change',renderRoster);
 $('refreshRoster').addEventListener('click',async()=>{ await loadBookings(mode!=='client'); refreshUI(); });
 $('reset').addEventListener('click',async()=>{
@@ -1126,7 +1134,7 @@ $('copyTherapist').addEventListener('click',()=>copy($('therapistLink').textCont
 function copy(text,btn){ navigator.clipboard.writeText(text).then(()=>{ const o=btn.textContent; btn.textContent='Copied'; setTimeout(()=>btn.textContent=o,1200); }).catch(()=>alert('Copy the link shown in the box.')); }
 $('export').addEventListener('click',()=>{
   if(!state.bookings.length){ alert('There are no bookings to export.'); return; }
-  const header=['Time','Therapist','First Name','Last Initial','Email','Pregnancy','Attendance'];
+  const header=['Time','Therapist','First Name','Last Initial','Email','Medical Condition','Attendance'];
   const rows=state.bookings.slice().sort((a,b)=>a.start-b.start).map(b=>[clock(b.start),therapistName(b.therapist),b.first,b.last,b.email,b.pregnancy||'',b.attendance]);
   const csv=[header,...rows].map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
   const blob=new Blob([csv],{type:'text/csv'}); const a=document.createElement('a');
