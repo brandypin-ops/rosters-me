@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Knead NYC — Chair Massage Sign-Up</title>
+  <style>
+    :root{
+      --ink:#171717; --muted:#6f6b65; --line:#e8e3dc; --paper:#fbfaf7; --card:#ffffff;
+      --soft:#f3efe9; --accent:#2f4138; --accent-2:#dfe8e2; --danger:#8b3d3d;
+      --shadow:0 12px 34px rgba(28,24,18,.07); --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;background:var(--paper);color:var(--ink);}
+    button,input,select{font:inherit}
+    .shell{max-width:1180px;margin:0 auto;padding:22px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:16px 0 22px;}
+    .brand{display:flex;align-items:center;gap:12px}
+    .mark{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:white;font-family:Georgia,serif;font-size:22px}
+    .brand h1{font-family:Georgia,serif;font-size:23px;margin:0;font-weight:500}
+    .brand p{margin:3px 0 0;color:var(--muted);font-size:13px}
+    .event-pill{padding:9px 13px;border:1px solid var(--line);border-radius:999px;background:white;font-size:13px;color:var(--muted)}
+    .tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;background:var(--soft);padding:7px;border-radius:15px;margin-bottom:20px;position:sticky;top:8px;z-index:5;box-shadow:0 5px 18px rgba(28,24,18,.04)}
+    .tab{border:0;background:transparent;border-radius:11px;padding:12px 10px;cursor:pointer;color:var(--muted);font-weight:650}
+    .tab.active{background:white;color:var(--ink);box-shadow:0 4px 14px rgba(0,0,0,.05)}
+    .view{display:none}
+    .view.active{display:block}
+    .hero{display:grid;grid-template-columns:1.4fr .8fr;gap:18px;margin-bottom:18px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow)}
+    .card h2,.card h3{margin-top:0;font-family:Georgia,serif;font-weight:500}
+    .card h2{font-size:31px;line-height:1.13;margin-bottom:10px}
+    .card h3{font-size:21px;margin-bottom:16px}
+    .sub{color:var(--muted);line-height:1.55;margin:0}
+    .metric{font-family:Georgia,serif;font-size:38px;margin:4px 0}
+    .label{color:var(--muted);font-size:13px}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .field{display:flex;flex-direction:column;gap:7px}
+    .field.full{grid-column:1/-1}
+    label{font-size:13px;font-weight:700}
+    input,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px 13px;background:#fff;color:var(--ink);outline:none}
+    input:focus,select:focus{border-color:#8b978f;box-shadow:0 0 0 3px var(--accent-2)}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+    .btn{border:1px solid var(--accent);border-radius:12px;padding:11px 15px;background:var(--accent);color:white;cursor:pointer;font-weight:750}
+    .btn.secondary{background:white;color:var(--accent)}
+    .btn.ghost{background:transparent;color:var(--muted);border-color:var(--line)}
+    .btn.danger{background:white;color:var(--danger);border-color:#dfc7c7}
+    .btn:disabled{opacity:.55;cursor:not-allowed}
+    .notice{padding:13px 15px;border-radius:12px;background:var(--accent-2);color:#26352e;font-size:14px;line-height:1.45;margin-top:16px}
+    .share{display:flex;align-items:center;gap:8px;margin-top:12px;border:1px dashed #cfc8be;padding:12px;border-radius:12px;background:#fff}
+    .share code{font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+    .slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:10px;margin-top:16px}
+    .slot{border:1px solid var(--line);border-radius:13px;padding:13px 10px;background:white;cursor:pointer;text-align:center}
+    .slot:hover{border-color:#9eaaa2}
+    .slot.selected{background:var(--accent);color:white;border-color:var(--accent)}
+    .slot.full{background:#f3f1ee;color:#aaa;cursor:not-allowed;text-decoration:line-through}
+    .slot small{display:block;margin-top:4px;color:inherit;opacity:.7}
+    .summary{border-top:1px solid var(--line);margin-top:18px;padding-top:16px;display:grid;gap:9px;font-size:14px}
+    .row{display:flex;justify-content:space-between;gap:15px}
+    .roster{display:grid;gap:10px}
+    .roster-item{display:grid;grid-template-columns:92px 1fr auto;gap:12px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:13px;background:white}
+    .time{font-weight:800}
+    .person small{display:block;color:var(--muted);margin-top:3px}
+    .status-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+    .mini{border:1px solid var(--line);background:white;border-radius:9px;padding:7px 9px;cursor:pointer;font-size:12px;font-weight:700;color:var(--muted)}
+    .mini.active{background:var(--accent);color:white;border-color:var(--accent)}
+    .empty{text-align:center;padding:32px;border:1px dashed #cfc8be;border-radius:14px;color:var(--muted)}
+    .footer-note{font-size:12px;color:var(--muted);margin-top:16px;line-height:1.5}
+    .success{display:none;margin-top:18px;padding:18px;border-radius:14px;background:var(--accent);color:white}
+    .success h3{font-family:Georgia,serif;margin:0 0 8px}
+    .topline{display:flex;align-items:center;justify-content:space-between;gap:14px}
+    .synced{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+    .dot{width:8px;height:8px;border-radius:50%;background:#c9c2b8}
+    .dot.live{background:#4c8a63}
+    #gate{position:fixed;inset:0;background:var(--paper);z-index:50;display:none;overflow:auto}
+    #gate .gate-card{max-width:430px;margin:11vh auto;padding:0 20px}
+    #gate .card{text-align:center}
+    #gate .mark{margin:0 auto 14px}
+    #gate h3{font-size:24px;margin:0 0 8px}
+    #gate .btn{width:100%;margin-top:14px;justify-content:center;text-align:center}
+    #gateMsg{margin-top:12px;font-size:14px;min-height:18px}
+    #gateMsg.err{color:var(--danger)}
+    @media(max-width:760px){
+      .shell{padding:14px}
+      header{align-items:flex-start}
+      .event-pill{display:none}
+      .hero{grid-template-columns:1fr}
+      .grid{grid-template-columns:1fr}
+      .field.full{grid-column:auto}
+      .tabs{top:5px;grid-template-columns:repeat(3,1fr)}
+      .tab{font-size:12px;padding:11px 5px}
+      .card{padding:17px}
+      .card h2{font-size:27px}
+      .roster-item{grid-template-columns:72px 1fr}
+      .status-actions{grid-column:1/-1;justify-content:flex-start}
+    }
+  </style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="gate-card">
+    <div class="card">
+      <div class="mark">K</div>
+      <p class="label" id="gateKicker">KNEAD NYC</p>
+      <h3 id="gateTitle">Enter access code</h3>
+      <p class="sub" id="gateSub"></p>
+      <div style="height:14px"></div>
+      <input id="gateCode" type="password" placeholder="Access code" autocomplete="off" />
+      <button class="btn" id="gateSubmit">Enter</button>
+      <p id="gateMsg"></p>
+    </div>
+  </div>
+</div>
+
+<div class="shell" id="app" style="display:none">
+  <header>
+    <div class="brand">
+      <div class="mark">K</div>
+      <div>
+        <h1>Knead NYC</h1>
+        <p>Chair massage scheduling</p>
+      </div>
+    </div>
+    <div class="event-pill" id="headerEvent">Loading…</div>
+  </header>
+
+  <nav class="tabs" id="tabBar">
+    <button class="tab active" data-view="admin">Admin Setup</button>
+    <button class="tab" data-view="events">Events</button>
+    <button class="tab" data-view="therapistsInfo">Therapists Info</button>
+    <button class="tab" data-view="signup">Employee Sign-Up</button>
+    <button class="tab" data-view="therapist">Therapist View</button>
+  </nav>
+  <datalist id="therapistDirectoryList"></datalist>
+
+  <section id="admin" class="view active">
+    <div class="hero">
+      <div class="card">
+        <p class="label">ADMIN DASHBOARD</p>
+        <h2>Create the event once. Let employees book themselves.</h2>
+        <p class="sub">Set the schedule, therapists and session length. Set a therapist code so only your team can open the roster. The app builds the slots and shares them live.</p>
+      </div>
+      <div class="card">
+        <p class="label">CURRENT BOOKINGS</p>
+        <div class="metric" id="bookingCount">0</div>
+        <p class="sub" id="capacityText">of 0 appointment slots reserved</p>
+        <p class="synced" style="margin-top:10px"><span class="dot" id="liveDot"></span><span id="liveText">Connecting…</span></p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Event details</h3>
+      <div class="grid">
+        <div class="field">
+          <label for="company">Client or event name</label>
+          <input id="company" value="Demo Corporate Wellness Day" />
+        </div>
+        <div class="field">
+          <label for="location">Location</label>
+          <input id="location" value="New York, NY" />
+        </div>
+        <div class="field">
+          <label for="date">Event date</label>
+          <input id="date" type="date" />
+        </div>
+        <div class="field full">
+          <label>Therapists working this event</label>
+          <div id="therapistNames"></div>
+          <button class="btn secondary" id="addTherapist" type="button" style="margin-top:8px">+ Add therapist</button>
+          <small style="color:var(--muted);line-height:1.45">Type each therapist's name. These names appear on the roster and the therapist sign-in.</small>
+        </div>
+        <div class="field">
+          <label for="start">Start time</label>
+          <input id="start" type="time" value="10:00" />
+        </div>
+        <div class="field">
+          <label for="end">End time</label>
+          <input id="end" type="time" value="14:00" />
+        </div>
+        <div class="field">
+          <label for="session">Massage time</label>
+          <select id="session">
+            <option value="10">10 minutes</option>
+            <option value="12">12 minutes</option>
+            <option value="15" selected>15 minutes</option>
+            <option value="20">20 minutes</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="buffer">Reset / cleaning time</label>
+          <select id="buffer">
+            <option value="0">No buffer</option>
+            <option value="2">2 minutes</option>
+            <option value="3" selected>3 minutes</option>
+            <option value="5">5 minutes</option>
+          </select>
+        </div>
+        <div class="field full">
+          <label for="therapistCode">Therapist access code</label>
+          <div style="display:flex;gap:8px;align-items:stretch">
+            <input id="therapistCode" placeholder="Leave blank to keep the current code" autocomplete="off" style="flex:1" />
+            <button class="btn secondary" id="genCode" type="button" style="white-space:nowrap">Generate new code</button>
+          </div>
+          <small style="color:var(--muted);line-height:1.45">Therapists type this to open the roster. It only works from 30 minutes before the event start to 30 minutes after the end.</small>
+          <div id="codeShare" class="share" style="display:none">
+            <div style="flex:1">
+              <div class="label" style="margin-bottom:4px">SEND THIS CODE TO YOUR THERAPIST</div>
+              <code id="codeShareVal" style="font-size:18px;font-weight:800;color:var(--ink)"></code>
+            </div>
+            <button class="mini" id="copyCode">Copy code</button>
+          </div>
+        </div>
+      </div>
+
+      <div style="height:24px"></div>
+      <h3>Therapist breaks</h3>
+      <p class="sub">Add breaks before sharing the booking link. Any appointment that overlaps a break is automatically removed from public availability.</p>
+      <div style="height:14px"></div>
+      <div class="grid">
+        <div class="field">
+          <label for="breakTherapist">Therapist</label>
+          <select id="breakTherapist"></select>
+        </div>
+        <div class="field">
+          <label for="breakStart">Break starts</label>
+          <input id="breakStart" type="time" value="12:00" />
+        </div>
+        <div class="field">
+          <label for="breakDuration">Break duration</label>
+          <select id="breakDuration">
+            <option value="15">15 minutes</option>
+            <option value="20">20 minutes</option>
+            <option value="30" selected>30 minutes</option>
+            <option value="45">45 minutes</option>
+            <option value="60">60 minutes</option>
+          </select>
+        </div>
+        <div class="field" style="justify-content:flex-end">
+          <button class="btn secondary" id="addBreak" type="button">Add therapist break</button>
+        </div>
+      </div>
+      <div style="height:14px"></div>
+      <div id="breakList" class="roster"></div>
+
+      <div class="actions">
+        <button class="btn" id="generate">Save event &amp; publish slots</button>
+        <button class="btn secondary" id="export">Export attendee list</button>
+        <button class="btn danger" id="reset">Clear all bookings</button>
+      </div>
+
+      <div class="notice">
+        Collect only the minimum safety information needed. Pregnancy answers should be private and visible only to the assigned therapist and authorized Knead NYC admin.
+      </div>
+
+      <p class="label" style="margin-top:20px">CLIENT / EMPLOYEE BOOKING LINK</p>
+      <div class="share">
+        <code id="shareLink">…</code>
+        <button class="mini" id="copyLink">Copy</button>
+      </div>
+      <p class="label" style="margin-top:14px">THERAPIST LINK — whole team (dropdown, still needs the code)</p>
+      <div class="share">
+        <code id="therapistLink">…</code>
+        <button class="mini" id="copyTherapist">Copy</button>
+      </div>
+      <p class="label" style="margin-top:14px">PERSONAL LINK PER THERAPIST — each sees only their own schedule (same code)</p>
+      <div id="therapistLinksPerPerson"></div>
+      <p class="footer-note">Send the booking link to the client. Send the therapist link to your team. Keep your own admin link private.</p>
+    </div>
+  </section>
+
+  <section id="events" class="view">
+    <div class="hero">
+      <div class="card">
+        <p class="label">EVENT LINE-UP</p>
+        <h2>Every event, at a glance.</h2>
+        <p class="sub">See all your events as a list or a calendar. Track the money for each one in the ledger, kept off to the side.</p>
+      </div>
+      <div class="card">
+        <p class="label">VIEW</p>
+        <div style="display:inline-flex;border:1px solid #e2dccc;border-radius:10px;overflow:hidden;margin-top:8px">
+          <button class="mini" id="evTabList" style="border:none;border-radius:0;background:#efe9db;font-weight:700">List</button>
+          <button class="mini" id="evTabCal" style="border:none;border-radius:0;background:transparent">Calendar</button>
+        </div>
+        <label style="display:block;margin-top:12px;font-size:13px;color:#6b675c;cursor:pointer"><input type="checkbox" id="evArchToggle" style="vertical-align:-2px;margin-right:6px">Show archived<span id="evArchCount"></span></label>
+      </div>
+    </div>
+    <div class="card">
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) 264px;gap:22px;align-items:start">
+        <div>
+          <div id="evList"></div>
+          <div id="evCal" style="display:none"></div>
+          <div id="evEmpty" class="empty" style="display:none">No events yet. Create one in Admin Setup.</div>
+        </div>
+        <aside id="evLedger" style="background:#f3eee1;border-radius:12px;padding:16px 18px"></aside>
+      </div>
+    </div>
+  </section>
+
+  <section id="therapistsInfo" class="view">
+    <div class="hero">
+      <div class="card">
+        <p class="label">THERAPISTS INFO</p>
+        <h2 style="margin:4px 0 6px">Your therapist roster.</h2>
+        <p style="color:var(--muted);margin:0 0 14px">Save each therapist once — their name auto-fills when you set up an event. All four fields required.</p>
+        <div id="tiForm" style="background:#f3eee1;border-radius:12px;padding:14px 16px;margin-bottom:14px">
+          <div style="display:grid;grid-template-columns:1fr 90px 1fr 1.2fr;gap:8px">
+            <input id="tiFirst" placeholder="First name" />
+            <input id="tiLast" placeholder="Last init." maxlength="3" />
+            <input id="tiPhone" placeholder="Phone" type="tel" />
+            <input id="tiEmail" placeholder="Email" type="email" />
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+            <button id="tiAdd" class="primary">Add therapist</button>
+            <button id="tiCancel" class="mini" type="button" style="display:none">Cancel edit</button>
+            <span id="tiMsg" style="font-size:12px;color:#a1462b"></span>
+            <span id="tiEditing" style="font-size:12px;color:#3d5b34;margin-left:auto"></span>
+          </div>
+        </div>
+        <div id="tiList"></div>
+        <p class="label" style="margin-top:16px">
+          <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-weight:600">
+            <input type="checkbox" id="tiShowArchived" /> Show archived <span id="tiArchCount" style="color:var(--muted);font-weight:400"></span>
+          </label>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="signup" class="view">
+    <div class="hero">
+      <div class="card">
+        <p class="label">EMPLOYEE BOOKING PAGE</p>
+        <h2 id="signupTitle">Loading…</h2>
+        <p class="sub"><span id="signupDate"></span> · <span id="signupLocation"></span></p>
+      </div>
+      <div class="card">
+        <p class="label">HOW IT WORKS</p>
+        <p class="sub">Choose an available time, enter your name and work email, then receive an on-screen confirmation.</p>
+        <p class="synced" style="margin-top:10px"><span class="dot" id="liveDot2"></span><span id="liveText2">Connecting…</span></p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="notice" style="background:#f6e7bf;color:#5c4a1a;font-weight:700;margin-top:0;margin-bottom:18px;border:1px solid #e6cd8e">
+        Please note: your confirmation shows on this screen only — no email is sent. After you book, take a screenshot of your confirmation so you have your time saved.
+      </div>
+      <h3>1. Choose a time</h3>
+      <div id="slotList" class="slots"></div>
+
+      <div class="summary" id="selectionSummary" style="display:none">
+        <div class="row"><span>Selected time</span><strong id="chosenTime">—</strong></div>
+        <div class="row"><span>Appointment length</span><strong id="chosenLength">—</strong></div>
+      </div>
+
+      <div style="height:18px"></div>
+      <h3>2. Your information</h3>
+      <div class="grid">
+        <div class="field">
+          <label for="firstName">First name</label>
+          <input id="firstName" autocomplete="given-name" />
+        </div>
+        <div class="field">
+          <label for="lastInitial">Last initial</label>
+          <input id="lastInitial" maxlength="1" />
+        </div>
+        <div class="field full">
+          <label for="email">Work email</label>
+          <input id="email" type="email" autocomplete="email" placeholder="name@company.com" />
+        </div>
+        <div class="field full">
+          <label for="pregnant">For massage safety: Are you currently pregnant?</label>
+          <select id="pregnant" required>
+            <option value="">Select an answer</option>
+            <option value="No">No</option>
+            <option value="Yes">Yes</option>
+            <option value="Discuss privately">I prefer to discuss this privately with the therapist</option>
+          </select>
+          <small style="color:var(--muted);line-height:1.45">This answer is shared only with the assigned therapist and authorized Knead NYC admin.</small>
+        </div>
+      </div>
+
+      <div id="existingNotice" style="display:none;background:#e8efe6;border:1px solid #b9ccb0;border-radius:12px;padding:14px 16px;margin-bottom:16px">
+        <div id="existingMsg" style="font-weight:700;color:#2f4429;margin-bottom:10px;line-height:1.5"></div>
+        <div id="existingActions" style="display:flex;gap:10px;flex-wrap:wrap">
+          <button type="button" class="btn" id="rescheduleBtn" onclick="startReschedule()">Reschedule</button>
+          <button type="button" class="btn secondary" id="keepBtn" onclick="keepBooking()">Keep my time</button>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn" id="book">Reserve appointment</button>
+      </div>
+      <div class="success" id="success">
+        <h3>Appointment reserved</h3>
+        <div id="confirmationText"></div>
+      </div>
+      <p class="footer-note">By reserving, the attendee agrees to arrive five minutes early. This form is for scheduling only and does not provide medical advice.</p>
+    </div>
+  </section>
+
+  <section id="therapist" class="view">
+    <div class="hero">
+      <div class="card">
+        <p class="label">THERAPIST MOBILE VIEW</p>
+        <h2>Today&rsquo;s schedule, without paper.</h2>
+        <p class="sub">Each therapist sees only their assigned time slots and can mark attendance from a phone.</p>
+      </div>
+      <div class="card" id="therapistPicker">
+        <label for="therapistSelect">View schedule for</label>
+        <select id="therapistSelect" style="margin-top:9px"></select>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="topline">
+        <h3 style="margin-bottom:0" id="rosterHeading">Appointment roster</h3>
+        <button class="btn ghost" id="refreshRoster">Refresh</button>
+      </div>
+      <div style="height:16px"></div>
+      <div id="roster" class="roster"></div>
+    </div>
+  </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://xpnsdedlemgahoesdqaa.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_jYRDRlWl8YoUMWOSS_t4hg_2ihS8flD';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// SHA-256 hash of the admin code. Change this to rotate the admin code.
+const ADMIN_CODE_HASH = 'ec3b2ca714c9f7ce9261c9e8bd1f4da661f6a216d0550a2bde0b0cd029cca7d4';
+const WINDOW_PAD = 30; // minutes before start / after end that the therapist code is active
+
+const DEFAULT_EVENT = { company:'Demo Corporate Wellness Day', location:'New York, NY', date:'', start:'10:00', end:'14:00', session:15, buffer:3, therapists:2, therapistNames:['',''], breaks:[], therapistCodeHash:null };
+
+let state = { event:{...DEFAULT_EVENT, id:'demo-corporate-wellness-day'}, bookings:[], slots:[] };
+let selectedStart = null, channel = null, mode = 'admin', lastTherapistCode = '';
+let existingBooking = null, rescheduleMode = false;
+let lockedTherapist = null;
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+
+async function sha256(str){
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+function defaultDate(){ const d=new Date(); d.setDate(d.getDate()+7); return d.toISOString().slice(0,10); }
+function minutes(t){ const [h,m]=t.split(':').map(Number); return h*60+m; }
+function clock(n){ let h=Math.floor(n/60), m=n%60; const ap=h>=12?'PM':'AM'; h=h%12||12; return `${h}:${String(m).padStart(2,'0')} ${ap}`; }
+function overlaps(sa,da,sb2,db){ return sa < sb2 + db && sb2 < sa + da; }
+function slotBlockedByBreak(slot){ return (state.event.breaks||[]).some(br => br.therapist===slot.therapist && overlaps(slot.start, state.event.session, br.start, br.duration)); }
+function prettyDate(v){ if(!v) return ''; const d=new Date(v+'T12:00:00'); return d.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric',year:'numeric'}); }
+function fmtDT(d){ return d.toLocaleString(undefined,{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}); }
+function slug(s){ return String(s||'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''); }
+
+function baseUrl(){ return location.protocol.startsWith('http') ? location.origin+location.pathname : 'https://rosters.me/'; }
+function params(){ return new URLSearchParams(location.search); }
+
+function mapBooking(r){ return { id:r.id, slotId:r.slot_id, therapist:r.therapist, start:r.slot_start, first:r.first_name, last:r.last_initial, email:r.email, pregnancy:r.pregnancy, attendance:r.attendance }; }
+
+// ----- Therapist names -----
+function rawTherapistNames(){ const box=document.getElementById('therapistNames'); return box ? [...box.querySelectorAll('input')].map(inp=>inp.value) : []; }
+function currentTherapistNames(){
+  const box=document.getElementById('therapistNames');
+  if(box && box.querySelector('input')){
+    return rawTherapistNames().map((s,i)=> (s && s.trim()) ? s.trim() : ('Therapist '+(i+1)));
+  }
+  const arr=(state.event.therapistNames||[]).map((s,i)=> (s && String(s).trim()) ? String(s).trim() : ('Therapist '+(i+1)));
+  return arr.length ? arr : ['Therapist 1'];
+}
+function therapistNamesList(){ const n=state.event.therapists||0; const arr=state.event.therapistNames||[]; return Array.from({length:n},(_,i)=> (arr[i]&&String(arr[i]).trim()) ? String(arr[i]).trim() : ('Therapist '+(i+1))); }
+function therapistName(i){ const arr=state.event.therapistNames||[]; return (arr[i-1]&&String(arr[i-1]).trim()) ? String(arr[i-1]).trim() : ('Therapist '+i); }
+function renderTherapistNameRows(){
+  const box=$('therapistNames'); if(!box) return;
+  let names=(state.event.therapistNames&&state.event.therapistNames.length)?state.event.therapistNames.slice():['',''];
+  box.innerHTML=names.map((nm,i)=>`<div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+    <input class="tname" placeholder="Therapist ${i+1} name" value="${esc(nm||'')}" style="flex:1" list="therapistDirectoryList" autocomplete="off" />
+    <button class="mini" type="button" onclick="removeTherapistRow(${i})">Remove</button></div>`).join('');
+}
+window.addTherapistRow=function(){ const n=rawTherapistNames(); n.push(''); state.event.therapistNames=n; renderTherapistNameRows(); renderBreakTherapistSelect(); };
+window.removeTherapistRow=function(i){ let n=rawTherapistNames(); n.splice(i,1); if(!n.length) n=['']; state.event.therapistNames=n; renderTherapistNameRows(); renderBreakTherapistSelect(); };
+async function ensureUniqueId(base, currentId){
+  if(base===currentId) return base;
+  let id=base, n=2;
+  while(n<60){
+    const { data, error } = await sb.from('events').select('id').eq('id', id).maybeSingle();
+    if(error){ console.error(error); return id; }
+    if(!data) return id;
+    id=base+'-'+n; n++;
+  }
+  return base+'-'+Date.now();
+}
+
+function therapistWindow(){
+  if(!state.event.date) return {ok:false, reason:'No event date has been set yet.'};
+  const [y,mo,d]=state.event.date.split('-').map(Number);
+  const open=new Date(y,mo-1,d,0,0,0); open.setMinutes(minutes(state.event.start)-WINDOW_PAD);
+  const close=new Date(y,mo-1,d,0,0,0); close.setMinutes(minutes(state.event.end)+WINDOW_PAD);
+  const now=new Date();
+  if(now<open) return {ok:false, reason:`This roster opens ${fmtDT(open)} and closes ${fmtDT(close)}.`};
+  if(now>close) return {ok:false, reason:`This roster closed at ${fmtDT(close)}.`};
+  return {ok:true};
+}
+
+function hydrateForm(){
+  $('company').value=state.event.company;
+  $('location').value=state.event.location;
+  $('date').value=state.event.date||defaultDate();
+  $('start').value=state.event.start;
+  $('end').value=state.event.end;
+  $('session').value=state.event.session;
+  $('buffer').value=state.event.buffer;
+  renderTherapistNameRows();
+}
+function readForm(){
+  state.event.company=$('company').value.trim() || 'Chair Massage Event';
+  state.event.location=$('location').value.trim() || 'New York, NY';
+  state.event.date=$('date').value;
+  state.event.start=$('start').value;
+  state.event.end=$('end').value;
+  state.event.session=Number($('session').value);
+  state.event.buffer=Number($('buffer').value);
+  const names=currentTherapistNames();
+  state.event.therapistNames=names; state.event.therapists=names.length;
+}
+function computeSlots(){
+  const start=minutes(state.event.start), end=minutes(state.event.end);
+  const step=state.event.session+state.event.buffer; const slots=[];
+  if(!state.event.date || end<=start || step<=0){ state.slots=[]; return; }
+  for(let t=start; t+state.event.session<=end; t+=step)
+    for(let therapist=1; therapist<=state.event.therapists; therapist++)
+      slots.push({ id:`${state.event.date}-${t}-${therapist}`, start:t, therapist });
+  state.slots=slots;
+}
+
+async function loadEvent(id){
+  const { data, error } = await sb.from('events').select('*').eq('id', id).maybeSingle();
+  if(error){ console.error(error); }
+  if(data){
+    let tNames = Array.isArray(data.therapist_names) ? data.therapist_names.filter(x=>typeof x==='string') : [];
+    if(tNames.length===0) tNames = Array.from({length:(data.therapists||2)},(_,i)=>'Therapist '+(i+1));
+    state.event = { id:data.id, company:data.company, location:data.location||'New York, NY',
+      date:data.event_date||'', start:data.start_time||'10:00', end:data.end_time||'14:00',
+      session:data.session_min||15, buffer:data.buffer_min||3, therapists:tNames.length, therapistNames:tNames,
+      breaks:Array.isArray(data.breaks)?data.breaks:[], therapistCodeHash:data.therapist_code_hash||null };
+    return true;
+  }
+  return false;
+}
+async function saveEvent(){
+  let codeHash = state.event.therapistCodeHash;
+  const typed = $('therapistCode') ? $('therapistCode').value.trim() : '';
+  if(typed) codeHash = await sha256(typed);
+  const finalNames = currentTherapistNames();
+  state.event.therapistNames = finalNames; state.event.therapists = finalNames.length;
+  const payload = { id:state.event.id, company:state.event.company, location:state.event.location,
+    event_date:state.event.date||null, start_time:state.event.start, end_time:state.event.end,
+    session_min:state.event.session, buffer_min:state.event.buffer, therapists:finalNames.length, therapist_names:finalNames,
+    breaks:state.event.breaks||[], therapist_code_hash:codeHash, updated_at:new Date().toISOString() };
+  const { error } = await sb.from('events').upsert(payload);
+  if(error){ alert('Could not save the event: '+error.message); return false; }
+  state.event.therapistCodeHash = codeHash;
+  if($('therapistCode')) $('therapistCode').value='';
+  return true;
+}
+async function loadBookings(full){
+  const cols = full ? '*' : 'slot_id, slot_start, therapist';
+  const { data, error } = await sb.from('bookings').select(cols).eq('event_id', state.event.id);
+  if(error){ console.error(error); state.bookings=[]; return; }
+  state.bookings = (data||[]).map(mapBooking);
+}
+
+function groupedSlots(){
+  const map={};
+  state.slots.forEach(s=>{ map[s.start]=map[s.start]||[]; map[s.start].push(s); });
+  return Object.keys(map).map(Number).sort((a,b)=>a-b).map(start=>({
+    start, total:map[start].length,
+    open:map[start].filter(s => !slotBlockedByBreak(s) && !state.bookings.some(b=>b.slotId===s.id)).length
+  }));
+}
+function renderSlots(){
+  const groups=groupedSlots();
+  $('slotList').innerHTML=groups.length ? groups.map(g=>{
+    const cls=g.open===0?'slot full':('slot'+(selectedStart===g.start?' selected':''));
+    return `<button class="${cls}" ${g.open===0?'disabled':''} onclick="chooseSlot(${g.start})">${clock(g.start)}<small>${g.open} available</small></button>`;
+  }).join('') : `<div class="empty" style="grid-column:1/-1">No times available yet.</div>`;
+}
+window.chooseSlot=function(start){
+  selectedStart=start;
+  $('selectionSummary').style.display='grid';
+  $('chosenTime').textContent=clock(start);
+  $('chosenLength').textContent=`${state.event.session} minutes`;
+  $('success').style.display='none';
+  renderSlots();
+};
+
+function renderBreakTherapistSelect(){
+  const list=currentTherapistNames();
+  const current=Number($('breakTherapist').value)||1;
+  $('breakTherapist').innerHTML=list.map((nm,i)=>`<option value="${i+1}">${esc(nm)}</option>`).join('');
+  $('breakTherapist').value=Math.min(current,list.length);
+}
+function renderBreaks(){
+  const breaks=(state.event.breaks||[]).slice().sort((a,b)=>a.therapist-b.therapist || a.start-b.start);
+  $('breakList').innerHTML=breaks.length ? breaks.map(br=>`
+    <div class="roster-item"><div class="time">${clock(br.start)}</div>
+      <div class="person"><strong>${esc(therapistName(br.therapist))} — break</strong><small>${br.duration} minutes · ends ${clock(br.start+br.duration)}</small></div>
+      <div class="status-actions"><button class="mini" onclick="removeBreak(${br.id})">Remove</button></div></div>`).join('')
+    : `<div class="empty">No therapist breaks added.</div>`;
+}
+async function addBreak(){
+  readForm();
+  const therapist=Number($('breakTherapist').value);
+  const startValue=$('breakStart').value; const duration=Number($('breakDuration').value);
+  if(!startValue) return alert('Please choose a break start time.');
+  const start=minutes(startValue);
+  if(start<minutes(state.event.start) || start+duration>minutes(state.event.end)) return alert('The break must fit inside the event hours.');
+  const conflict=state.bookings.find(b=>b.therapist===therapist && overlaps(b.start, state.event.session, start, duration));
+  if(conflict) return alert(`${therapistName(therapist)} already has a booking during this break. Move or remove that booking first.`);
+  state.event.breaks=state.event.breaks||[]; state.event.breaks.push({id:Date.now(), therapist, start, duration});
+  await saveEvent(); refreshUI();
+}
+window.removeBreak=async function(id){ state.event.breaks=(state.event.breaks||[]).filter(br=>br.id!==id); await saveEvent(); refreshUI(); };
+
+async function generate(){
+  readForm();
+  const start=minutes(state.event.start), end=minutes(state.event.end), step=state.event.session+state.event.buffer;
+  if(!state.event.date || end<=start || step<=0){ alert('Please check the date and event times.'); return; }
+  const base=slug(state.event.company)||'event';
+  const uid=await ensureUniqueId(base, state.event.id);
+  state.event.id=uid;
+  state.event.breaks=(state.event.breaks||[]).filter(br=>br.therapist<=state.event.therapists && br.start>=start && br.start+br.duration<=end);
+  if(!await saveEvent()) return;
+  localStorage.setItem('kneadCurrentEvent', state.event.id);
+  await loadBookings(true); computeSlots(); subscribe(); selectedStart=null; refreshUI();
+  if(uid!==base) alert(`Heads up: an event named "${state.event.company}" already existed, so this one's link is unique:\n\n${baseUrl()}?e=${uid}`);
+  showView('signup');
+}
+
+async function genCode(){
+  readForm();
+  if(!state.event.date){ alert('Please set the event date and times first.'); return; }
+  state.event.id = await ensureUniqueId(slug(state.event.company)||'event', state.event.id);
+  const code = String(Math.floor(100000 + Math.random()*900000));
+  $('therapistCode').value = code;
+  lastTherapistCode = code;
+  if(!await saveEvent()) return;
+  localStorage.setItem('kneadCurrentEvent', state.event.id);
+  await loadBookings(true); computeSlots(); subscribe();
+  $('codeShareVal').textContent = code;
+  $('codeShare').style.display = 'flex';
+  refreshUI();
+}
+
+async function findBookingByEmail(email){
+  if(!email || !email.includes('@')) return null;
+  const { data, error } = await sb.from('bookings').select('*').eq('event_id', state.event.id).ilike('email', email).limit(1);
+  if(error){ console.error(error); return null; }
+  return (data && data[0]) ? mapBooking(data[0]) : null;
+}
+function showExistingNotice(b){
+  $('existingMsg').innerHTML=`You already have a booking at <strong>${clock(b.start)}</strong> on ${esc(prettyDate(state.event.date))}. Keep it, or move to a different time?`;
+  $('existingActions').style.display='flex';
+  $('existingNotice').style.display='block';
+  $('book').disabled=true;
+}
+function hideExistingNotice(){ $('existingNotice').style.display='none'; $('book').disabled=false; }
+async function checkExisting(){
+  if(rescheduleMode) return;
+  const prior=await findBookingByEmail($('email').value.trim());
+  existingBooking=prior;
+  if(prior) showExistingNotice(prior); else hideExistingNotice();
+}
+window.startReschedule=function(){
+  if(!existingBooking) return;
+  rescheduleMode=true;
+  $('existingMsg').innerHTML=`Pick your new time below, then tap Reserve. Your <strong>${clock(existingBooking.start)}</strong> spot is held until you confirm the new one.`;
+  $('existingActions').style.display='none';
+  $('existingNotice').style.display='block';
+  $('book').disabled=false;
+  selectedStart=null; $('selectionSummary').style.display='none'; $('success').style.display='none';
+  const list=document.getElementById('slotList'); if(list) list.scrollIntoView({behavior:'smooth',block:'center'});
+};
+window.keepBooking=function(){
+  const b=existingBooking; hideExistingNotice();
+  if(!b) return;
+  $('confirmationText').innerHTML=`You're all set — no change made. ${esc(b.first||'')} ${esc(b.last||'')}. is booked for <strong>${clock(b.start)}</strong> on ${esc(prettyDate(state.event.date))}. Please arrive five minutes early.<br><br><strong>Screenshot this screen so you have your time saved.</strong>`;
+  $('success').style.display='block'; $('selectionSummary').style.display='none';
+};
+async function reserve(){
+  const first=$('firstName').value.trim();
+  const last=$('lastInitial').value.trim().slice(0,1).toUpperCase();
+  const email=$('email').value.trim(); const pregnancy=$('pregnant').value;
+  if(!first || !last || !email || !email.includes('@')) return alert('Please enter your name and a valid work email.');
+  if(!pregnancy) return alert('Please answer the pregnancy safety question.');
+  if(!rescheduleMode){
+    const prior=await findBookingByEmail(email);
+    if(prior){ existingBooking=prior; showExistingNotice(prior); return; }
+  }
+  if(selectedStart===null) return alert('Please choose an appointment time.');
+  if(rescheduleMode && existingBooking && existingBooking.start===selectedStart){
+    return alert('That is already your booking time. Pick a different slot, or tap Keep my time.');
+  }
+  const open=state.slots.find(s=>s.start===selectedStart && !slotBlockedByBreak(s) && !state.bookings.some(b=>b.slotId===s.id));
+  if(!open){ alert('That time was just reserved. Please choose another time.'); await loadBookings(mode!=='client'); renderSlots(); return; }
+  $('book').disabled=true;
+  const { error } = await sb.from('bookings').insert({ event_id:state.event.id, slot_id:open.id, therapist:open.therapist, slot_start:open.start, first_name:first, last_initial:last, email, pregnancy, attendance:'Scheduled' });
+  if(error){
+    $('book').disabled=false;
+    if(error.code==='23505'){ alert('That time was just reserved. Please choose another time.'); }
+    else { alert('Something went wrong saving your booking. Please try again.'); console.error(error); }
+    await loadBookings(mode!=='client'); renderSlots(); return;
+  }
+  let rescheduled=false;
+  if(rescheduleMode && existingBooking && existingBooking.id){
+    const del=await sb.from('bookings').delete().eq('id', existingBooking.id);
+    if(del.error){ console.error(del.error); } else { rescheduled=true; }
+  }
+  $('book').disabled=false;
+  const startVal=open.start;
+  rescheduleMode=false; existingBooking=null; hideExistingNotice();
+  await loadBookings(mode!=='client'); selectedStart=null; refreshUI();
+  const lead=rescheduled?`Your time has been changed. `:``;
+  $('confirmationText').innerHTML=`${lead}${esc(first)} ${esc(last)}. is booked for <strong>${clock(startVal)}</strong> on ${esc(prettyDate(state.event.date))}. Please arrive five minutes early.<br><br><strong>Screenshot this screen now — no confirmation email is sent.</strong>`;
+  $('success').style.display='block'; $('selectionSummary').style.display='none';
+  $('firstName').value=''; $('lastInitial').value=''; $('email').value=''; $('pregnant').value='';
+}
+
+function renderTherapistLinks(){
+  const box=$('therapistLinksPerPerson'); if(!box) return;
+  const list=therapistNamesList();
+  box.innerHTML=list.map((nm,i)=>{
+    const url=`${baseUrl()}?e=${state.event.id}&role=therapist&t=${i+1}`;
+    return `<div class="share" style="margin-top:8px"><code style="flex:1;font-size:12px"><strong>${esc(nm)}</strong> — ${esc(url)}</code><button class="mini" onclick="copyLinkText('${url}',this)">Copy</button></div>`;
+  }).join('');
+}
+window.copyLinkText=function(url,btn){ navigator.clipboard.writeText(url).then(()=>{ const o=btn.textContent; btn.textContent='Copied'; setTimeout(()=>btn.textContent=o,1200); }).catch(()=>alert('Copy this link:\n'+url)); };
+function renderTherapistSelect(){
+  const list=therapistNamesList();
+  if(lockedTherapist){
+    const idx=Math.min(lockedTherapist, list.length||1);
+    $('therapistSelect').innerHTML=`<option value="${idx}">${esc(list[idx-1]||('Therapist '+idx))}</option>`;
+    $('therapistSelect').value=idx;
+    if($('therapistPicker')) $('therapistPicker').style.display='none';
+    return;
+  }
+  if($('therapistPicker')) $('therapistPicker').style.display='';
+  const current=Number($('therapistSelect').value)||1;
+  $('therapistSelect').innerHTML=list.map((nm,i)=>`<option value="${i+1}">${esc(nm)}</option>`).join('');
+  $('therapistSelect').value=Math.min(current,list.length||1);
+}
+function renderRoster(){
+  const t=Number($('therapistSelect').value)||1;
+  if($('rosterHeading')) $('rosterHeading').textContent = `${therapistName(t)} — roster`;
+  const rows=state.slots.filter(s=>s.therapist===t).sort((a,b)=>a.start-b.start).map(s=>{
+    const b=state.bookings.find(x=>x.slotId===s.id);
+    if(slotBlockedByBreak(s)) return `<div class="roster-item"><div class="time">${clock(s.start)}</div><div class="person"><strong>Break</strong><small>Not available for booking</small></div></div>`;
+    if(!b) return `<div class="roster-item"><div class="time">${clock(s.start)}</div><div class="person"><strong>Available</strong><small>Open appointment</small></div></div>`;
+    const statuses=['Arrived','Completed','No-show'];
+    return `<div class="roster-item"><div class="time">${clock(s.start)}</div>
+      <div class="person"><strong>${esc(b.first||'Booked')} ${esc(b.last||'')}.</strong><small>${esc(b.email||'')} · Pregnancy: ${esc(b.pregnancy||'Not recorded')} · ${esc(b.attendance||'Scheduled')}</small></div>
+      <div class="status-actions">${statuses.map(st=>`<button class="mini ${b.attendance===st?'active':''}" onclick="setStatus('${b.id}','${st}')">${st}</button>`).join('')}</div></div>`;
+  });
+  $('roster').innerHTML=rows.length?rows.join(''):`<div class="empty">No schedule has been created.</div>`;
+}
+window.setStatus=async function(id,status){
+  const { error } = await sb.from('bookings').update({attendance:status}).eq('id', id);
+  if(error){ alert('Could not update attendance.'); return; }
+  await loadBookings(true); refreshUI();
+};
+
+function setLive(on){
+  const txt=on?'Live — bookings sync in real time':'Offline';
+  ['liveDot','liveDot2'].forEach(id=>{ const el=$(id); if(el) el.classList.toggle('live',on); });
+  ['liveText','liveText2'].forEach(id=>{ const el=$(id); if(el) el.textContent=txt; });
+}
+function subscribe(){
+  if(channel){ sb.removeChannel(channel); channel=null; }
+  channel=sb.channel('bk-'+state.event.id)
+    .on('postgres_changes',{event:'*',schema:'public',table:'bookings'}, async (payload)=>{
+      const row=payload.new||payload.old||{};
+      if(row.event_id && row.event_id!==state.event.id) return;
+      await loadBookings(mode!=='client'); refreshUI();
+    })
+    .subscribe((status)=>{ setLive(status==='SUBSCRIBED'); });
+}
+
+function refreshUI(){
+  computeSlots();
+  $('headerEvent').textContent=`${state.event.company} · ${state.event.location}`;
+  $('signupTitle').textContent=state.event.company;
+  $('signupLocation').textContent=state.event.location;
+  $('signupDate').textContent=prettyDate(state.event.date);
+  if($('shareLink')) $('shareLink').textContent=`${baseUrl()}?e=${state.event.id}`;
+  if($('therapistLink')) $('therapistLink').textContent=`${baseUrl()}?e=${state.event.id}&role=therapist`;
+  $('bookingCount').textContent=state.bookings.length;
+  $('capacityText').textContent=`of ${state.slots.filter(s=>!slotBlockedByBreak(s)).length} available appointment slots reserved`;
+  renderSlots();
+  if(mode==='admin'){ renderBreakTherapistSelect(); renderBreaks(); renderTherapistLinks(); }
+  renderTherapistSelect();
+  if(mode!=='client') renderRoster();
+}
+function showView(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.view===id));
+  if(id==='therapist') renderRoster();
+  if(id==='events') renderEventsView();
+  if(id==='therapistsInfo') renderTherapistsInfo();
+}
+
+/* ---------- Therapists Info directory ---------- */
+let tiAll=[], tiEditId=null, tiShowArchived=false;
+function tiVisible(){ return tiAll.filter(t=> tiShowArchived ? t.archived : !t.archived); }
+function tiValidateForm(){
+  const f=$('tiFirst').value.trim();
+  const l=$('tiLast').value.trim();
+  const p=$('tiPhone').value.trim();
+  const e=$('tiEmail').value.trim();
+  if(!f||!l||!p||!e) return 'All four fields are required.';
+  if(!/^[A-Za-z]$/.test(l.charAt(0))) return 'Last initial must start with a letter.';
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) return 'Enter a valid email address.';
+  const digits=p.replace(/\D/g,''); if(digits.length<7) return 'Enter a valid phone number.';
+  return null;
+}
+async function loadTherapistsInfo(){
+  const { data, error } = await sb.from('therapists').select('*').order('first_name');
+  if(error){ console.error(error); tiAll=[]; return; }
+  tiAll = data||[];
+  populateTherapistDirectoryDatalist();
+}
+function populateTherapistDirectoryDatalist(){
+  const dl=$('therapistDirectoryList'); if(!dl) return;
+  const active = tiAll.filter(t=>!t.archived);
+  dl.innerHTML = active.map(t=>`<option value="${esc(t.first_name+' '+t.last_initial.charAt(0).toUpperCase()+'.')}"></option>`).join('');
+}
+async function renderTherapistsInfo(){
+  await loadTherapistsInfo();
+  const arch=tiAll.filter(t=>t.archived).length;
+  $('tiArchCount').textContent = arch ? `(${arch})` : '';
+  const list=tiVisible();
+  if(!list.length){
+    $('tiList').innerHTML = `<div style="font-size:13px;color:#8a8574;padding:8px 2px">${tiShowArchived?'No archived therapists.':'No therapists yet. Add your first one above.'}</div>`;
+    return;
+  }
+  $('tiList').innerHTML = list.map(t=>{
+    const nm = esc(t.first_name+' '+t.last_initial.charAt(0).toUpperCase()+'.');
+    return `<div style="border:1px solid #e6e0d2;background:#fff;border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px">
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:650">${nm}${t.archived?' <span style="color:#a1462b;font-size:11px;font-weight:500">archived</span>':''}</div>
+        <div style="font-size:12px;color:#8a8574;margin-top:2px">${esc(t.phone)} · ${esc(t.email)}</div>
+      </div>
+      <button class="mini" onclick="tiEdit('${t.id}')">Edit</button>
+      <button class="mini" onclick="tiArchive('${t.id}')">${t.archived?'Restore':'Archive'}</button>
+      <button class="mini" onclick="tiDelete('${t.id}')" style="color:#a1462b">Delete</button>
+    </div>`;
+  }).join('');
+}
+window.tiEdit = function(id){
+  const t=tiAll.find(x=>x.id===id); if(!t) return;
+  tiEditId=id;
+  $('tiFirst').value=t.first_name; $('tiLast').value=t.last_initial;
+  $('tiPhone').value=t.phone; $('tiEmail').value=t.email;
+  $('tiAdd').textContent='Save changes'; $('tiCancel').style.display='';
+  $('tiEditing').textContent='Editing: '+t.first_name+' '+t.last_initial.charAt(0).toUpperCase()+'.';
+  $('tiMsg').textContent=''; $('tiFirst').focus();
+};
+function tiResetForm(){
+  tiEditId=null;
+  ['tiFirst','tiLast','tiPhone','tiEmail'].forEach(id=>$(id).value='');
+  $('tiAdd').textContent='Add therapist'; $('tiCancel').style.display='none';
+  $('tiEditing').textContent=''; $('tiMsg').textContent='';
+}
+async function tiSubmit(){
+  const err=tiValidateForm();
+  if(err){ $('tiMsg').textContent=err; return; }
+  $('tiMsg').textContent='';
+  const payload={
+    first_name:$('tiFirst').value.trim(),
+    last_initial:$('tiLast').value.trim().charAt(0).toUpperCase(),
+    phone:$('tiPhone').value.trim(),
+    email:$('tiEmail').value.trim()
+  };
+  if(tiEditId){
+    const { error } = await sb.from('therapists').update(payload).eq('id', tiEditId);
+    if(error){ $('tiMsg').textContent=error.message; return; }
+  } else {
+    const { error } = await sb.from('therapists').insert(payload);
+    if(error){ $('tiMsg').textContent=error.message; return; }
+  }
+  tiResetForm();
+  await renderTherapistsInfo();
+}
+window.tiArchive = async function(id){
+  const t=tiAll.find(x=>x.id===id); if(!t) return;
+  const { error } = await sb.from('therapists').update({archived:!t.archived}).eq('id', id);
+  if(error){ alert(error.message); return; }
+  await renderTherapistsInfo();
+};
+window.tiDelete = async function(id){
+  const t=tiAll.find(x=>x.id===id); if(!t) return;
+  if(!confirm(`Delete ${t.first_name} ${t.last_initial}. permanently? This cannot be undone.`)) return;
+  const { error } = await sb.from('therapists').delete().eq('id', id);
+  if(error){ alert(error.message); return; }
+  await renderTherapistsInfo();
+};
+
+/* ---------- Events line-up + ledger ---------- */
+let allEvents=[], evSelId=null, evView='list', evCalMonth=new Date(), evShowArchived=false;
+function visibleEvents(){ return allEvents.filter(e=> evShowArchived ? e.archived : !e.archived); }
+const fmtMoney=n=>{ const v=Math.round(n); return (v<0?'-$':'$')+Math.abs(v).toLocaleString(); };
+const fmtH=x=> (Math.round(x*10)/10);
+async function loadAllEvents(){
+  const { data, error } = await sb.from('events').select('*').order('event_date',{ascending:true});
+  if(error){ console.error(error); allEvents=[]; return; }
+  allEvents=(data||[]).filter(e=>e.id!=='event').map(e=>({
+    id:e.id, company:e.company||'Untitled', location:e.location||'',
+    date:e.event_date||'', start:e.start_time||'10:00', end:e.end_time||'12:00',
+    therapists:(Array.isArray(e.therapist_names)&&e.therapist_names.length)?e.therapist_names.length:(e.therapists||1),
+    finance:(e.finance&&typeof e.finance==='object')?e.finance:{}, archived:!!e.archived
+  }));
+}
+function evDurationH(ev){ const d=(minutes(ev.end)-minutes(ev.start))/60; return d>0?d:0; }
+function evFin(ev){ const f=ev.finance||{}; return { fee:Number(f.fee)||0, taxi:Number(f.taxi)||0, rate:(f.rate===undefined||f.rate===null||f.rate==='')?70:Number(f.rate) }; }
+function evPay(ev){ return evDurationH(ev)*ev.therapists*evFin(ev).rate; }
+function evProfit(ev){ const f=evFin(ev); return f.fee - f.taxi - evPay(ev); }
+function evMonLabel(ev){ return ev.date ? new Date(ev.date+'T12:00:00').toLocaleDateString(undefined,{month:'short'}) : ''; }
+function evDayNum(ev){ return ev.date ? String(Number(ev.date.slice(8,10))) : '—'; }
+function evTimeLabel(ev){ return `${clock(minutes(ev.start))} – ${clock(minutes(ev.end))}`; }
+
+async function renderEventsView(){
+  await loadAllEvents();
+  const arch=allEvents.filter(e=>e.archived).length;
+  if($('evArchCount')) $('evArchCount').textContent = arch ? ` (${arch})` : '';
+  const vis=visibleEvents();
+  if(!vis.length){ $('evList').innerHTML=''; $('evCal').innerHTML=''; $('evEmpty').style.display='block'; $('evEmpty').textContent=evShowArchived?'No archived events.':'No events yet. Create one in Admin Setup.'; $('evLedger').innerHTML='<div style="font-size:13px;color:#8a8574">No event selected.</div>'; return; }
+  $('evEmpty').style.display='none';
+  if(evSelId===null || !vis.some(e=>e.id===evSelId)) evSelId=vis[0].id;
+  renderEvList(); renderEvCal(); renderEvLedger(); setEvView(evView);
+}
+function renderEvList(){
+  $('evList').innerHTML=visibleEvents().map(ev=>{
+    const on=ev.id===evSelId;
+    return `<div style="border:1px solid ${on?'#2f4429':'#e6e0d2'};background:${on?'#eef3e9':'#fff'};border-radius:12px;padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;gap:12px">
+      <div onclick="selectEv('${ev.id}')" style="flex:1;min-width:0;display:flex;align-items:center;gap:14px;cursor:pointer">
+        <div style="min-width:50px"><div style="font-size:12px;color:#8a8574">${esc(evMonLabel(ev))}</div><div style="font-size:20px;font-weight:800;line-height:1">${evDayNum(ev)}</div></div>
+        <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:700;margin-bottom:3px">${esc(ev.company)}${ev.location?' · '+esc(ev.location):''}</div>
+        <div style="font-size:13px;color:#6b675c">${evTimeLabel(ev)} · ${ev.therapists} therapist${ev.therapists>1?'s':''}</div></div>
+      </div>
+      <button class="mini" onclick="editEv('${ev.id}')">Edit</button>
+    </div>`;
+  }).join('');
+}
+function renderEvCal(){
+  const y=evCalMonth.getFullYear(), m=evCalMonth.getMonth();
+  const first=new Date(y,m,1).getDay(), dim=new Date(y,m+1,0).getDate();
+  const byDay={};
+  visibleEvents().forEach(ev=>{ if(ev.date){ const d=new Date(ev.date+'T12:00:00'); if(d.getFullYear()===y&&d.getMonth()===m){ (byDay[d.getDate()]=byDay[d.getDate()]||[]).push(ev); } } });
+  let cells='';
+  for(let i=0;i<first;i++) cells+='<div></div>';
+  for(let d=1;d<=dim;d++){
+    const evs=byDay[d]||[], has=evs.length>0;
+    const dot=has?`<span style="display:block;margin-top:3px;font-size:11px;color:#2f4429;font-weight:700">●${evs.length>1?' '+evs.length:''}</span>`:'';
+    const click=has?`onclick="selectEv('${evs[0].id}');setEvView('list')"`:'';
+    cells+=`<div ${click} style="min-height:48px;border:1px solid #e6e0d2;border-radius:8px;padding:5px 7px;background:${has?'#fff':'#faf7f0'};cursor:${has?'pointer':'default'}"><span style="font-size:12px;color:#6b675c">${d}</span>${dot}</div>`;
+  }
+  const head=['S','M','T','W','T','F','S'].map(x=>`<div style="text-align:center;font-size:11px;color:#8a8574;padding-bottom:4px">${x}</div>`).join('');
+  $('evCal').innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+    <button class="mini" onclick="evMonthShift(-1)">‹ Prev</button>
+    <strong style="font-size:15px">${evCalMonth.toLocaleDateString(undefined,{month:'long',year:'numeric'})}</strong>
+    <button class="mini" onclick="evMonthShift(1)">Next ›</button></div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px">${head}${cells}</div>`;
+}
+window.evMonthShift=function(n){ evCalMonth=new Date(evCalMonth.getFullYear(), evCalMonth.getMonth()+n, 1); renderEvCal(); };
+function renderEvLedger(){
+  const ev=allEvents.find(e=>e.id===evSelId); if(!ev){ $('evLedger').innerHTML=''; return; }
+  const f=evFin(ev);
+  $('evLedger').innerHTML=`
+    <strong style="font-size:12px;color:#6b675c;letter-spacing:.05em">LEDGER</strong>
+    <div style="font-size:13px;color:#8a8574;margin:6px 0 14px">${esc(ev.company)}${ev.date?' · '+esc(evMonLabel(ev)+' '+evDayNum(ev)):''}</div>
+    <label style="font-size:12px;color:#6b675c;display:block;margin-bottom:4px">Fee you charge ($)</label>
+    <input id="finFee" type="number" placeholder="0" value="${f.fee||''}" style="width:100%;margin-bottom:12px">
+    <label style="font-size:12px;color:#6b675c;display:block;margin-bottom:4px">Taxi fee ($)</label>
+    <input id="finTaxi" type="number" placeholder="0" value="${f.taxi||''}" style="width:100%;margin-bottom:12px">
+    <label style="font-size:12px;color:#6b675c;display:block;margin-bottom:4px">Therapist rate ($/hr)</label>
+    <input id="finRate" type="number" placeholder="70" value="${f.rate}" style="width:100%;margin-bottom:14px">
+    <div style="border-top:1px solid #e2dccc;padding-top:10px;font-size:13px;color:#6b675c">
+      <div style="display:flex;justify-content:space-between;margin-bottom:5px"><span>Hours (${fmtH(evDurationH(ev))} × ${ev.therapists})</span><span>${fmtH(evDurationH(ev)*ev.therapists)} hrs</span></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px"><span>Therapist pay</span><span id="finPay">${fmtMoney(evPay(ev))}</span></div>
+    </div>
+    <div style="border-top:1px solid #e2dccc;padding-top:10px;display:flex;align-items:baseline;justify-content:space-between">
+      <span style="font-size:13px;color:#6b675c">My profit</span>
+      <strong id="finProfit" style="font-size:22px;color:${evProfit(ev)<0?'#a3352f':'#2f6e3b'}">${fmtMoney(evProfit(ev))}</strong>
+    </div>
+    <div id="finSaved" style="font-size:12px;color:#8a8574;margin-top:8px;height:14px"></div>
+    <div style="border-top:1px solid #e2dccc;margin-top:8px;padding-top:12px">
+      <button class="btn" style="width:100%;margin-bottom:8px" onclick="editEv('${ev.id}')">Edit this event</button>
+      <div style="display:flex;gap:8px">
+        <button class="mini" style="flex:1" onclick="archiveEv('${ev.id}')">${ev.archived?'Restore':'Archive'}</button>
+        <button class="mini" style="flex:1;color:#a3352f;border-color:#e3b7b3" onclick="deleteEv('${ev.id}')">Delete</button>
+      </div>
+    </div>`;
+  ['finFee','finTaxi','finRate'].forEach(id=>{ const el=$(id); el.addEventListener('input',evLedgerRecalc); el.addEventListener('change',evLedgerSave); });
+}
+window.archiveEv=async function(id){
+  const ev=allEvents.find(e=>e.id===id); if(!ev) return;
+  const { error } = await sb.from('events').update({ archived: !ev.archived }).eq('id', id);
+  if(error){ alert('Could not update the event.'); return; }
+  evSelId=null; renderEventsView();
+};
+window.deleteEv=async function(id){
+  const ev=allEvents.find(e=>e.id===id);
+  if(!confirm(`Delete "${ev?ev.company:id}" and all of its bookings? This cannot be undone.`)) return;
+  await sb.from('bookings').delete().eq('event_id', id);
+  const { error } = await sb.from('events').delete().eq('id', id);
+  if(error){ alert('Could not delete the event.'); return; }
+  evSelId=null; renderEventsView();
+};
+function evLedgerRecalc(){
+  const ev=allEvents.find(e=>e.id===evSelId); if(!ev) return;
+  ev.finance={ fee:Number($('finFee').value)||0, taxi:Number($('finTaxi').value)||0, rate:($('finRate').value===''?70:Number($('finRate').value)) };
+  const pay=evPay(ev), prof=evProfit(ev);
+  $('finPay').textContent=fmtMoney(pay);
+  $('finProfit').textContent=fmtMoney(prof);
+  $('finProfit').style.color = prof<0 ? '#a3352f' : '#2f6e3b';
+}
+async function evLedgerSave(){
+  const ev=allEvents.find(e=>e.id===evSelId); if(!ev) return;
+  evLedgerRecalc();
+  const { error } = await sb.from('events').update({ finance: ev.finance }).eq('id', ev.id);
+  const note=$('finSaved'); if(note){ note.textContent = error ? 'Could not save.' : 'Saved.'; setTimeout(()=>{ if(note) note.textContent=''; }, 1500); }
+}
+window.selectEv=function(id){ evSelId=id; renderEvList(); renderEvLedger(); };
+window.editEv=async function(id){
+  if(!await loadEvent(id)){ alert('Could not load that event.'); return; }
+  localStorage.setItem('kneadCurrentEvent', id);
+  await loadBookings(true); computeSlots(); subscribe(); hydrateForm(); refreshUI();
+  showView('admin'); window.scrollTo(0,0);
+};
+function setEvView(v){
+  evView=v; const isList=v==='list';
+  $('evList').style.display=isList?'block':'none';
+  $('evCal').style.display=isList?'none':'block';
+  $('evTabList').style.background=isList?'#efe9db':'transparent'; $('evTabList').style.fontWeight=isList?'700':'400';
+  $('evTabCal').style.background=isList?'transparent':'#efe9db'; $('evTabCal').style.fontWeight=isList?'400':'700';
+}
+window.setEvView=setEvView;
+
+/* ---------- Access gate ---------- */
+function showApp(){ $('gate').style.display='none'; $('app').style.display='block'; }
+function lockTo(view){ $('tabBar').style.display='none'; showView(view); }
+function showGate(kicker,title,subhtml,onSubmit){
+  $('gate').style.display='block'; $('app').style.display='none';
+  $('gateKicker').textContent=kicker; $('gateTitle').textContent=title; $('gateSub').innerHTML=subhtml;
+  $('gateMsg').textContent=''; $('gateCode').value='';
+  const submit=async()=>{ $('gateMsg').className=''; $('gateMsg').textContent='Checking…'; await onSubmit($('gateCode').value.trim()); };
+  $('gateSubmit').onclick=submit;
+  $('gateCode').onkeydown=(e)=>{ if(e.key==='Enter') submit(); };
+  setTimeout(()=>$('gateCode').focus(),50);
+}
+function gateError(msg){ $('gateMsg').className='err'; $('gateMsg').textContent=msg; }
+
+async function startAdmin(preEventId){
+  mode='admin'; showApp(); $('tabBar').style.display='grid';
+  const id = preEventId || localStorage.getItem('kneadCurrentEvent') || 'demo-corporate-wellness-day';
+  if(!await loadEvent(id)){ state.event={...DEFAULT_EVENT, id, date:defaultDate()}; await saveEvent(); }
+  hydrateForm(); await loadBookings(true); computeSlots(); subscribe(); refreshUI(); showView('admin');
+  loadTherapistsInfo();
+}
+async function startClient(id){
+  mode='client'; if(!await loadEvent(id)){ state.event={...DEFAULT_EVENT, id, date:defaultDate()}; }
+  showApp(); lockTo('signup'); await loadBookings(false); computeSlots(); subscribe(); refreshUI();
+}
+async function startTherapist(lockIdx){
+  lockedTherapist = (lockIdx!=null && lockIdx!=='') ? Math.max(1, Number(lockIdx)||1) : null;
+  mode='therapist'; showApp(); lockTo('therapist'); await loadBookings(true); computeSlots(); subscribe(); refreshUI(); renderRoster();
+}
+
+async function init(){
+  const p=params(); const e=p.get('e'); const role=p.get('role'); const isAdmin=p.has('admin');
+
+  if(e && role==='therapist'){
+    await loadEvent(e); // event details are not private; needed for window + code hash
+    showGate('THERAPIST ACCESS', 'Therapist sign-in', `Enter the therapist code for <strong>${esc(state.event.company)}</strong>.`, async(code)=>{
+      if(!code) return gateError('Please enter the code.');
+      if(!state.event.therapistCodeHash) return gateError('No therapist code has been set for this event yet.');
+      if(await sha256(code)!==state.event.therapistCodeHash) return gateError('Incorrect code.');
+      const w=therapistWindow();
+      if(!w.ok) return gateError(w.reason);
+      startTherapist(p.get('t'));
+    });
+    return;
+  }
+  if(e && !isAdmin){ startClient(e); return; }
+
+  // admin (also the bare URL) — open, no code required
+  startAdmin(e || null);
+}
+
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>showView(t.dataset.view)));
+$('generate').addEventListener('click',generate);
+$('addBreak').addEventListener('click',addBreak);
+$('genCode').addEventListener('click',genCode);
+$('copyCode').addEventListener('click',()=>copy(lastTherapistCode,$('copyCode')));
+$('addTherapist').addEventListener('click',addTherapistRow);
+$('therapistNames').addEventListener('input',renderBreakTherapistSelect);
+$('evTabList').addEventListener('click',()=>setEvView('list'));
+$('evTabCal').addEventListener('click',()=>setEvView('cal'));
+$('evArchToggle').addEventListener('change',e=>{ evShowArchived=e.target.checked; evSelId=null; renderEventsView(); });
+$('tiAdd').addEventListener('click',tiSubmit);
+$('tiCancel').addEventListener('click',tiResetForm);
+$('tiShowArchived').addEventListener('change',e=>{ tiShowArchived=e.target.checked; renderTherapistsInfo(); });
+['tiFirst','tiLast','tiPhone','tiEmail'].forEach(id=>$(id).addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); tiSubmit(); } }));
+$('book').addEventListener('click',reserve);
+$('email').addEventListener('blur',checkExisting);
+$('therapistSelect').addEventListener('change',renderRoster);
+$('refreshRoster').addEventListener('click',async()=>{ await loadBookings(mode!=='client'); refreshUI(); });
+$('reset').addEventListener('click',async()=>{
+  if(!confirm('Clear ALL bookings for this event? This cannot be undone.')) return;
+  const { error } = await sb.from('bookings').delete().eq('event_id', state.event.id);
+  if(error){ alert('Could not clear bookings.'); return; }
+  await loadBookings(true); refreshUI();
+});
+$('copyLink').addEventListener('click',()=>copy($('shareLink').textContent,$('copyLink')));
+$('copyTherapist').addEventListener('click',()=>copy($('therapistLink').textContent,$('copyTherapist')));
+function copy(text,btn){ navigator.clipboard.writeText(text).then(()=>{ const o=btn.textContent; btn.textContent='Copied'; setTimeout(()=>btn.textContent=o,1200); }).catch(()=>alert('Copy the link shown in the box.')); }
+$('export').addEventListener('click',()=>{
+  if(!state.bookings.length){ alert('There are no bookings to export.'); return; }
+  const header=['Time','Therapist','First Name','Last Initial','Email','Pregnancy','Attendance'];
+  const rows=state.bookings.slice().sort((a,b)=>a.start-b.start).map(b=>[clock(b.start),therapistName(b.therapist),b.first,b.last,b.email,b.pregnancy||'',b.attendance]);
+  const csv=[header,...rows].map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv'}); const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download=`${slug(state.event.company)||'chair-massage'}-attendees.csv`; a.click(); URL.revokeObjectURL(a.href);
+});
+
+init();
+</script>
+</body>
+</html>
