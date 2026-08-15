@@ -79,6 +79,9 @@
     #gate .btn{width:100%;margin-top:14px;justify-content:center;text-align:center}
     #gateMsg{margin-top:12px;font-size:14px;min-height:18px}
     #gateMsg.err{color:var(--danger)}
+    .ev-layout{grid-template-columns:minmax(0,1fr) 264px}
+    .ti-form-grid{grid-template-columns:1fr 90px 1fr 1.2fr}
+    .code-row{display:flex;gap:8px;align-items:stretch}
     @media(max-width:760px){
       .shell{padding:14px}
       header{align-items:flex-start}
@@ -86,12 +89,18 @@
       .hero{grid-template-columns:1fr}
       .grid{grid-template-columns:1fr}
       .field.full{grid-column:auto}
-      .tabs{top:5px;grid-template-columns:repeat(3,1fr)}
-      .tab{font-size:12px;padding:11px 5px}
+      .tabs{top:5px;grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(92px,max-content);overflow-x:auto;-webkit-overflow-scrolling:touch;justify-content:flex-start;scrollbar-width:none}
+      .tabs::-webkit-scrollbar{display:none}
+      .tab{font-size:12.5px;padding:11px 12px;white-space:nowrap}
       .card{padding:17px}
-      .card h2{font-size:27px}
+      .card h2{font-size:25px}
       .roster-item{grid-template-columns:72px 1fr}
       .status-actions{grid-column:1/-1;justify-content:flex-start}
+      .slots{grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px}
+      .ev-layout{grid-template-columns:1fr;gap:16px}
+      .ti-form-grid{grid-template-columns:1fr;gap:8px}
+      .code-row{flex-direction:column;align-items:stretch}
+      .code-row button{width:100%}
     }
   </style>
 </head>
@@ -197,7 +206,7 @@
         </div>
         <div class="field full">
           <label for="therapistCode">Therapist access code</label>
-          <div style="display:flex;gap:8px;align-items:stretch">
+          <div class="code-row">
             <input id="therapistCode" placeholder="Leave blank to keep the current code" autocomplete="off" style="flex:1" />
             <button class="btn secondary" id="genCode" type="button" style="white-space:nowrap">Generate new code</button>
           </div>
@@ -285,7 +294,7 @@
       </div>
     </div>
     <div class="card">
-      <div style="display:grid;grid-template-columns:minmax(0,1fr) 264px;gap:22px;align-items:start">
+      <div class="ev-layout" style="display:grid;gap:22px;align-items:start">
         <div>
           <div id="evList"></div>
           <div id="evCal" style="display:none"></div>
@@ -303,7 +312,7 @@
         <h2 style="margin:4px 0 6px">Your therapist roster.</h2>
         <p style="color:var(--muted);margin:0 0 14px">Save each therapist once — their name auto-fills when you set up an event. All four fields required.</p>
         <div id="tiForm" style="background:#f3eee1;border-radius:12px;padding:14px 16px;margin-bottom:14px">
-          <div style="display:grid;grid-template-columns:1fr 90px 1fr 1.2fr;gap:8px">
+          <div class="ti-form-grid" style="display:grid;gap:8px">
             <input id="tiFirst" placeholder="First name" />
             <input id="tiLast" placeholder="Last init." maxlength="3" />
             <input id="tiPhone" placeholder="Phone" type="tel" />
