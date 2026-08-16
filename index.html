@@ -89,7 +89,7 @@
       .hero{grid-template-columns:1fr}
       .grid{grid-template-columns:1fr}
       .field.full{grid-column:auto}
-            .tabs{top:5px;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding:6px;border-radius:14px}
+      .tabs{top:5px;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding:6px;border-radius:14px}
       .tab{font-size:13px;padding:12px 6px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
       .tab:last-child{grid-column:1/-1}
       .card{padding:17px}
@@ -250,6 +250,46 @@
       </div>
       <div style="height:14px"></div>
       <div id="breakList" class="roster"></div>
+
+      <div style="height:24px"></div>
+      <h3>Client details</h3>
+      <p class="sub">Who booked this event and how to reach them. Saved with the event, so everything about this job lives in one record.</p>
+      <div style="height:14px"></div>
+      <div class="grid">
+        <div class="field">
+          <label for="clCompany">Billing company name</label>
+          <input id="clCompany" placeholder="e.g. Walleye Capital Management LLC" autocomplete="off" />
+          <small style="color:var(--muted);line-height:1.45">The legal name for invoicing, if it differs from the event name above.</small>
+        </div>
+        <div class="field">
+          <label for="clContact">Point of contact</label>
+          <input id="clContact" placeholder="Name and title" autocomplete="off" />
+        </div>
+        <div class="field">
+          <label for="clEmail">Client email</label>
+          <input id="clEmail" type="email" placeholder="name@company.com" autocomplete="off" />
+        </div>
+        <div class="field">
+          <label for="clPhone">Client phone</label>
+          <input id="clPhone" type="tel" placeholder="(212) 555-0100" autocomplete="off" />
+        </div>
+        <div class="field full">
+          <label for="clInvoice">Invoice / quote link</label>
+          <div class="code-row">
+            <input id="clInvoice" type="url" placeholder="Paste the Google Drive link to the quote or invoice PDF" autocomplete="off" style="flex:1" />
+            <button class="btn secondary" id="clOpenInvoice" type="button" style="white-space:nowrap">Open</button>
+          </div>
+          <small style="color:var(--muted);line-height:1.45">Paste the Drive link from your TBD folder. Nothing is uploaded here.</small>
+        </div>
+        <div class="field full">
+          <label for="clNotes">Notes</label>
+          <input id="clNotes" placeholder="Building access, COI, check-in desk, floor, anything the team needs on the day" autocomplete="off" />
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap">
+        <button class="btn secondary" id="clSave" type="button">Save client details</button>
+        <span id="clSaved" style="font-size:13px;color:var(--muted)"></span>
+      </div>
 
       <div class="actions">
         <button class="btn" id="generate">Save event &amp; publish slots</button>
@@ -440,7 +480,8 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const ADMIN_CODE_HASH = 'bb4a8d406d71288bf63deb6dc126dbf745907fbabb363a3e4552a988e783cffb';
 const WINDOW_PAD = 30; // minutes before start / after end that the therapist code is active
 
-const DEFAULT_EVENT = { company:'Demo Corporate Wellness Day', location:'New York, NY', date:'', start:'10:00', end:'14:00', session:15, buffer:3, therapists:2, therapistNames:['',''], breaks:[], therapistCodeHash:null };
+const DEFAULT_EVENT = { company:'Demo Corporate Wellness Day', location:'New York, NY', date:'', start:'10:00', end:'14:00', session:15, buffer:3, therapists:2, therapistNames:['',''], breaks:[], therapistCodeHash:null, client:{} };
+const CLIENT_FIELDS = { clCompany:'company', clContact:'contact', clEmail:'email', clPhone:'phone', clInvoice:'invoice', clNotes:'notes' };
 
 let state = { event:{...DEFAULT_EVENT, id:'demo-corporate-wellness-day'}, bookings:[], slots:[] };
 let selectedStart = null, channel = null, mode = 'admin', lastTherapistCode = '';
@@ -521,6 +562,47 @@ function hydrateForm(){
   $('session').value=state.event.session;
   $('buffer').value=state.event.buffer;
   renderTherapistNameRows();
+  hydrateClientForm();
+}
+
+/* ---------- Client details ---------- */
+function readClientForm(){
+  const c = {...(state.event.client||{})};
+  Object.entries(CLIENT_FIELDS).forEach(([id,key])=>{
+    const el=$(id);
+    if(el) c[key]=el.value.trim();
+  });
+  Object.keys(c).forEach(k=>{ if(c[k]==='' || c[k]==null) delete c[k]; });
+  state.event.client=c;
+  return c;
+}
+function hydrateClientForm(){
+  const c=state.event.client||{};
+  Object.entries(CLIENT_FIELDS).forEach(([id,key])=>{
+    const el=$(id);
+    if(el) el.value = c[key] || '';
+  });
+}
+async function saveClientDetails(){
+  const note=$('clSaved');
+  const invoice=$('clInvoice').value.trim();
+  if(invoice && !/^https?:\/\//i.test(invoice)){
+    if(note){ note.style.color='var(--danger)'; note.textContent='The invoice link must start with http:// or https://'; }
+    return;
+  }
+  const email=$('clEmail').value.trim();
+  if(email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    if(note){ note.style.color='var(--danger)'; note.textContent='Enter a valid client email.'; }
+    return;
+  }
+  const payload=readClientForm();
+  if(note){ note.style.color='var(--muted)'; note.textContent='Saving…'; }
+  const { error } = await sb.from('events').update({ client:payload }).eq('id', state.event.id);
+  if(note){
+    note.style.color = error ? 'var(--danger)' : '#2f6e3b';
+    note.textContent = error ? 'Could not save. Save the event first, then try again.' : 'Saved.';
+    if(!error) setTimeout(()=>{ if(note) note.textContent=''; }, 2000);
+  }
 }
 function readForm(){
   state.event.company=$('company').value.trim() || 'Chair Massage Event';
@@ -552,7 +634,8 @@ async function loadEvent(id){
     state.event = { id:data.id, company:data.company, location:data.location||'New York, NY',
       date:data.event_date||'', start:data.start_time||'10:00', end:data.end_time||'14:00',
       session:data.session_min||15, buffer:data.buffer_min||3, therapists:tNames.length, therapistNames:tNames,
-      breaks:Array.isArray(data.breaks)?data.breaks:[], therapistCodeHash:data.therapist_code_hash||null };
+      breaks:Array.isArray(data.breaks)?data.breaks:[], therapistCodeHash:data.therapist_code_hash||null,
+      client:(data.client && typeof data.client==='object' && !Array.isArray(data.client)) ? data.client : {} };
     return true;
   }
   return false;
@@ -566,7 +649,7 @@ async function saveEvent(){
   const payload = { id:state.event.id, company:state.event.company, location:state.event.location,
     event_date:state.event.date||null, start_time:state.event.start, end_time:state.event.end,
     session_min:state.event.session, buffer_min:state.event.buffer, therapists:finalNames.length, therapist_names:finalNames,
-    breaks:state.event.breaks||[], therapist_code_hash:codeHash, updated_at:new Date().toISOString() };
+    breaks:state.event.breaks||[], therapist_code_hash:codeHash, client:readClientForm(), updated_at:new Date().toISOString() };
   const { error } = await sb.from('events').upsert(payload);
   if(error){ alert('Could not save the event: '+error.message); return false; }
   state.event.therapistCodeHash = codeHash;
@@ -929,7 +1012,8 @@ async function loadAllEvents(){
     id:e.id, company:e.company||'Untitled', location:e.location||'',
     date:e.event_date||'', start:e.start_time||'10:00', end:e.end_time||'12:00',
     therapists:(Array.isArray(e.therapist_names)&&e.therapist_names.length)?e.therapist_names.length:(e.therapists||1),
-    finance:(e.finance&&typeof e.finance==='object')?e.finance:{}, archived:!!e.archived
+    finance:(e.finance&&typeof e.finance==='object')?e.finance:{}, archived:!!e.archived,
+    client:(e.client&&typeof e.client==='object'&&!Array.isArray(e.client))?e.client:{}
   }));
 }
 function evDurationH(ev){ const d=(minutes(ev.end)-minutes(ev.start))/60; return d>0?d:0; }
@@ -987,6 +1071,20 @@ window.evMonthShift=function(n){ evCalMonth=new Date(evCalMonth.getFullYear(), e
 function renderEvLedger(){
   const ev=allEvents.find(e=>e.id===evSelId); if(!ev){ $('evLedger').innerHTML=''; return; }
   const f=evFin(ev);
+  const c=ev.client||{};
+  const clientRows=[
+    c.company?`<div style="margin-bottom:3px"><strong>${esc(c.company)}</strong></div>`:'',
+    c.contact?`<div style="margin-bottom:3px">${esc(c.contact)}</div>`:'',
+    c.email?`<div style="margin-bottom:3px"><a href="mailto:${esc(c.email)}" style="color:#2f4429">${esc(c.email)}</a></div>`:'',
+    c.phone?`<div style="margin-bottom:3px"><a href="tel:${esc(c.phone)}" style="color:#2f4429">${esc(c.phone)}</a></div>`:'',
+    c.invoice?`<div style="margin-bottom:3px"><a href="${esc(c.invoice)}" target="_blank" rel="noopener" style="color:#2f4429">Invoice / quote →</a></div>`:'',
+    c.notes?`<div style="margin-top:6px;color:#8a8574">${esc(c.notes)}</div>`:''
+  ].filter(Boolean).join('');
+  const clientBlock = clientRows
+    ? `<div style="border-top:1px solid #e2dccc;margin-top:12px;padding-top:12px;font-size:13px;color:#6b675c">
+         <strong style="font-size:12px;letter-spacing:.05em;display:block;margin-bottom:8px">CLIENT</strong>${clientRows}
+       </div>`
+    : `<div style="border-top:1px solid #e2dccc;margin-top:12px;padding-top:12px;font-size:12px;color:#8a8574">No client details saved. Add them in Admin Setup.</div>`;
   $('evLedger').innerHTML=`
     <strong style="font-size:12px;color:#6b675c;letter-spacing:.05em">LEDGER</strong>
     <div style="font-size:13px;color:#8a8574;margin:6px 0 14px">${esc(ev.company)}${ev.date?' · '+esc(evMonLabel(ev)+' '+evDayNum(ev)):''}</div>
@@ -1005,6 +1103,7 @@ function renderEvLedger(){
       <strong id="finProfit" style="font-size:22px;color:${evProfit(ev)<0?'#a3352f':'#2f6e3b'}">${fmtMoney(evProfit(ev))}</strong>
     </div>
     <div id="finSaved" style="font-size:12px;color:#8a8574;margin-top:8px;height:14px"></div>
+    ${clientBlock}
     <div style="border-top:1px solid #e2dccc;margin-top:8px;padding-top:12px">
       <button class="btn" style="width:100%;margin-bottom:8px" onclick="editEv('${ev.id}')">Edit this event</button>
       <div style="display:flex;gap:8px">
@@ -1119,6 +1218,13 @@ $('addBreak').addEventListener('click',addBreak);
 $('genCode').addEventListener('click',genCode);
 $('copyCode').addEventListener('click',()=>copy(lastTherapistCode,$('copyCode')));
 $('addTherapist').addEventListener('click',addTherapistRow);
+$('clSave').addEventListener('click',saveClientDetails);
+$('clOpenInvoice').addEventListener('click',()=>{
+  const url=$('clInvoice').value.trim();
+  if(!url) return alert('Paste the invoice or quote link first.');
+  if(!/^https?:\/\//i.test(url)) return alert('That link must start with http:// or https://');
+  window.open(url,'_blank','noopener');
+});
 $('therapistNames').addEventListener('input',renderBreakTherapistSelect);
 $('evTabList').addEventListener('click',()=>setEvView('list'));
 $('evTabCal').addEventListener('click',()=>setEvView('cal'));
