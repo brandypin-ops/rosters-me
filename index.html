@@ -437,7 +437,7 @@ const SUPABASE_KEY = 'sb_publishable_jYRDRlWl8YoUMWOSS_t4hg_2ihS8flD';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // SHA-256 hash of the admin code. Change this to rotate the admin code.
-const ADMIN_CODE_HASH = 'ec3b2ca714c9f7ce9261c9e8bd1f4da661f6a216d0550a2bde0b0cd029cca7d4';
+const ADMIN_CODE_HASH = 'bb4a8d406d71288bf63deb6dc126dbf745907fbabb363a3e4552a988e783cffb';
 const WINDOW_PAD = 30; // minutes before start / after end that the therapist code is active
 
 const DEFAULT_EVENT = { company:'Demo Corporate Wellness Day', location:'New York, NY', date:'', start:'10:00', end:'14:00', session:15, buffer:3, therapists:2, therapistNames:['',''], breaks:[], therapistCodeHash:null };
@@ -1105,8 +1105,12 @@ async function init(){
   }
   if(e && !isAdmin){ startClient(e); return; }
 
-  // admin (also the bare URL) — open, no code required
-  startAdmin(e || null);
+  // admin (also the bare URL) — passcode required on every visit
+  showGate('ADMIN ACCESS', 'Admin sign-in', 'Enter your Knead NYC admin passcode.', async(code)=>{
+    if(!code) return gateError('Please enter the passcode.');
+    if(await sha256(code)!==ADMIN_CODE_HASH) return gateError('Incorrect passcode.');
+    startAdmin(e || null);
+  });
 }
 
 document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>showView(t.dataset.view)));
