@@ -158,6 +158,9 @@
     </div>
 
     <div class="card">
+            <div id="dupNotice" class="notice" style="display:none;background:#f6e7bf;color:#5c4a1a;border:1px solid #e6cd8e;margin-top:0;margin-bottom:18px;line-height:1.5">
+        <strong>This is an unsaved copy.</strong> <span id="dupNoticeText"></span>
+      </div>
       <h3>Event details</h3>
       <div class="grid">
         <div class="field">
@@ -1043,6 +1046,7 @@ function renderEvList(){
         <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:700;margin-bottom:3px">${esc(ev.company)}${ev.location?' · '+esc(ev.location):''}</div>
         <div style="font-size:13px;color:#6b675c">${evTimeLabel(ev)} · ${ev.therapists} therapist${ev.therapists>1?'s':''}</div></div>
       </div>
+            <button class="mini" onclick="duplicateEv('${ev.id}')">Duplicate</button>
       <button class="mini" onclick="editEv('${ev.id}')">Edit</button>
     </div>`;
   }).join('');
@@ -1142,8 +1146,28 @@ async function evLedgerSave(){
   const note=$('finSaved'); if(note){ note.textContent = error ? 'Could not save.' : 'Saved.'; setTimeout(()=>{ if(note) note.textContent=''; }, 1500); }
 }
 window.selectEv=function(id){ evSelId=id; renderEvList(); renderEvLedger(); };
+window.duplicateEv=async function(id){
+  if(!await loadEvent(id)){ alert('Could not load that event to copy.'); return; }
+  const sourceName=state.event.company;
+  // Reserve a fresh id up front so nothing can ever write over the original event.
+  const newId=await ensureUniqueId(slug(sourceName)||'event', null);
+  if(newId===id){ alert('Could not create a copy. Please rename the event and try again.'); return; }
+  state.event.id=newId;
+  state.event.date='';                // force a new date
+  state.event.therapistCodeHash=null; // codes are one-way hashed, so each event gets its own
+  state.bookings=[];                  // bookings never copy
+  computeSlots(); hydrateForm(); subscribe(); refreshUI();
+  $('date').value='';
+  if($('dupNotice')){
+    $('dupNoticeText').textContent='Copied from "'+sourceName+'". Set the event date, change anything you need, then press "Save event & publish slots". Nothing is saved until you do. The therapist access code was not copied — generate a new one below.';
+    $('dupNotice').style.display='block';
+  }
+  showView('admin'); window.scrollTo(0,0);
+  $('date').focus();
+};
 window.editEv=async function(id){
   if(!await loadEvent(id)){ alert('Could not load that event.'); return; }
+  if($('dupNotice')) $('dupNotice').style.display='none';
   localStorage.setItem('kneadCurrentEvent', id);
   await loadBookings(true); computeSlots(); subscribe(); hydrateForm(); refreshUI();
   showView('admin'); window.scrollTo(0,0);
