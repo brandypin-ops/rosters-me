@@ -629,8 +629,10 @@ function computeSlots(){
   state.slots=slots;
 }
 
+const PUBLIC_EVENT_COLS = 'id,company,location,event_date,start_time,end_time,session_min,buffer_min,therapists,therapist_names,breaks,therapist_code_hash,archived';
+function wantsFullEvent(){ const p=params(); return !(p.get('e') && !p.has('admin')); }
 async function loadEvent(id){
-  const { data, error } = await sb.from('events').select('*').eq('id', id).maybeSingle();
+  const { data, error } = await sb.from('events').select(wantsFullEvent() ? '*' : PUBLIC_EVENT_COLS).eq('id', id).maybeSingle();
   if(error){ console.error(error); }
   if(data){
     let tNames = Array.isArray(data.therapist_names) ? data.therapist_names.filter(x=>typeof x==='string') : [];
