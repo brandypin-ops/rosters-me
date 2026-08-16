@@ -114,6 +114,7 @@
       <h3 id="gateTitle">Enter access code</h3>
       <p class="sub" id="gateSub"></p>
       <div style="height:14px"></div>
+            <input id="gateEmail" type="email" placeholder="Email" autocomplete="username" style="display:none;margin-bottom:10px" />
       <input id="gateCode" type="password" placeholder="Access code" autocomplete="off" />
       <button class="btn" id="gateSubmit">Enter</button>
       <p id="gateMsg"></p>
@@ -1228,12 +1229,20 @@ async function init(){
   }
   if(e && !isAdmin){ startClient(e); return; }
 
-  // admin (also the bare URL) — passcode required on every visit
-  showGate('ADMIN ACCESS', 'Admin sign-in', 'Enter your Knead NYC admin passcode.', async(code)=>{
-    if(!code) return gateError('Please enter the passcode.');
-    if(await sha256(code)!==ADMIN_CODE_HASH) return gateError('Incorrect passcode.');
+    // admin (also the bare URL) — real account sign-in, verified by the database
+  const { data:{ session } } = await sb.auth.getSession();
+  if(session){ startAdmin(e || null); return; }
+  showGate('ADMIN ACCESS', 'Admin sign-in', 'Sign in with your Knead NYC admin account.', async(pw)=>{
+    const email=$('gateEmail').value.trim();
+    if(!email || !pw) return gateError('Enter your email and password.');
+    const { error } = await sb.auth.signInWithPassword({ email, password:pw });
+    if(error) return gateError('Email or password not recognised.');
     startAdmin(e || null);
   });
+  $('gateEmail').style.display='block';
+  $('gateCode').placeholder='Password';
+  $('gateCode').autocomplete='current-password';
+  setTimeout(()=>$('gateEmail').focus(),60);
 }
 
 document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>showView(t.dataset.view)));
