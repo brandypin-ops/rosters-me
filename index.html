@@ -20,7 +20,7 @@
     .brand h1{font-family:Georgia,serif;font-size:23px;margin:0;font-weight:500}
     .brand p{margin:3px 0 0;color:var(--muted);font-size:13px}
     .event-pill{padding:9px 13px;border:1px solid var(--line);border-radius:999px;background:white;font-size:13px;color:var(--muted)}
-    .tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;background:var(--soft);padding:7px;border-radius:15px;margin-bottom:20px;position:sticky;top:8px;z-index:5;box-shadow:0 5px 18px rgba(28,24,18,.04)}
+    .tabs{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;background:var(--soft);padding:7px;border-radius:15px;margin-bottom:20px;position:sticky;top:8px;z-index:5;box-shadow:0 5px 18px rgba(28,24,18,.04)}
     .tab{border:0;background:transparent;border-radius:11px;padding:12px 10px;cursor:pointer;color:var(--muted);font-weight:650}
     .tab.active{background:white;color:var(--ink);box-shadow:0 4px 14px rgba(0,0,0,.05)}
     .view{display:none}
@@ -138,6 +138,7 @@
     <button class="tab active" data-view="admin">Admin Setup</button>
     <button class="tab" data-view="events">Events</button>
     <button class="tab" data-view="therapistsInfo">Therapists Info</button>
+    <button class="tab" data-view="calendarSettings">Google Calendar</button>
     <button class="tab" data-view="signup">Employee Sign-Up</button>
     <button class="tab" data-view="therapist">Therapist View</button>
   </nav>
@@ -379,6 +380,32 @@
     </div>
   </section>
 
+  <section id="calendarSettings" class="view">
+    <div class="hero">
+      <div class="card">
+        <p class="label">CALENDAR AUTOMATION</p>
+        <h2>Connect once. Stay synchronized.</h2>
+        <p class="sub">Published Rosters events are automatically created and updated in this business&rsquo;s Google Calendar. Each Rosters customer connects their own account.</p>
+      </div>
+      <div class="card">
+        <p class="label">CONNECTION STATUS</p>
+        <div class="metric" id="calendarStatusTitle" style="font-size:28px">Checking…</div>
+        <p class="sub" id="calendarStatusDetail">Loading the Calendar connection.</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Google Calendar</h3>
+      <p class="sub">Rosters sends only the event name, location, date, and start/end time. Employee bookings, health answers, therapist details, client contacts, and financial information are never sent to Google.</p>
+      <div id="calendarMessage" class="notice" style="display:none"></div>
+      <div class="actions">
+        <button class="btn" id="calendarConnect" type="button">Connect Google Calendar</button>
+        <button class="btn secondary" id="calendarSyncNow" type="button" style="display:none">Sync all events now</button>
+        <button class="btn danger" id="calendarDisconnect" type="button" style="display:none">Disconnect</button>
+      </div>
+      <p class="footer-note">Rosters is the source of truth. Publishing or editing in Rosters updates Google Calendar. Calendar edits do not change Rosters.</p>
+    </div>
+  </section>
+
   <section id="signup" class="view">
     <div class="hero">
       <div class="card">
@@ -491,6 +518,7 @@ let state = { event:{...DEFAULT_EVENT, id:'demo-corporate-wellness-day'}, bookin
 let selectedStart = null, channel = null, mode = 'admin', lastTherapistCode = '';
 let existingBooking = null, rescheduleMode = false;
 let lockedTherapist = null;
+let adminSession = null, currentOrganizationId = null;
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
@@ -538,7 +566,9 @@ async function ensureUniqueId(base, currentId){
   if(base===currentId) return base;
   let id=base, n=2;
   while(n<60){
-    const { data, error } = await sb.from('events').select('id').eq('id', id).maybeSingle();
+    let query = sb.from('events').select('id').eq('id', id);
+    if(currentOrganizationId) query=query.eq('organization_id',currentOrganizationId);
+    const { data, error } = await query.maybeSingle();
     if(error){ console.error(error); return id; }
     if(!data) return id;
     id=base+'-'+n; n++;
@@ -601,7 +631,7 @@ async function saveClientDetails(){
   }
   const payload=readClientForm();
   if(note){ note.style.color='var(--muted)'; note.textContent='Saving…'; }
-  const { error } = await sb.from('events').update({ client:payload }).eq('id', state.event.id);
+  const { error } = await sb.from('events').update({ client:payload }).eq('id', state.event.id).eq('organization_id',currentOrganizationId);
   if(note){
     note.style.color = error ? 'var(--danger)' : '#2f6e3b';
     note.textContent = error ? 'Could not save. Save the event first, then try again.' : 'Saved.';
@@ -632,7 +662,10 @@ function computeSlots(){
 const PUBLIC_EVENT_COLS = 'id,company,location,event_date,start_time,end_time,session_min,buffer_min,therapists,therapist_names,breaks,therapist_code_hash,archived';
 function wantsFullEvent(){ const p=params(); return !(p.get('e') && !p.has('admin')); }
 async function loadEvent(id){
-  const { data, error } = await sb.from('events').select(wantsFullEvent() ? '*' : PUBLIC_EVENT_COLS).eq('id', id).maybeSingle();
+  const source = adminSession ? 'events' : 'public_events';
+  let query = sb.from(source).select(wantsFullEvent() && adminSession ? '*' : PUBLIC_EVENT_COLS).eq('id', id);
+  if(adminSession && currentOrganizationId) query=query.eq('organization_id',currentOrganizationId);
+  const { data, error } = await query.maybeSingle();
   if(error){ console.error(error); }
   if(data){
     let tNames = Array.isArray(data.therapist_names) ? data.therapist_names.filter(x=>typeof x==='string') : [];
@@ -653,6 +686,7 @@ async function saveEvent(){
   const finalNames = currentTherapistNames();
   state.event.therapistNames = finalNames; state.event.therapists = finalNames.length;
   const payload = { id:state.event.id, company:state.event.company, location:state.event.location,
+    organization_id:currentOrganizationId,
     event_date:state.event.date||null, start_time:state.event.start, end_time:state.event.end,
     session_min:state.event.session, buffer_min:state.event.buffer, therapists:finalNames.length, therapist_names:finalNames,
     breaks:state.event.breaks||[], therapist_code_hash:codeHash, client:readClientForm(), updated_at:new Date().toISOString() };
@@ -908,6 +942,70 @@ function showView(id){
   if(id==='therapist') renderRoster();
   if(id==='events') renderEventsView();
   if(id==='therapistsInfo') renderTherapistsInfo();
+  if(id==='calendarSettings') loadCalendarConnection();
+}
+
+/* ---------- Google Calendar connection ---------- */
+function calendarMessage(text,isError=false){
+  const box=$('calendarMessage'); if(!box) return;
+  box.textContent=text||''; box.style.display=text?'block':'none';
+  box.style.background=isError?'#f8e5e3':'var(--accent-2)';
+  box.style.color=isError?'var(--danger)':'#26352e';
+}
+async function calendarAction(action,extra={}){
+  const { data, error } = await sb.functions.invoke('google-calendar',{body:{action,...extra}});
+  if(error) throw new Error(error.message||'Calendar service request failed.');
+  if(data&&data.error) throw new Error(data.error);
+  return data||{};
+}
+async function loadCalendarConnection(){
+  if(!adminSession||!$('calendarStatusTitle')) return;
+  $('calendarStatusTitle').textContent='Checking…';
+  $('calendarStatusDetail').textContent='Loading the Calendar connection.';
+  calendarMessage('');
+  try{
+    const data=await calendarAction('status');
+    const c=data.connection||{}; const connected=!!data.connected;
+    $('calendarStatusTitle').textContent=connected?'Connected':(c.status==='error'?'Needs attention':'Not connected');
+    $('calendarStatusDetail').textContent=connected
+      ? `${c.google_account_email||'Google account'}${c.last_synced_at?' · Last synced '+new Date(c.last_synced_at).toLocaleString():''}`
+      : (c.last_error||'Connect this business’s Google Calendar once to automate published events.');
+    $('calendarConnect').style.display=connected?'none':'';
+    $('calendarSyncNow').style.display=connected?'':'none';
+    $('calendarDisconnect').style.display=connected?'':'none';
+    $('calendarConnect').disabled=!data.configured;
+    if(!data.configured) calendarMessage('Calendar setup is being completed. Google OAuth credentials are not active yet.',true);
+    if(c.last_error&&connected) calendarMessage(c.last_error,true);
+  }catch(error){
+    $('calendarStatusTitle').textContent='Unavailable';
+    $('calendarStatusDetail').textContent='Rosters could not load the Calendar connection.';
+    calendarMessage(error.message,true);
+  }
+}
+async function connectGoogleCalendar(){
+  const btn=$('calendarConnect'); btn.disabled=true; btn.textContent='Opening Google…'; calendarMessage('');
+  try{
+    const returnUrl=location.origin+location.pathname+'?admin=1';
+    const data=await calendarAction('start',{return_url:returnUrl});
+    if(!data.authorization_url) throw new Error('Google authorization URL was not returned.');
+    location.assign(data.authorization_url);
+  }catch(error){ calendarMessage(error.message,true); btn.disabled=false; btn.textContent='Connect Google Calendar'; }
+}
+async function syncGoogleCalendarNow(){
+  const btn=$('calendarSyncNow'); btn.disabled=true; btn.textContent='Syncing…'; calendarMessage('');
+  try{
+    const data=await calendarAction('sync-now');
+    calendarMessage(`Calendar sync completed. ${data.queued||0} event${data.queued===1?'':'s'} checked.`);
+    await loadCalendarConnection();
+  }catch(error){ calendarMessage(error.message,true); }
+  finally{ btn.disabled=false; btn.textContent='Sync all events now'; }
+}
+async function disconnectGoogleCalendar(){
+  if(!confirm('Disconnect this business from Google Calendar? Existing Calendar events will remain, but future Rosters changes will stop syncing.')) return;
+  const btn=$('calendarDisconnect'); btn.disabled=true; btn.textContent='Disconnecting…';
+  try{ await calendarAction('disconnect'); calendarMessage('Google Calendar disconnected.'); await loadCalendarConnection(); }
+  catch(error){ calendarMessage(error.message,true); }
+  finally{ btn.disabled=false; btn.textContent='Disconnect'; }
 }
 
 /* ---------- Therapists Info directory ---------- */
@@ -925,7 +1023,7 @@ function tiValidateForm(){
   return null;
 }
 async function loadTherapistsInfo(){
-  const { data, error } = await sb.from('therapists').select('*').order('first_name');
+  const { data, error } = await sb.from('therapists').select('*').eq('organization_id',currentOrganizationId).order('first_name');
   if(error){ console.error(error); tiAll=[]; return; }
   tiAll = data||[];
   populateTherapistDirectoryDatalist();
@@ -977,13 +1075,14 @@ async function tiSubmit(){
   if(err){ $('tiMsg').textContent=err; return; }
   $('tiMsg').textContent='';
   const payload={
+    organization_id:currentOrganizationId,
     first_name:$('tiFirst').value.trim(),
     last_initial:$('tiLast').value.trim().charAt(0).toUpperCase(),
     phone:$('tiPhone').value.trim(),
     email:$('tiEmail').value.trim()
   };
   if(tiEditId){
-    const { error } = await sb.from('therapists').update(payload).eq('id', tiEditId);
+    const { error } = await sb.from('therapists').update(payload).eq('id', tiEditId).eq('organization_id',currentOrganizationId);
     if(error){ $('tiMsg').textContent=error.message; return; }
   } else {
     const { error } = await sb.from('therapists').insert(payload);
@@ -994,14 +1093,14 @@ async function tiSubmit(){
 }
 window.tiArchive = async function(id){
   const t=tiAll.find(x=>x.id===id); if(!t) return;
-  const { error } = await sb.from('therapists').update({archived:!t.archived}).eq('id', id);
+  const { error } = await sb.from('therapists').update({archived:!t.archived}).eq('id', id).eq('organization_id',currentOrganizationId);
   if(error){ alert(error.message); return; }
   await renderTherapistsInfo();
 };
 window.tiDelete = async function(id){
   const t=tiAll.find(x=>x.id===id); if(!t) return;
   if(!confirm(`Delete ${t.first_name} ${t.last_initial}. permanently? This cannot be undone.`)) return;
-  const { error } = await sb.from('therapists').delete().eq('id', id);
+  const { error } = await sb.from('therapists').delete().eq('id', id).eq('organization_id',currentOrganizationId);
   if(error){ alert(error.message); return; }
   await renderTherapistsInfo();
 };
@@ -1012,7 +1111,7 @@ function visibleEvents(){ return allEvents.filter(e=> evShowArchived ? e.archive
 const fmtMoney=n=>{ const v=Math.round(n); return (v<0?'-$':'$')+Math.abs(v).toLocaleString(); };
 const fmtH=x=> (Math.round(x*10)/10);
 async function loadAllEvents(){
-  const { data, error } = await sb.from('events').select('*').order('event_date',{ascending:true});
+  const { data, error } = await sb.from('events').select('*').eq('organization_id',currentOrganizationId).order('event_date',{ascending:true});
   if(error){ console.error(error); allEvents=[]; return; }
   allEvents=(data||[]).filter(e=>e.id!=='event').map(e=>({
     id:e.id, company:e.company||'Untitled', location:e.location||'',
@@ -1122,7 +1221,7 @@ function renderEvLedger(){
 }
 window.archiveEv=async function(id){
   const ev=allEvents.find(e=>e.id===id); if(!ev) return;
-  const { error } = await sb.from('events').update({ archived: !ev.archived }).eq('id', id);
+  const { error } = await sb.from('events').update({ archived: !ev.archived }).eq('id', id).eq('organization_id',currentOrganizationId);
   if(error){ alert('Could not update the event.'); return; }
   evSelId=null; renderEventsView();
 };
@@ -1130,7 +1229,7 @@ window.deleteEv=async function(id){
   const ev=allEvents.find(e=>e.id===id);
   if(!confirm(`Delete "${ev?ev.company:id}" and all of its bookings? This cannot be undone.`)) return;
   await sb.from('bookings').delete().eq('event_id', id);
-  const { error } = await sb.from('events').delete().eq('id', id);
+  const { error } = await sb.from('events').delete().eq('id', id).eq('organization_id',currentOrganizationId);
   if(error){ alert('Could not delete the event.'); return; }
   evSelId=null; renderEventsView();
 };
@@ -1145,7 +1244,7 @@ function evLedgerRecalc(){
 async function evLedgerSave(){
   const ev=allEvents.find(e=>e.id===evSelId); if(!ev) return;
   evLedgerRecalc();
-  const { error } = await sb.from('events').update({ finance: ev.finance }).eq('id', ev.id);
+  const { error } = await sb.from('events').update({ finance: ev.finance }).eq('id', ev.id).eq('organization_id',currentOrganizationId);
   const note=$('finSaved'); if(note){ note.textContent = error ? 'Could not save.' : 'Saved.'; setTimeout(()=>{ if(note) note.textContent=''; }, 1500); }
 }
 window.selectEv=function(id){ evSelId=id; renderEvList(); renderEvLedger(); };
@@ -1198,12 +1297,31 @@ function showGate(kicker,title,subhtml,onSubmit){
 }
 function gateError(msg){ $('gateMsg').className='err'; $('gateMsg').textContent=msg; }
 
+async function loadAdminContext(session){
+  adminSession=session;
+  const { data, error } = await sb.rpc('my_organization_id');
+  if(error||!data){
+    adminSession=null; currentOrganizationId=null;
+    throw new Error('This admin account is not assigned to a Rosters organization.');
+  }
+  currentOrganizationId=data;
+}
+
 async function startAdmin(preEventId){
+  const { data:{ session } } = await sb.auth.getSession();
+  if(!session){ location.reload(); return; }
+  try{ await loadAdminContext(session); }
+  catch(error){ alert(error.message); await sb.auth.signOut(); location.reload(); return; }
   mode='admin'; showApp(); $('tabBar').style.display='grid';
   const id = preEventId || localStorage.getItem('kneadCurrentEvent') || 'demo-corporate-wellness-day';
   if(!await loadEvent(id)){ state.event={...DEFAULT_EVENT, id, date:defaultDate()}; await saveEvent(); }
   hydrateForm(); await loadBookings(true); computeSlots(); subscribe(); refreshUI(); showView('admin');
   loadTherapistsInfo();
+  const calendarResult=params().get('calendar');
+  if(calendarResult){
+    showView('calendarSettings');
+    setTimeout(()=>calendarMessage(calendarResult==='connected'?'Google Calendar connected. Future event changes will sync automatically.':(params().get('message')||'Google Calendar could not be connected.'),calendarResult!=='connected'),150);
+  }
 }
 async function startClient(id){
   mode='client'; if(!await loadEvent(id)){ state.event={...DEFAULT_EVENT, id, date:defaultDate()}; }
@@ -1233,13 +1351,13 @@ async function init(){
 
     // admin (also the bare URL) — real account sign-in, verified by the database
   const { data:{ session } } = await sb.auth.getSession();
-  if(session){ startAdmin(e || null); return; }
+  if(session){ await startAdmin(e || null); return; }
   showGate('ADMIN ACCESS', 'Admin sign-in', 'Sign in with your Rosters admin account.', async(pw)=>{
     const email=$('gateEmail').value.trim();
     if(!email || !pw) return gateError('Enter your email and password.');
     const { error } = await sb.auth.signInWithPassword({ email, password:pw });
     if(error) return gateError('Email or password not recognised.');
-    startAdmin(e || null);
+    await startAdmin(e || null);
   });
   $('gateEmail').style.display='block';
   $('gateCode').placeholder='Password';
@@ -1267,6 +1385,9 @@ $('evArchToggle').addEventListener('change',e=>{ evShowArchived=e.target.checked
 $('tiAdd').addEventListener('click',tiSubmit);
 $('tiCancel').addEventListener('click',tiResetForm);
 $('tiShowArchived').addEventListener('change',e=>{ tiShowArchived=e.target.checked; renderTherapistsInfo(); });
+$('calendarConnect').addEventListener('click',connectGoogleCalendar);
+$('calendarSyncNow').addEventListener('click',syncGoogleCalendarNow);
+$('calendarDisconnect').addEventListener('click',disconnectGoogleCalendar);
 ['tiFirst','tiLast','tiPhone','tiEmail'].forEach(id=>$(id).addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); tiSubmit(); } }));
 $('book').addEventListener('click',reserve);
 $('email').addEventListener('blur',checkExisting);
