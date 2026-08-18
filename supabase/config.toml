@@ -1,0 +1,5 @@
+project_id = "xpnsdedlemgahoesdqaa"
+
+[functions.google-calendar]
+verify_jwt = false
+
