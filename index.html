@@ -109,8 +109,8 @@
 <div id="gate">
   <div class="gate-card">
     <div class="card">
-      <div class="mark">K</div>
-      <p class="label" id="gateKicker">KNEAD NYC</p>
+      <div class="mark">R</div>
+      <p class="label" id="gateKicker">ROSTERS</p>
       <h3 id="gateTitle">Enter access code</h3>
       <p class="sub" id="gateSub"></p>
       <div style="height:14px"></div>
@@ -125,10 +125,10 @@
 <div class="shell" id="app" style="display:none">
   <header>
     <div class="brand">
-      <div class="mark">K</div>
+      <div class="mark">R</div>
       <div>
-        <h1>Knead NYC</h1>
-        <p>Chair massage scheduling</p>
+        <h1>Corporate Wellness Booking Platform</h1>
+        <p>Digital employee sign-ups, appointment scheduling, therapist management, and live event capacity—all in one place.</p>
       </div>
     </div>
     <div class="event-pill" id="headerEvent">Loading…</div>
@@ -302,7 +302,7 @@
       </div>
 
       <div class="notice">
-        Collect only the minimum safety information needed. Pregnancy answers should be private and visible only to the assigned therapist and authorized Knead NYC admin.
+        Collect only the minimum safety information needed. Pregnancy answers should be private and visible only to the assigned therapist and authorized Rosters admin.
       </div>
 
       <p class="label" style="margin-top:20px">CLIENT / EMPLOYEE BOOKING LINK</p>
@@ -428,7 +428,7 @@
             <option value="Yes">Yes</option>
           </select>
           <input id="pregnantDetail" placeholder="Tell me what it is..." style="margin-top:8px;display:none" />
-          <small style="color:var(--muted);line-height:1.45">This answer is shared only with the assigned therapist and authorized Knead NYC admin.</small>
+          <small style="color:var(--muted);line-height:1.45">This answer is shared only with the assigned therapist and authorized Rosters admin.</small>
         </div>
       </div>
 
@@ -1234,7 +1234,7 @@ async function init(){
     // admin (also the bare URL) — real account sign-in, verified by the database
   const { data:{ session } } = await sb.auth.getSession();
   if(session){ startAdmin(e || null); return; }
-  showGate('ADMIN ACCESS', 'Admin sign-in', 'Sign in with your Knead NYC admin account.', async(pw)=>{
+  showGate('ADMIN ACCESS', 'Admin sign-in', 'Sign in with your Rosters admin account.', async(pw)=>{
     const email=$('gateEmail').value.trim();
     if(!email || !pw) return gateError('Enter your email and password.');
     const { error } = await sb.auth.signInWithPassword({ email, password:pw });
