@@ -58,3 +58,16 @@ The database-to-function webhook secret is generated automatically by the migrat
 4. Apply `20260818_harden_event_reads.sql` to remove private event JSON from anonymous table access.
 5. Configure Google OAuth secrets and complete the first connection.
 
+## Production status — August 18, 2026
+
+- Google Cloud project: `rosters-calendar-sync-2026` (`Rosters Calendar Sync`)
+- Google Calendar API: enabled
+- OAuth client type: Web application
+- OAuth publishing status: Testing
+- Configured sensitive scope: `https://www.googleapis.com/auth/calendar.events`
+- First test user and connected account: `info@kneadnyc.com`
+- Edge Function secrets: configured in Supabase (values are not stored in this repository)
+- First full sync: successful
+- Repeat full sync: successful and idempotent
+
+Testing mode is appropriate for the initial owner connection. Before onboarding arbitrary paying customers, publish Rosters privacy-policy and terms pages, configure the verified `rosters.me` OAuth branding, and complete Google's sensitive-scope verification. Until that is complete, each additional account must be explicitly added as a Google OAuth test user and the project remains subject to Google's testing-user limits.
