@@ -954,7 +954,17 @@ function calendarMessage(text,isError=false){
 }
 async function calendarAction(action,extra={}){
   const { data, error } = await sb.functions.invoke('google-calendar',{body:{action,...extra}});
-  if(error) throw new Error(error.message||'Calendar service request failed.');
+  if(error){
+    let message=error.message||'Calendar service request failed.';
+    try{
+      const response=error.context;
+      if(response&&typeof response.clone==='function'){
+        const payload=await response.clone().json();
+        if(payload&&payload.error) message=payload.error;
+      }
+    }catch{/* Keep the SDK fallback when the response has no JSON body. */}
+    throw new Error(message);
+  }
   if(data&&data.error) throw new Error(data.error);
   return data||{};
 }
