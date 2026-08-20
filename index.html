@@ -1123,13 +1123,22 @@ const fmtH=x=> (Math.round(x*10)/10);
 async function loadAllEvents(){
   const { data, error } = await sb.from('events').select('*').eq('organization_id',currentOrganizationId).order('event_date',{ascending:true});
   if(error){ console.error(error); allEvents=[]; return; }
-  allEvents=(data||[]).filter(e=>e.id!=='event').map(e=>({
-    id:e.id, company:e.company||'Untitled', location:e.location||'',
-    date:e.event_date||'', start:e.start_time||'10:00', end:e.end_time||'12:00',
-    therapists:(Array.isArray(e.therapist_names)&&e.therapist_names.length)?e.therapist_names.length:(e.therapists||1),
-    finance:(e.finance&&typeof e.finance==='object')?e.finance:{}, archived:!!e.archived,
-    client:(e.client&&typeof e.client==='object'&&!Array.isArray(e.client))?e.client:{}
-  }));
+  allEvents=(data||[]).filter(e=>e.id!=='event').map(e=>{
+    const savedNames=Array.isArray(e.therapist_names)
+      ? e.therapist_names.map(name=>String(name||'').trim()).filter(Boolean)
+      : [];
+    const therapistCount=savedNames.length||(e.therapists||1);
+    const therapistNames=savedNames.length
+      ? savedNames
+      : Array.from({length:therapistCount},(_,i)=>`Therapist ${i+1}`);
+    return {
+      id:e.id, company:e.company||'Untitled', location:e.location||'',
+      date:e.event_date||'', start:e.start_time||'10:00', end:e.end_time||'12:00',
+      therapists:therapistCount, therapistNames,
+      finance:(e.finance&&typeof e.finance==='object')?e.finance:{}, archived:!!e.archived,
+      client:(e.client&&typeof e.client==='object'&&!Array.isArray(e.client))?e.client:{}
+    };
+  });
 }
 function evDurationH(ev){ const d=(minutes(ev.end)-minutes(ev.start))/60; return d>0?d:0; }
 function evFin(ev){ const f=ev.finance||{}; return { fee:Number(f.fee)||0, taxi:Number(f.taxi)||0, rate:(f.rate===undefined||f.rate===null||f.rate==='')?70:Number(f.rate) }; }
@@ -1156,7 +1165,8 @@ function renderEvList(){
       <div onclick="selectEv('${ev.id}')" style="flex:1;min-width:0;display:flex;align-items:center;gap:14px;cursor:pointer">
         <div style="min-width:50px"><div style="font-size:12px;color:#8a8574">${esc(evMonLabel(ev))}</div><div style="font-size:20px;font-weight:800;line-height:1">${evDayNum(ev)}</div></div>
         <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:700;margin-bottom:3px">${esc(ev.company)}${ev.location?' · '+esc(ev.location):''}</div>
-        <div style="font-size:13px;color:#6b675c">${evTimeLabel(ev)} · ${ev.therapists} therapist${ev.therapists>1?'s':''}</div></div>
+        <div style="font-size:13px;color:#6b675c">${evTimeLabel(ev)} · ${ev.therapists} therapist${ev.therapists>1?'s':''}</div>
+        <div style="font-size:12px;color:#817c72;margin-top:3px">${ev.therapists===1?'Therapist':'Therapists'}: ${ev.therapistNames.map(esc).join(', ')}</div></div>
       </div>
             <button class="mini" onclick="duplicateEv('${ev.id}')">Duplicate</button>
       <button class="mini" onclick="editEv('${ev.id}')">Edit</button>
