@@ -19,8 +19,11 @@
     .mark{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:white;font-family:Georgia,serif;font-size:22px}
     .brand h1{font-family:Georgia,serif;font-size:23px;margin:0;font-weight:500}
     .brand p{margin:3px 0 0;color:var(--muted);font-size:13px}
+    .header-actions{display:flex;align-items:center;gap:10px;flex-shrink:0}
     .event-pill{padding:9px 13px;border:1px solid var(--line);border-radius:999px;background:white;font-size:13px;color:var(--muted)}
-    .tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;background:var(--soft);padding:7px;border-radius:15px;margin-bottom:20px;position:sticky;top:8px;z-index:5;box-shadow:0 5px 18px rgba(28,24,18,.04)}
+    .settings-link{border:1px solid var(--line);background:white;color:var(--muted);border-radius:999px;padding:9px 13px;cursor:pointer;font-size:13px;font-weight:700}
+    .settings-link:hover,.settings-link.active{border-color:var(--accent);color:var(--accent);background:var(--accent-2)}
+    .tabs{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;background:var(--soft);padding:7px;border-radius:15px;margin-bottom:20px;position:sticky;top:8px;z-index:5;box-shadow:0 5px 18px rgba(28,24,18,.04)}
     .tab{border:0;background:transparent;border-radius:11px;padding:12px 10px;cursor:pointer;color:var(--muted);font-weight:650}
     .tab.active{background:white;color:var(--ink);box-shadow:0 4px 14px rgba(0,0,0,.05)}
     .view{display:none}
@@ -89,14 +92,14 @@
     .code-row{display:flex;gap:8px;align-items:stretch}
     @media(max-width:760px){
       .shell{padding:14px}
-      header{align-items:flex-start}
+      header{align-items:flex-start;flex-direction:column;gap:12px}
+      .header-actions{width:100%;justify-content:flex-end}
       .event-pill{display:none}
       .hero{grid-template-columns:1fr}
       .grid{grid-template-columns:1fr}
       .field.full{grid-column:auto}
       .tabs{top:5px;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding:6px;border-radius:14px}
       .tab{font-size:13px;padding:12px 6px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
-      .tab:last-child{grid-column:1/-1}
       .card{padding:17px}
       .card h2{font-size:25px}
       .roster-item{grid-template-columns:72px 1fr}
@@ -140,23 +143,24 @@
         <p>Digital employee sign-ups, appointment scheduling, therapist management, and live event capacity—all in one place.</p>
       </div>
     </div>
-    <div class="event-pill" id="headerEvent">Loading…</div>
+    <div class="header-actions">
+      <button class="settings-link" id="settingsNav" type="button" style="display:none">Settings / Integrations</button>
+      <div class="event-pill" id="headerEvent">Loading…</div>
+    </div>
   </header>
 
   <nav class="tabs" id="tabBar">
-    <button class="tab active" data-view="admin">Admin Setup</button>
-    <button class="tab" data-view="events">Events</button>
+    <button class="tab active" data-view="events">Events</button>
     <button class="tab" data-view="therapistsInfo">Therapists Info</button>
-    <button class="tab" data-view="calendarSettings">Google Calendar</button>
-    <button class="tab" data-view="signup">Booking Page ↗</button>
   </nav>
   <datalist id="therapistDirectoryList"></datalist>
 
-  <section id="admin" class="view active">
+  <section id="admin" class="view">
     <div class="hero">
       <div class="card">
-        <p class="label">ADMIN DASHBOARD</p>
-        <h2>Create the event once. Let employees book themselves.</h2>
+        <button class="mini" id="backToEvents" type="button" style="margin-bottom:16px">← Back to Events</button>
+        <p class="label">EVENT EDITOR</p>
+        <h2>Set up the event. Share the right links.</h2>
         <p class="sub">Set the schedule, therapists and session length. Set a therapist code so only your team can open the roster. The app builds the slots and shares them live.</p>
       </div>
       <div class="card">
@@ -330,12 +334,13 @@
     </div>
   </section>
 
-  <section id="events" class="view">
+  <section id="events" class="view active">
     <div class="hero">
       <div class="card">
         <p class="label">EVENT LINE-UP</p>
         <h2>Every event, at a glance.</h2>
         <p class="sub">See all your events as a list or a calendar. Track the money for each one in the ledger, kept off to the side.</p>
+        <div class="actions"><button class="btn" id="createEvent" type="button">+ Create event</button></div>
       </div>
       <div class="card">
         <p class="label">VIEW</p>
@@ -351,7 +356,7 @@
         <div>
           <div id="evList"></div>
           <div id="evCal" style="display:none"></div>
-          <div id="evEmpty" class="empty" style="display:none">No events yet. Create one in Admin Setup.</div>
+          <div id="evEmpty" class="empty" style="display:none">No events yet. Use Create event above.</div>
         </div>
         <aside id="evLedger" style="background:#f3eee1;border-radius:12px;padding:16px 18px"></aside>
       </div>
@@ -391,18 +396,18 @@
   <section id="calendarSettings" class="view">
     <div class="hero">
       <div class="card">
-        <p class="label">CALENDAR AUTOMATION</p>
-        <h2>Connect once. Stay synchronized.</h2>
+        <p class="label">SETTINGS / INTEGRATIONS</p>
+        <h2>Connect your business tools.</h2>
         <p class="sub">Published Rosters events are automatically created and updated in this business&rsquo;s Google Calendar. Each Rosters customer connects their own account.</p>
       </div>
       <div class="card">
-        <p class="label">CONNECTION STATUS</p>
+        <p class="label">GOOGLE CALENDAR STATUS</p>
         <div class="metric" id="calendarStatusTitle" style="font-size:28px">Checking…</div>
         <p class="sub" id="calendarStatusDetail">Loading the Calendar connection.</p>
       </div>
     </div>
     <div class="card">
-      <h3>Google Calendar</h3>
+      <h3>Google Calendar integration</h3>
       <p class="sub">Rosters sends only the event name, location, date, and start/end time. Employee bookings, health answers, therapist details, client contacts, and financial information are never sent to Google.</p>
       <div id="calendarMessage" class="notice" style="display:none"></div>
       <div class="actions">
@@ -547,14 +552,19 @@ function slug(s){ return String(s||'').toLowerCase().trim().replace(/[^a-z0-9]+/
 function baseUrl(){ return location.protocol.startsWith('http') ? location.origin+location.pathname : 'https://rosters.me/'; }
 function params(){ return new URLSearchParams(location.search); }
 const ADMIN_VIEW_SLUGS={
-  admin:'admin-setup',
+  admin:'event-editor',
   events:'events',
-  therapistsInfo:'therapists-info',
-  calendarSettings:'google-calendar'
+  therapistsInfo:'therapists',
+  calendarSettings:'settings'
 };
-const ADMIN_SLUG_VIEWS=Object.fromEntries(Object.entries(ADMIN_VIEW_SLUGS).map(([view,slugName])=>[slugName,view]));
-const ADMIN_VIEW_TITLES={admin:'Admin Setup',events:'Events',therapistsInfo:'Therapists Info',calendarSettings:'Google Calendar'};
-function adminViewFromUrl(){ return ADMIN_SLUG_VIEWS[params().get('tab')]||'admin'; }
+const ADMIN_SLUG_VIEWS={
+  ...Object.fromEntries(Object.entries(ADMIN_VIEW_SLUGS).map(([view,slugName])=>[slugName,view])),
+  'admin-setup':'events',
+  'therapists-info':'therapistsInfo',
+  'google-calendar':'calendarSettings'
+};
+const ADMIN_VIEW_TITLES={admin:'Event Editor',events:'Events',therapistsInfo:'Therapists',calendarSettings:'Settings & Integrations'};
+function adminViewFromUrl(){ return ADMIN_SLUG_VIEWS[params().get('tab')]||'events'; }
 function syncAdminViewUrl(id,replace=false){
   if(mode!=='admin'||!ADMIN_VIEW_SLUGS[id]) return;
   const url=new URL(location.href);
@@ -979,6 +989,10 @@ function refreshUI(){
 function showView(id,{updateUrl=true,replaceUrl=false}={}){
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.view===id));
+  if($('settingsNav')){
+    $('settingsNav').classList.toggle('active',id==='calendarSettings');
+    $('settingsNav').setAttribute('aria-pressed',id==='calendarSettings'?'true':'false');
+  }
   if(mode==='admin'&&ADMIN_VIEW_TITLES[id]){
     document.title=`${ADMIN_VIEW_TITLES[id]} | Rosters`;
     if(updateUrl) syncAdminViewUrl(id,replaceUrl);
@@ -1041,7 +1055,7 @@ async function connectGoogleCalendar(){
   try{
     const returnUrl=new URL(location.origin+location.pathname);
     returnUrl.searchParams.set('admin','1');
-    returnUrl.searchParams.set('tab','google-calendar');
+    returnUrl.searchParams.set('tab','settings');
     const data=await calendarAction('start',{return_url:returnUrl.toString()});
     if(!data.authorization_url) throw new Error('Google authorization URL was not returned.');
     location.assign(data.authorization_url);
@@ -1199,7 +1213,7 @@ async function renderEventsView(){
   const arch=allEvents.filter(e=>e.archived).length;
   if($('evArchCount')) $('evArchCount').textContent = arch ? ` (${arch})` : '';
   const vis=visibleEvents();
-  if(!vis.length){ $('evList').innerHTML=''; $('evCal').innerHTML=''; $('evEmpty').style.display='block'; $('evEmpty').textContent=evShowArchived?'No archived events.':'No events yet. Create one in Admin Setup.'; $('evLedger').innerHTML='<div style="font-size:13px;color:#8a8574">No event selected.</div>'; return; }
+  if(!vis.length){ $('evList').innerHTML=''; $('evCal').innerHTML=''; $('evEmpty').style.display='block'; $('evEmpty').textContent=evShowArchived?'No archived events.':'No events yet. Use Create event above.'; $('evLedger').innerHTML='<div style="font-size:13px;color:#8a8574">No event selected.</div>'; return; }
   $('evEmpty').style.display='none';
   if(evSelId===null || !vis.some(e=>e.id===evSelId)) evSelId=vis[0].id;
   renderEvList(); renderEvCal(); renderEvLedger(); setEvView(evView);
@@ -1277,7 +1291,7 @@ function renderEvLedger(){
     ? `<div style="border-top:1px solid #e2dccc;margin-top:12px;padding-top:12px;font-size:13px;color:#6b675c">
          <strong style="font-size:12px;letter-spacing:.05em;display:block;margin-bottom:8px">CLIENT</strong>${clientRows}
        </div>`
-    : `<div style="border-top:1px solid #e2dccc;margin-top:12px;padding-top:12px;font-size:12px;color:#8a8574">No client details saved. Add them in Admin Setup.</div>`;
+    : `<div style="border-top:1px solid #e2dccc;margin-top:12px;padding-top:12px;font-size:12px;color:#8a8574">No client details saved. Add them in the Event Editor.</div>`;
   $('evLedger').innerHTML=`
     <strong style="font-size:12px;color:#6b675c;letter-spacing:.05em">LEDGER</strong>
     <div style="font-size:13px;color:#8a8574;margin:6px 0 14px">${esc(ev.company)}${ev.date?' · '+esc(evMonLabel(ev)+' '+evDayNum(ev)):''}</div>
@@ -1335,6 +1349,16 @@ async function evLedgerSave(){
   const note=$('finSaved'); if(note){ note.textContent = error ? 'Could not save.' : 'Saved.'; setTimeout(()=>{ if(note) note.textContent=''; }, 1500); }
 }
 window.selectEv=function(id){ evSelId=id; renderEvList(); renderEvLedger(); };
+window.createEvent=function(){
+  if(channel){ sb.removeChannel(channel); channel=null; }
+  state.event={...DEFAULT_EVENT,id:'new-event',date:defaultDate(),therapistNames:['',''],breaks:[],client:{}};
+  state.bookings=[]; selectedStart=null; existingBooking=null; rescheduleMode=false; lastTherapistCode='';
+  computeSlots(); hydrateForm();
+  if($('therapistCode')) $('therapistCode').value='';
+  if($('dupNotice')) $('dupNotice').style.display='none';
+  refreshUI(); showView('admin'); window.scrollTo(0,0);
+  $('company').focus(); $('company').select();
+};
 window.duplicateEv=async function(id){
   if(!await loadEvent(id)){ alert('Could not load that event to copy.'); return; }
   const sourceName=state.event.company;
@@ -1373,7 +1397,7 @@ window.setEvView=setEvView;
 
 /* ---------- Access gate ---------- */
 function showApp(){ $('gate').style.display='none'; $('app').style.display='block'; }
-function lockTo(view){ $('tabBar').style.display='none'; showView(view); }
+function lockTo(view){ $('tabBar').style.display='none'; if($('settingsNav')) $('settingsNav').style.display='none'; showView(view); }
 function showGate(kicker,title,subhtml,onSubmit){
   $('gate').style.display='block'; $('app').style.display='none';
   $('gateKicker').textContent=kicker; $('gateTitle').textContent=title; $('gateSub').innerHTML=subhtml;
@@ -1409,7 +1433,7 @@ async function startAdmin(preEventId){
   if(!session){ location.reload(); return; }
   try{ await loadAdminContext(session); }
   catch(error){ alert(error.message); await sb.auth.signOut(); location.reload(); return; }
-  mode='admin'; showApp(); $('tabBar').style.display='grid';
+  mode='admin'; showApp(); $('tabBar').style.display='grid'; $('settingsNav').style.display='';
   const id = preEventId || localStorage.getItem('kneadCurrentEvent') || 'demo-corporate-wellness-day';
   if(!await loadEvent(id)){ state.event={...DEFAULT_EVENT, id, date:defaultDate()}; await saveEvent(); }
   hydrateForm(); await loadBookings(true); computeSlots(); subscribe(); refreshUI();
@@ -1470,12 +1494,11 @@ async function init(){
 }
 
 document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
-  if(mode==='admin'&&t.dataset.view==='signup'){
-    window.open(employeeBookingUrl(),'_blank','noopener');
-    return;
-  }
   showView(t.dataset.view);
 }));
+$('settingsNav').addEventListener('click',()=>showView('calendarSettings'));
+$('createEvent').addEventListener('click',createEvent);
+$('backToEvents').addEventListener('click',()=>showView('events'));
 window.addEventListener('popstate',()=>{
   if(mode==='admin') showView(adminViewFromUrl(),{updateUrl:false});
 });
