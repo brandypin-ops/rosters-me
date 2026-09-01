@@ -414,6 +414,21 @@
       </div>
       <p class="footer-note">Rosters is the source of truth. Publishing or editing in Rosters updates Google Calendar. Calendar edits do not change Rosters.</p>
     </div>
+    <div class="card" style="margin-top:18px">
+      <h3>Owner master code</h3>
+      <p class="sub">Use this private code to open any therapist view at any time. Regular therapist codes will still work only near the event time.</p>
+      <div class="grid" style="margin-top:16px">
+        <div class="field">
+          <label for="ownerMasterCode">New master code</label>
+          <input id="ownerMasterCode" type="password" minlength="8" placeholder="At least 8 characters" autocomplete="new-password" />
+        </div>
+        <div class="field" style="justify-content:flex-end">
+          <button class="btn" id="saveOwnerMasterCode" type="button">Set master code</button>
+        </div>
+      </div>
+      <div id="ownerMasterCodeMessage" class="notice" style="display:none"></div>
+      <p class="footer-note">Only the organization owner can replace this code. Rosters stores a one-way hash, not the code itself.</p>
+    </div>
   </section>
 
   <section id="signup" class="view">
@@ -997,10 +1012,39 @@ function showView(id,{updateUrl=true,replaceUrl=false}={}){
   if(id==='therapist') renderRoster();
   if(id==='events') renderEventsView();
   if(id==='therapistsInfo') renderTherapistsInfo();
-  if(id==='calendarSettings') loadCalendarConnection();
+  if(id==='calendarSettings'){
+    loadCalendarConnection();
+    loadOwnerMasterCodeStatus();
+  }
 }
 
 /* ---------- Google Calendar connection ---------- */
+function ownerMasterCodeMessage(text,isError=false){
+  const box=$('ownerMasterCodeMessage'); if(!box) return;
+  box.textContent=text||''; box.style.display=text?'block':'none';
+  box.style.background=isError?'#f8e5e3':'var(--accent-2)';
+  box.style.color=isError?'var(--danger)':'#26352e';
+}
+async function loadOwnerMasterCodeStatus(){
+  ownerMasterCodeMessage('');
+  const { data, error } = await sb.rpc('owner_master_code_configured');
+  if(error){ ownerMasterCodeMessage('Master-code settings are unavailable.',true); return; }
+  if(data) ownerMasterCodeMessage('A master code is active. Enter a new code below only when you want to replace it.');
+}
+async function saveOwnerMasterCode(){
+  const input=$('ownerMasterCode'); const button=$('saveOwnerMasterCode');
+  const code=input.value.trim();
+  if(code.length<8){ ownerMasterCodeMessage('Use at least 8 characters for the master code.',true); input.focus(); return; }
+  button.disabled=true; button.textContent='Saving…'; ownerMasterCodeMessage('');
+  try{
+    const { error } = await sb.rpc('set_owner_master_code',{p_code_hash:await sha256(code)});
+    if(error) throw error;
+    input.value='';
+    ownerMasterCodeMessage('Master code saved. It can now unlock any therapist view at any time.');
+  }catch(error){ ownerMasterCodeMessage(error.message||'Could not save the master code.',true); }
+  finally{ button.disabled=false; button.textContent='Set master code'; }
+}
+
 function calendarMessage(text,isError=false){
   const box=$('calendarMessage'); if(!box) return;
   box.textContent=text||''; box.style.display=text?'block':'none';
@@ -1466,14 +1510,22 @@ async function init(){
   const p=params(); const e=p.get('e'); const role=p.get('role'); const isAdmin=p.has('admin');
 
   if(e && role==='therapist'){
-    if(!await loadEvent(e)){ showPublicError(); return; } // event details are not private; needed for window + code hash
+    if(!await loadEvent(e)){ showPublicError(); return; }
     const canonical=therapistRosterUrl(state.event,p.get('t')||null);
     if(location.href!==canonical) history.replaceState(null,'',canonical);
     document.title=`${state.event.company} therapist roster | Rosters`;
-    showGate('THERAPIST ACCESS', 'Therapist sign-in', `Enter the therapist code for <strong>${esc(state.event.company)}</strong>.`, async(code)=>{
+    showGate('THERAPIST ACCESS', 'Therapist sign-in', `Enter the therapist code or owner master code for <strong>${esc(state.event.company)}</strong>.`, async(code)=>{
       if(!code) return gateError('Please enter the code.');
-      if(!state.event.therapistCodeHash) return gateError('No therapist code has been set for this event yet.');
-      if(await sha256(code)!==state.event.therapistCodeHash) return gateError('Incorrect code.');
+      const { data:access, error } = await sb.rpc('verify_therapist_access',{
+        p_public_token:state.event.publicToken,
+        p_code_hash:await sha256(code)
+      });
+      if(error) return gateError('Could not verify the code. Please try again.');
+      if(access==='master'){
+        startTherapist(p.get('t'));
+        return;
+      }
+      if(access!=='event') return gateError('Incorrect code.');
       const w=therapistWindow();
       if(!w.ok) return gateError(w.reason);
       startTherapist(p.get('t'));
@@ -1529,6 +1581,10 @@ $('tiShowArchived').addEventListener('change',e=>{ tiShowArchived=e.target.check
 $('calendarConnect').addEventListener('click',connectGoogleCalendar);
 $('calendarSyncNow').addEventListener('click',syncGoogleCalendarNow);
 $('calendarDisconnect').addEventListener('click',disconnectGoogleCalendar);
+$('saveOwnerMasterCode').addEventListener('click',saveOwnerMasterCode);
+$('ownerMasterCode').addEventListener('keydown',e=>{
+  if(e.key==='Enter'){ e.preventDefault(); saveOwnerMasterCode(); }
+});
 ['tiFirst','tiLast','tiPhone','tiEmail'].forEach(id=>$(id).addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); tiSubmit(); } }));
 $('book').addEventListener('click',reserve);
 $('email').addEventListener('blur',checkExisting);
