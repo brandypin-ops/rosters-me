@@ -546,6 +546,22 @@ function slug(s){ return String(s||'').toLowerCase().trim().replace(/[^a-z0-9]+/
 
 function baseUrl(){ return location.protocol.startsWith('http') ? location.origin+location.pathname : 'https://rosters.me/'; }
 function params(){ return new URLSearchParams(location.search); }
+const ADMIN_VIEW_SLUGS={
+  admin:'admin-setup',
+  events:'events',
+  therapistsInfo:'therapists-info',
+  calendarSettings:'google-calendar'
+};
+const ADMIN_SLUG_VIEWS=Object.fromEntries(Object.entries(ADMIN_VIEW_SLUGS).map(([view,slugName])=>[slugName,view]));
+const ADMIN_VIEW_TITLES={admin:'Admin Setup',events:'Events',therapistsInfo:'Therapists Info',calendarSettings:'Google Calendar'};
+function adminViewFromUrl(){ return ADMIN_SLUG_VIEWS[params().get('tab')]||'admin'; }
+function syncAdminViewUrl(id,replace=false){
+  if(mode!=='admin'||!ADMIN_VIEW_SLUGS[id]) return;
+  const url=new URL(location.href);
+  url.searchParams.set('tab',ADMIN_VIEW_SLUGS[id]);
+  if(url.href===location.href) return;
+  history[replace?'replaceState':'pushState']({view:id},'',url);
+}
 function employeeBookingUrl(event=state.event){
   const key=event.publicToken||event.public_token||event.id;
   const url=new URL(baseUrl());
@@ -960,9 +976,13 @@ function refreshUI(){
   renderTherapistSelect();
   if(mode!=='client') renderRoster();
 }
-function showView(id){
+function showView(id,{updateUrl=true,replaceUrl=false}={}){
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.view===id));
+  if(mode==='admin'&&ADMIN_VIEW_TITLES[id]){
+    document.title=`${ADMIN_VIEW_TITLES[id]} | Rosters`;
+    if(updateUrl) syncAdminViewUrl(id,replaceUrl);
+  }
   if(id==='therapist') renderRoster();
   if(id==='events') renderEventsView();
   if(id==='therapistsInfo') renderTherapistsInfo();
@@ -1019,8 +1039,10 @@ async function loadCalendarConnection(){
 async function connectGoogleCalendar(){
   const btn=$('calendarConnect'); btn.disabled=true; btn.textContent='Opening Google…'; calendarMessage('');
   try{
-    const returnUrl=location.origin+location.pathname+'?admin=1';
-    const data=await calendarAction('start',{return_url:returnUrl});
+    const returnUrl=new URL(location.origin+location.pathname);
+    returnUrl.searchParams.set('admin','1');
+    returnUrl.searchParams.set('tab','google-calendar');
+    const data=await calendarAction('start',{return_url:returnUrl.toString()});
     if(!data.authorization_url) throw new Error('Google authorization URL was not returned.');
     location.assign(data.authorization_url);
   }catch(error){ calendarMessage(error.message,true); btn.disabled=false; btn.textContent='Connect Google Calendar'; }
@@ -1390,11 +1412,11 @@ async function startAdmin(preEventId){
   mode='admin'; showApp(); $('tabBar').style.display='grid';
   const id = preEventId || localStorage.getItem('kneadCurrentEvent') || 'demo-corporate-wellness-day';
   if(!await loadEvent(id)){ state.event={...DEFAULT_EVENT, id, date:defaultDate()}; await saveEvent(); }
-  hydrateForm(); await loadBookings(true); computeSlots(); subscribe(); refreshUI(); showView('admin');
+  hydrateForm(); await loadBookings(true); computeSlots(); subscribe(); refreshUI();
   loadTherapistsInfo();
   const calendarResult=params().get('calendar');
+  showView(calendarResult?'calendarSettings':adminViewFromUrl(),{replaceUrl:true});
   if(calendarResult){
-    showView('calendarSettings');
     setTimeout(()=>calendarMessage(calendarResult==='connected'?'Google Calendar connected. Future event changes will sync automatically.':(params().get('message')||'Google Calendar could not be connected.'),calendarResult!=='connected'),150);
   }
 }
@@ -1454,6 +1476,9 @@ document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
   }
   showView(t.dataset.view);
 }));
+window.addEventListener('popstate',()=>{
+  if(mode==='admin') showView(adminViewFromUrl(),{updateUrl:false});
+});
 $('generate').addEventListener('click',generate);
 $('addBreak').addEventListener('click',addBreak);
 $('genCode').addEventListener('click',genCode);
