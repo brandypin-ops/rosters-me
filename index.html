@@ -80,6 +80,11 @@
     #gateMsg{margin-top:12px;font-size:14px;min-height:18px}
     #gateMsg.err{color:var(--danger)}
     .ev-layout{grid-template-columns:minmax(0,1fr) 264px}
+    .event-row{border:1px solid var(--line);background:#fff;border-radius:12px;padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;gap:12px}
+    .event-row.selected{border-color:#2f4429;background:#eef3e9}
+    .event-main{flex:1;min-width:0;display:flex;align-items:center;gap:14px;cursor:pointer}
+    .event-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+    .event-actions .open-booking{background:var(--accent);border-color:var(--accent);color:#fff}
     .ti-form-grid{grid-template-columns:1fr 90px 1fr 1.2fr}
     .code-row{display:flex;gap:8px;align-items:stretch}
     @media(max-width:760px){
@@ -98,6 +103,10 @@
       .status-actions{grid-column:1/-1;justify-content:flex-start}
       .slots{grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px}
       .ev-layout{grid-template-columns:1fr;gap:16px}
+      .event-row{align-items:stretch;flex-direction:column}
+      .event-actions{display:grid;grid-template-columns:1fr 1fr;width:100%}
+      .event-actions button{width:100%}
+      .event-actions .open-booking{grid-column:1/-1}
       .ti-form-grid{grid-template-columns:1fr;gap:8px}
       .code-row{flex-direction:column;align-items:stretch}
       .code-row button{width:100%}
@@ -139,7 +148,7 @@
     <button class="tab" data-view="events">Events</button>
     <button class="tab" data-view="therapistsInfo">Therapists Info</button>
     <button class="tab" data-view="calendarSettings">Google Calendar</button>
-    <button class="tab" data-view="signup">Employee Sign-Up</button>
+    <button class="tab" data-view="signup">Booking Page ↗</button>
     <button class="tab" data-view="therapist">Therapist View</button>
   </nav>
   <datalist id="therapistDirectoryList"></datalist>
@@ -511,7 +520,7 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const ADMIN_CODE_HASH = 'bb4a8d406d71288bf63deb6dc126dbf745907fbabb363a3e4552a988e783cffb';
 const WINDOW_PAD = 30; // minutes before start / after end that the therapist code is active
 
-const DEFAULT_EVENT = { company:'Demo Corporate Wellness Day', location:'New York, NY', date:'', start:'10:00', end:'14:00', session:15, buffer:3, therapists:2, therapistNames:['',''], breaks:[], therapistCodeHash:null, client:{} };
+const DEFAULT_EVENT = { company:'Demo Corporate Wellness Day', location:'New York, NY', date:'', start:'10:00', end:'14:00', session:15, buffer:3, therapists:2, therapistNames:['',''], breaks:[], therapistCodeHash:null, publicToken:null, client:{} };
 const CLIENT_FIELDS = { clCompany:'company', clContact:'contact', clEmail:'email', clPhone:'phone', clInvoice:'invoice', clNotes:'notes' };
 
 let state = { event:{...DEFAULT_EVENT, id:'demo-corporate-wellness-day'}, bookings:[], slots:[] };
@@ -538,6 +547,19 @@ function slug(s){ return String(s||'').toLowerCase().trim().replace(/[^a-z0-9]+/
 
 function baseUrl(){ return location.protocol.startsWith('http') ? location.origin+location.pathname : 'https://rosters.me/'; }
 function params(){ return new URLSearchParams(location.search); }
+function employeeBookingUrl(event=state.event){
+  const key=event.publicToken||event.public_token||event.id;
+  const url=new URL(baseUrl());
+  url.searchParams.set('e',key);
+  return url.toString();
+}
+function therapistRosterUrl(event=state.event,therapistNumber=null){
+  const url=new URL(employeeBookingUrl(event));
+  url.searchParams.set('role','therapist');
+  if(therapistNumber!==null) url.searchParams.set('t',therapistNumber);
+  return url.toString();
+}
+function isPublicToken(value){ return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value||''); }
 
 function mapBooking(r){ return { id:r.id, slotId:r.slot_id, therapist:r.therapist, start:r.slot_start, first:r.first_name, last:r.last_initial, email:r.email, pregnancy:r.pregnancy, attendance:r.attendance }; }
 
@@ -659,18 +681,19 @@ function computeSlots(){
   state.slots=slots;
 }
 
-const PUBLIC_EVENT_COLS = 'id,company,location,event_date,start_time,end_time,session_min,buffer_min,therapists,therapist_names,breaks,therapist_code_hash,archived';
+const PUBLIC_EVENT_COLS = 'id,public_token,company,location,event_date,start_time,end_time,session_min,buffer_min,therapists,therapist_names,breaks,therapist_code_hash,archived';
 function wantsFullEvent(){ const p=params(); return !(p.get('e') && !p.has('admin')); }
 async function loadEvent(id){
   const source = adminSession ? 'events' : 'public_events';
-  let query = sb.from(source).select(wantsFullEvent() && adminSession ? '*' : PUBLIC_EVENT_COLS).eq('id', id);
+  const lookupColumn=!adminSession&&isPublicToken(id)?'public_token':'id';
+  let query = sb.from(source).select(wantsFullEvent() && adminSession ? '*' : PUBLIC_EVENT_COLS).eq(lookupColumn, id);
   if(adminSession && currentOrganizationId) query=query.eq('organization_id',currentOrganizationId);
   const { data, error } = await query.maybeSingle();
   if(error){ console.error(error); }
   if(data){
     let tNames = Array.isArray(data.therapist_names) ? data.therapist_names.filter(x=>typeof x==='string') : [];
     if(tNames.length===0) tNames = Array.from({length:(data.therapists||2)},(_,i)=>'Therapist '+(i+1));
-    state.event = { id:data.id, company:data.company, location:data.location||'New York, NY',
+    state.event = { id:data.id, publicToken:data.public_token||null, company:data.company, location:data.location||'New York, NY',
       date:data.event_date||'', start:data.start_time||'10:00', end:data.end_time||'14:00',
       session:data.session_min||15, buffer:data.buffer_min||3, therapists:tNames.length, therapistNames:tNames,
       breaks:Array.isArray(data.breaks)?data.breaks:[], therapistCodeHash:data.therapist_code_hash||null,
@@ -690,8 +713,9 @@ async function saveEvent(){
     event_date:state.event.date||null, start_time:state.event.start, end_time:state.event.end,
     session_min:state.event.session, buffer_min:state.event.buffer, therapists:finalNames.length, therapist_names:finalNames,
     breaks:state.event.breaks||[], therapist_code_hash:codeHash, client:readClientForm(), updated_at:new Date().toISOString() };
-  const { error } = await sb.from('events').upsert(payload);
+  const { data, error } = await sb.from('events').upsert(payload).select('public_token').single();
   if(error){ alert('Could not save the event: '+error.message); return false; }
+  state.event.publicToken=data.public_token;
   state.event.therapistCodeHash = codeHash;
   if($('therapistCode')) $('therapistCode').value='';
   return true;
@@ -766,8 +790,8 @@ async function generate(){
   if(!await saveEvent()) return;
   localStorage.setItem('kneadCurrentEvent', state.event.id);
   await loadBookings(true); computeSlots(); subscribe(); selectedStart=null; refreshUI();
-  if(uid!==base) alert(`Heads up: an event named "${state.event.company}" already existed, so this one's link is unique:\n\n${baseUrl()}?e=${uid}`);
-  showView('signup');
+  if(uid!==base) alert(`Heads up: an event named "${state.event.company}" already existed, so this one's link is unique:\n\n${employeeBookingUrl()}`);
+  showView('events');
 }
 
 async function genCode(){
@@ -866,7 +890,7 @@ function renderTherapistLinks(){
   const box=$('therapistLinksPerPerson'); if(!box) return;
   const list=therapistNamesList();
   box.innerHTML=list.map((nm,i)=>{
-    const url=`${baseUrl()}?e=${state.event.id}&role=therapist&t=${i+1}`;
+    const url=therapistRosterUrl(state.event,i+1);
     return `<div class="share" style="margin-top:8px"><code style="flex:1;font-size:12px"><strong>${esc(nm)}</strong> — ${esc(url)}</code><button class="mini" onclick="copyLinkText('${url}',this)">Copy</button></div>`;
   }).join('');
 }
@@ -927,8 +951,8 @@ function refreshUI(){
   $('signupTitle').textContent=state.event.company;
   $('signupLocation').textContent=state.event.location;
   $('signupDate').textContent=prettyDate(state.event.date);
-  if($('shareLink')) $('shareLink').textContent=`${baseUrl()}?e=${state.event.id}`;
-  if($('therapistLink')) $('therapistLink').textContent=`${baseUrl()}?e=${state.event.id}&role=therapist`;
+  if($('shareLink')) $('shareLink').textContent=employeeBookingUrl();
+  if($('therapistLink')) $('therapistLink').textContent=therapistRosterUrl();
   $('bookingCount').textContent=state.bookings.length;
   $('capacityText').textContent=`of ${state.slots.filter(s=>!slotBlockedByBreak(s)).length} available appointment slots reserved`;
   renderSlots();
@@ -1132,7 +1156,7 @@ async function loadAllEvents(){
       ? savedNames
       : Array.from({length:therapistCount},(_,i)=>`Therapist ${i+1}`);
     return {
-      id:e.id, company:e.company||'Untitled', location:e.location||'',
+      id:e.id, publicToken:e.public_token||null, company:e.company||'Untitled', location:e.location||'',
       date:e.event_date||'', start:e.start_time||'10:00', end:e.end_time||'12:00',
       therapists:therapistCount, therapistNames,
       finance:(e.finance&&typeof e.finance==='object')?e.finance:{}, archived:!!e.archived,
@@ -1161,18 +1185,34 @@ async function renderEventsView(){
 function renderEvList(){
   $('evList').innerHTML=visibleEvents().map(ev=>{
     const on=ev.id===evSelId;
-    return `<div style="border:1px solid ${on?'#2f4429':'#e6e0d2'};background:${on?'#eef3e9':'#fff'};border-radius:12px;padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;gap:12px">
-      <div onclick="selectEv('${ev.id}')" style="flex:1;min-width:0;display:flex;align-items:center;gap:14px;cursor:pointer">
+    return `<div class="event-row${on?' selected':''}">
+      <div class="event-main" onclick="selectEv('${ev.id}')">
         <div style="min-width:50px"><div style="font-size:12px;color:#8a8574">${esc(evMonLabel(ev))}</div><div style="font-size:20px;font-weight:800;line-height:1">${evDayNum(ev)}</div></div>
         <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:700;margin-bottom:3px">${esc(ev.company)}${ev.location?' · '+esc(ev.location):''}</div>
         <div style="font-size:13px;color:#6b675c">${evTimeLabel(ev)} · ${ev.therapists} therapist${ev.therapists>1?'s':''}</div>
         <div style="font-size:12px;color:#817c72;margin-top:3px">${ev.therapists===1?'Therapist':'Therapists'}: ${ev.therapistNames.map(esc).join(', ')}</div></div>
       </div>
-            <button class="mini" onclick="duplicateEv('${ev.id}')">Duplicate</button>
-      <button class="mini" onclick="editEv('${ev.id}')">Edit</button>
+      <div class="event-actions">
+        <button class="mini open-booking" onclick="openBookingPage('${ev.id}')">Open booking page ↗</button>
+        <button class="mini" onclick="copyBookingPage('${ev.id}',this)">Copy link</button>
+        <button class="mini" onclick="duplicateEv('${ev.id}')">Duplicate</button>
+        <button class="mini" onclick="editEv('${ev.id}')">Edit</button>
+      </div>
     </div>`;
   }).join('');
 }
+window.openBookingPage=function(id){
+  const ev=allEvents.find(item=>item.id===id); if(!ev) return;
+  window.open(employeeBookingUrl(ev),'_blank','noopener');
+};
+window.copyBookingPage=async function(id,button){
+  const ev=allEvents.find(item=>item.id===id); if(!ev) return;
+  try{
+    await navigator.clipboard.writeText(employeeBookingUrl(ev));
+    const label=button.textContent; button.textContent='Copied';
+    setTimeout(()=>button.textContent=label,1500);
+  }catch{ alert('Copy this booking link:\n'+employeeBookingUrl(ev)); }
+};
 function renderEvCal(){
   const y=evCalMonth.getFullYear(), m=evCalMonth.getMonth();
   const first=new Date(y,m,1).getDay(), dim=new Date(y,m+1,0).getDate();
@@ -1275,6 +1315,7 @@ window.duplicateEv=async function(id){
   const newId=await ensureUniqueId(slug(sourceName)||'event', null);
   if(newId===id){ alert('Could not create a copy. Please rename the event and try again.'); return; }
   state.event.id=newId;
+  state.event.publicToken=null;
   state.event.date='';                // force a new date
   state.event.therapistCodeHash=null; // codes are one-way hashed, so each event gets its own
   state.bookings=[];                  // bookings never copy
@@ -1316,6 +1357,15 @@ function showGate(kicker,title,subhtml,onSubmit){
   setTimeout(()=>$('gateCode').focus(),50);
 }
 function gateError(msg){ $('gateMsg').className='err'; $('gateMsg').textContent=msg; }
+function showPublicError(){
+  $('app').style.display='none'; $('gate').style.display='block';
+  $('gateKicker').textContent='EVENT UNAVAILABLE';
+  $('gateTitle').textContent='This booking link is not available';
+  $('gateSub').textContent='The event may have been removed or the link may be incomplete. Ask your event organizer for a new booking link.';
+  $('gateEmail').style.display='none'; $('gateCode').style.display='none'; $('gateSubmit').style.display='none';
+  $('gateMsg').textContent='';
+  document.title='Event unavailable | Rosters';
+}
 
 async function loadAdminContext(session){
   adminSession=session;
@@ -1344,8 +1394,12 @@ async function startAdmin(preEventId){
   }
 }
 async function startClient(id){
-  mode='client'; if(!await loadEvent(id)){ state.event={...DEFAULT_EVENT, id, date:defaultDate()}; }
+  mode='client';
+  if(!await loadEvent(id)){ showPublicError(); return; }
   showApp(); lockTo('signup'); await loadBookings(false); computeSlots(); subscribe(); refreshUI();
+  document.title=`${state.event.company} booking | Rosters`;
+  const canonical=employeeBookingUrl();
+  if(location.href!==canonical) history.replaceState(null,'',canonical);
 }
 async function startTherapist(lockIdx){
   lockedTherapist = (lockIdx!=null && lockIdx!=='') ? Math.max(1, Number(lockIdx)||1) : null;
@@ -1356,7 +1410,7 @@ async function init(){
   const p=params(); const e=p.get('e'); const role=p.get('role'); const isAdmin=p.has('admin');
 
   if(e && role==='therapist'){
-    await loadEvent(e); // event details are not private; needed for window + code hash
+    if(!await loadEvent(e)){ showPublicError(); return; } // event details are not private; needed for window + code hash
     showGate('THERAPIST ACCESS', 'Therapist sign-in', `Enter the therapist code for <strong>${esc(state.event.company)}</strong>.`, async(code)=>{
       if(!code) return gateError('Please enter the code.');
       if(!state.event.therapistCodeHash) return gateError('No therapist code has been set for this event yet.');
@@ -1385,7 +1439,13 @@ async function init(){
   setTimeout(()=>$('gateEmail').focus(),60);
 }
 
-document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>showView(t.dataset.view)));
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
+  if(mode==='admin'&&t.dataset.view==='signup'){
+    window.open(employeeBookingUrl(),'_blank','noopener');
+    return;
+  }
+  showView(t.dataset.view);
+}));
 $('generate').addEventListener('click',generate);
 $('addBreak').addEventListener('click',addBreak);
 $('genCode').addEventListener('click',genCode);
