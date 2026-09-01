@@ -20,7 +20,7 @@
     .brand h1{font-family:Georgia,serif;font-size:23px;margin:0;font-weight:500}
     .brand p{margin:3px 0 0;color:var(--muted);font-size:13px}
     .event-pill{padding:9px 13px;border:1px solid var(--line);border-radius:999px;background:white;font-size:13px;color:var(--muted)}
-    .tabs{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;background:var(--soft);padding:7px;border-radius:15px;margin-bottom:20px;position:sticky;top:8px;z-index:5;box-shadow:0 5px 18px rgba(28,24,18,.04)}
+    .tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;background:var(--soft);padding:7px;border-radius:15px;margin-bottom:20px;position:sticky;top:8px;z-index:5;box-shadow:0 5px 18px rgba(28,24,18,.04)}
     .tab{border:0;background:transparent;border-radius:11px;padding:12px 10px;cursor:pointer;color:var(--muted);font-weight:650}
     .tab.active{background:white;color:var(--ink);box-shadow:0 4px 14px rgba(0,0,0,.05)}
     .view{display:none}
@@ -149,7 +149,6 @@
     <button class="tab" data-view="therapistsInfo">Therapists Info</button>
     <button class="tab" data-view="calendarSettings">Google Calendar</button>
     <button class="tab" data-view="signup">Booking Page ↗</button>
-    <button class="tab" data-view="therapist">Therapist View</button>
   </nav>
   <datalist id="therapistDirectoryList"></datalist>
 
@@ -1195,6 +1194,7 @@ function renderEvList(){
       </div>
       <div class="event-actions">
         <button class="mini open-booking" onclick="openBookingPage('${ev.id}')">Open booking page ↗</button>
+        <button class="mini" onclick="openTherapistPage('${ev.id}')">Therapist view ↗</button>
         <button class="mini" onclick="copyBookingPage('${ev.id}',this)">Copy link</button>
         <button class="mini" onclick="duplicateEv('${ev.id}')">Duplicate</button>
         <button class="mini" onclick="editEv('${ev.id}')">Edit</button>
@@ -1205,6 +1205,10 @@ function renderEvList(){
 window.openBookingPage=function(id){
   const ev=allEvents.find(item=>item.id===id); if(!ev) return;
   window.open(employeeBookingUrl(ev),'_blank','noopener');
+};
+window.openTherapistPage=function(id){
+  const ev=allEvents.find(item=>item.id===id); if(!ev) return;
+  window.open(therapistRosterUrl(ev),'_blank','noopener');
 };
 window.copyBookingPage=async function(id,button){
   const ev=allEvents.find(item=>item.id===id); if(!ev) return;
