@@ -82,12 +82,15 @@
     #gate .btn{width:100%;margin-top:14px;justify-content:center;text-align:center}
     #gateMsg{margin-top:12px;font-size:14px;min-height:18px}
     #gateMsg.err{color:var(--danger)}
-    .ev-layout{grid-template-columns:minmax(0,1fr) 264px}
-    .event-row{border:1px solid var(--line);background:#fff;border-radius:12px;padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;gap:12px}
+    .event-row{border:1px solid var(--line);background:#fff;border-radius:12px;margin-bottom:10px;display:block;overflow:hidden}
     .event-row.selected{border-color:#2f4429;background:#eef3e9}
+    .event-summary{padding:12px 14px;display:flex;align-items:center;gap:12px}
     .event-main{flex:1;min-width:0;display:flex;align-items:center;gap:14px;cursor:pointer}
     .event-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:flex-end}
     .event-actions .open-booking{background:var(--accent);border-color:var(--accent);color:#fff}
+    .event-actions .ledger-toggle.active{background:var(--accent-2);border-color:#9eb0a4;color:var(--accent)}
+    .event-ledger{border-top:1px solid #c7d4ca;background:#eef3e9;padding:18px}
+    .event-ledger-panel{max-width:390px;background:white;border:1px solid #d4ddd6;border-radius:13px;padding:16px 18px}
     .ti-form-grid{grid-template-columns:1fr 90px 1fr 1.2fr}
     .code-row{display:flex;gap:8px;align-items:stretch}
     @media(max-width:760px){
@@ -105,8 +108,7 @@
       .roster-item{grid-template-columns:72px 1fr}
       .status-actions{grid-column:1/-1;justify-content:flex-start}
       .slots{grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px}
-      .ev-layout{grid-template-columns:1fr;gap:16px}
-      .event-row{align-items:stretch;flex-direction:column}
+      .event-summary{align-items:stretch;flex-direction:column}
       .event-actions{display:grid;grid-template-columns:1fr 1fr;width:100%}
       .event-actions button{width:100%}
       .event-actions .open-booking{grid-column:1/-1}
@@ -352,14 +354,9 @@
       </div>
     </div>
     <div class="card">
-      <div class="ev-layout" style="display:grid;gap:22px;align-items:start">
-        <div>
-          <div id="evList"></div>
-          <div id="evCal" style="display:none"></div>
-          <div id="evEmpty" class="empty" style="display:none">No events yet. Use Create event above.</div>
-        </div>
-        <aside id="evLedger" style="background:#f3eee1;border-radius:12px;padding:16px 18px"></aside>
-      </div>
+      <div id="evList"></div>
+      <div id="evCal" style="display:none"></div>
+      <div id="evEmpty" class="empty" style="display:none">No events yet. Use Create event above.</div>
     </div>
   </section>
 
@@ -1213,30 +1210,35 @@ async function renderEventsView(){
   const arch=allEvents.filter(e=>e.archived).length;
   if($('evArchCount')) $('evArchCount').textContent = arch ? ` (${arch})` : '';
   const vis=visibleEvents();
-  if(!vis.length){ $('evList').innerHTML=''; $('evCal').innerHTML=''; $('evEmpty').style.display='block'; $('evEmpty').textContent=evShowArchived?'No archived events.':'No events yet. Use Create event above.'; $('evLedger').innerHTML='<div style="font-size:13px;color:#8a8574">No event selected.</div>'; return; }
+  if(!vis.length){ $('evList').innerHTML=''; $('evCal').innerHTML=''; $('evEmpty').style.display='block'; $('evEmpty').textContent=evShowArchived?'No archived events.':'No events yet. Use Create event above.'; return; }
   $('evEmpty').style.display='none';
   if(evSelId===null || !vis.some(e=>e.id===evSelId)) evSelId=vis[0].id;
-  renderEvList(); renderEvCal(); renderEvLedger(); setEvView(evView);
+  renderEvList(); renderEvCal(); setEvView(evView);
 }
 function renderEvList(){
   $('evList').innerHTML=visibleEvents().map(ev=>{
     const on=ev.id===evSelId;
     return `<div class="event-row${on?' selected':''}">
-      <div class="event-main" onclick="selectEv('${ev.id}')">
-        <div style="min-width:50px"><div style="font-size:12px;color:#8a8574">${esc(evMonLabel(ev))}</div><div style="font-size:20px;font-weight:800;line-height:1">${evDayNum(ev)}</div></div>
-        <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:700;margin-bottom:3px">${esc(ev.company)}${ev.location?' · '+esc(ev.location):''}</div>
-        <div style="font-size:13px;color:#6b675c">${evTimeLabel(ev)} · ${ev.therapists} therapist${ev.therapists>1?'s':''}</div>
-        <div style="font-size:12px;color:#817c72;margin-top:3px">${ev.therapists===1?'Therapist':'Therapists'}: ${ev.therapistNames.map(esc).join(', ')}</div></div>
+      <div class="event-summary">
+        <div class="event-main" onclick="toggleEvLedger('${ev.id}')">
+          <div style="min-width:50px"><div style="font-size:12px;color:#8a8574">${esc(evMonLabel(ev))}</div><div style="font-size:20px;font-weight:800;line-height:1">${evDayNum(ev)}</div></div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:700;margin-bottom:3px">${esc(ev.company)}${ev.location?' · '+esc(ev.location):''}</div>
+          <div style="font-size:13px;color:#6b675c">${evTimeLabel(ev)} · ${ev.therapists} therapist${ev.therapists>1?'s':''}</div>
+          <div style="font-size:12px;color:#817c72;margin-top:3px">${ev.therapists===1?'Therapist':'Therapists'}: ${ev.therapistNames.map(esc).join(', ')}</div></div>
+        </div>
+        <div class="event-actions">
+          <button class="mini open-booking" onclick="openBookingPage('${ev.id}')">Open booking page ↗</button>
+          <button class="mini" onclick="openTherapistPage('${ev.id}')">Therapist view ↗</button>
+          <button class="mini ledger-toggle${on?' active':''}" onclick="toggleEvLedger('${ev.id}')">Ledger ${on?'▲':'▼'}</button>
+          <button class="mini" onclick="copyBookingPage('${ev.id}',this)">Copy link</button>
+          <button class="mini" onclick="duplicateEv('${ev.id}')">Duplicate</button>
+          <button class="mini" onclick="editEv('${ev.id}')">Edit</button>
+        </div>
       </div>
-      <div class="event-actions">
-        <button class="mini open-booking" onclick="openBookingPage('${ev.id}')">Open booking page ↗</button>
-        <button class="mini" onclick="openTherapistPage('${ev.id}')">Therapist view ↗</button>
-        <button class="mini" onclick="copyBookingPage('${ev.id}',this)">Copy link</button>
-        <button class="mini" onclick="duplicateEv('${ev.id}')">Duplicate</button>
-        <button class="mini" onclick="editEv('${ev.id}')">Edit</button>
-      </div>
+      ${on?`<div class="event-ledger" id="eventLedger-${ev.id}"></div>`:''}
     </div>`;
   }).join('');
+  if(evSelId) renderEvLedger();
 }
 window.openBookingPage=function(id){
   const ev=allEvents.find(item=>item.id===id); if(!ev) return;
@@ -1276,7 +1278,8 @@ function renderEvCal(){
 }
 window.evMonthShift=function(n){ evCalMonth=new Date(evCalMonth.getFullYear(), evCalMonth.getMonth()+n, 1); renderEvCal(); };
 function renderEvLedger(){
-  const ev=allEvents.find(e=>e.id===evSelId); if(!ev){ $('evLedger').innerHTML=''; return; }
+  const ev=allEvents.find(e=>e.id===evSelId); if(!ev) return;
+  const target=$('eventLedger-'+ev.id); if(!target) return;
   const f=evFin(ev);
   const c=ev.client||{};
   const clientRows=[
@@ -1292,7 +1295,7 @@ function renderEvLedger(){
          <strong style="font-size:12px;letter-spacing:.05em;display:block;margin-bottom:8px">CLIENT</strong>${clientRows}
        </div>`
     : `<div style="border-top:1px solid #e2dccc;margin-top:12px;padding-top:12px;font-size:12px;color:#8a8574">No client details saved. Add them in the Event Editor.</div>`;
-  $('evLedger').innerHTML=`
+  target.innerHTML=`<div class="event-ledger-panel">
     <strong style="font-size:12px;color:#6b675c;letter-spacing:.05em">LEDGER</strong>
     <div style="font-size:13px;color:#8a8574;margin:6px 0 14px">${esc(ev.company)}${ev.date?' · '+esc(evMonLabel(ev)+' '+evDayNum(ev)):''}</div>
     <label style="font-size:12px;color:#6b675c;display:block;margin-bottom:4px">Fee you charge ($)</label>
@@ -1317,7 +1320,8 @@ function renderEvLedger(){
         <button class="mini" style="flex:1" onclick="archiveEv('${ev.id}')">${ev.archived?'Restore':'Archive'}</button>
         <button class="mini" style="flex:1;color:#a3352f;border-color:#e3b7b3" onclick="deleteEv('${ev.id}')">Delete</button>
       </div>
-    </div>`;
+    </div>
+  </div>`;
   ['finFee','finTaxi','finRate'].forEach(id=>{ const el=$(id); el.addEventListener('input',evLedgerRecalc); el.addEventListener('change',evLedgerSave); });
 }
 window.archiveEv=async function(id){
@@ -1348,7 +1352,8 @@ async function evLedgerSave(){
   const { error } = await sb.from('events').update({ finance: ev.finance }).eq('id', ev.id).eq('organization_id',currentOrganizationId);
   const note=$('finSaved'); if(note){ note.textContent = error ? 'Could not save.' : 'Saved.'; setTimeout(()=>{ if(note) note.textContent=''; }, 1500); }
 }
-window.selectEv=function(id){ evSelId=id; renderEvList(); renderEvLedger(); };
+window.selectEv=function(id){ evSelId=id; renderEvList(); };
+window.toggleEvLedger=function(id){ evSelId=evSelId===id?null:id; renderEvList(); };
 window.createEvent=function(){
   if(channel){ sb.removeChannel(channel); channel=null; }
   state.event={...DEFAULT_EVENT,id:'new-event',date:defaultDate(),therapistNames:['',''],breaks:[],client:{}};
