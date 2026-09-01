@@ -550,6 +550,7 @@ function params(){ return new URLSearchParams(location.search); }
 function employeeBookingUrl(event=state.event){
   const key=event.publicToken||event.public_token||event.id;
   const url=new URL(baseUrl());
+  url.searchParams.set('company',slug(event.company)||'event');
   url.searchParams.set('e',key);
   return url.toString();
 }
@@ -1411,6 +1412,9 @@ async function init(){
 
   if(e && role==='therapist'){
     if(!await loadEvent(e)){ showPublicError(); return; } // event details are not private; needed for window + code hash
+    const canonical=therapistRosterUrl(state.event,p.get('t')||null);
+    if(location.href!==canonical) history.replaceState(null,'',canonical);
+    document.title=`${state.event.company} therapist roster | Rosters`;
     showGate('THERAPIST ACCESS', 'Therapist sign-in', `Enter the therapist code for <strong>${esc(state.event.company)}</strong>.`, async(code)=>{
       if(!code) return gateError('Please enter the code.');
       if(!state.event.therapistCodeHash) return gateError('No therapist code has been set for this event yet.');
