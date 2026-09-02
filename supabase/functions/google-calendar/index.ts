@@ -181,7 +181,7 @@ function calendarDescription(snapshot: Record<string, unknown>, cancelled = fals
   const start = eventTimeLabel(snapshot.start_time);
   const end = eventTimeLabel(snapshot.end_time);
 
-  return `${cancelled ? "CANCELLED\n\n" : ""}Client: ${company}\nPoint of Contact: ${String(client.contact || "—")}\nEmail: ${String(client.email || "—")}\nPhone: ${String(client.phone || "—")}\n\nAdditional Client Details: ${details}\n\nTherapist(s): ${therapists}\nDate: ${eventDateLabel(snapshot)}\nTime: ${start} – ${end}\n\nManaged by Rosters.me\nRosters event ID: ${String(snapshot.id || "")}`;
+  return `${cancelled ? "CANCELLED\n\n" : ""}Client: ${company}\nPoint of Contact: ${String(client.contact || "—")}\nEmail: ${String(client.email || "—")}\nPhone: ${String(client.phone || "—")}\n\nAdditional Client Details: ${details}\n\nTherapist(s): ${therapists}\nDate: ${eventDateLabel(snapshot)}\nTime: ${start} – ${end}\n\nManaged by Rosters.me\nRosters event ID: ${String(snapshot.id || "")}\nTherapist access code: ${String(snapshot.therapist_code || "—")}`;
 }
 
 function normalizeTherapistName(value: unknown) {
