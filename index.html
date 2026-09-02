@@ -90,7 +90,10 @@
     .event-actions .open-booking{background:var(--accent);border-color:var(--accent);color:#fff}
     .event-actions .ledger-toggle.active{background:var(--accent-2);border-color:#9eb0a4;color:var(--accent)}
     .event-ledger{border-top:1px solid #c7d4ca;background:#eef3e9;padding:18px}
+    .event-detail-grid{display:grid;grid-template-columns:minmax(280px,390px) minmax(320px,1fr);gap:16px;align-items:start}
     .event-ledger-panel{max-width:390px;background:white;border:1px solid #d4ddd6;border-radius:13px;padding:16px 18px}
+    .event-summary-panel{background:white;border:1px solid #d4ddd6;border-radius:13px;padding:16px 18px}
+    .event-summary-copy{white-space:pre-wrap;font-size:13px;line-height:1.65;color:#3f443f;background:#f8faf7;border:1px solid #e1e7e1;border-radius:10px;padding:13px;margin:10px 0 0}
     .ti-form-grid{grid-template-columns:1fr 90px 1fr 1.2fr}
     .code-row{display:flex;gap:8px;align-items:stretch}
     @media(max-width:760px){
@@ -112,6 +115,8 @@
       .event-actions{display:grid;grid-template-columns:1fr 1fr;width:100%}
       .event-actions button{width:100%}
       .event-actions .open-booking{grid-column:1/-1}
+      .event-detail-grid{grid-template-columns:1fr}
+      .event-ledger-panel{max-width:none}
       .ti-form-grid{grid-template-columns:1fr;gap:8px}
       .code-row{flex-direction:column;align-items:stretch}
       .code-row button{width:100%}
@@ -1248,6 +1253,25 @@ function evProfit(ev){ const f=evFin(ev); return f.fee - f.taxi - evPay(ev); }
 function evMonLabel(ev){ return ev.date ? new Date(ev.date+'T12:00:00').toLocaleDateString(undefined,{month:'short'}) : ''; }
 function evDayNum(ev){ return ev.date ? String(Number(ev.date.slice(8,10))) : '—'; }
 function evTimeLabel(ev){ return `${clock(minutes(ev.start))} – ${clock(minutes(ev.end))}`; }
+function evDateLabel(ev){ return ev.date ? new Date(ev.date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}) : '—'; }
+function sentence(text){
+  const value=String(text||'').trim();
+  return value && !/[.!?]$/.test(value) ? value+'.' : value;
+}
+function eventSummaryText(ev){
+  const c=ev.client||{};
+  const client=ev.company||c.company||'—';
+  let details='—';
+  if(c.serviceAddress){
+    details=`Service address: ${sentence(c.serviceAddress)}`;
+    if(c.notes) details+=`\nArrival instructions / access details: ${sentence(c.notes)}`;
+  } else if(c.notes){
+    details=sentence(c.notes);
+  } else if(ev.location){
+    details=`Service address: ${sentence(ev.location)}`;
+  }
+  return `Client: ${client}\nPoint of Contact: ${c.contact||'—'}\nEmail: ${c.email||'—'}\nPhone: ${c.phone||'—'}\n\nAdditional Client Details: ${details}\n\nTherapist(s): ${ev.therapistNames.join(', ')||'—'}\nDate: ${evDateLabel(ev)}\nTime: ${evTimeLabel(ev)}`;
+}
 
 async function renderEventsView(){
   await loadAllEvents();
@@ -1339,7 +1363,8 @@ function renderEvLedger(){
          <strong style="font-size:12px;letter-spacing:.05em;display:block;margin-bottom:8px">CLIENT</strong>${clientRows}
        </div>`
     : `<div style="border-top:1px solid #e2dccc;margin-top:12px;padding-top:12px;font-size:12px;color:#8a8574">No client details saved. Add them in the Event Editor.</div>`;
-  target.innerHTML=`<div class="event-ledger-panel">
+  const summary=eventSummaryText(ev);
+  target.innerHTML=`<div class="event-detail-grid"><div class="event-ledger-panel">
     <strong style="font-size:12px;color:#6b675c;letter-spacing:.05em">LEDGER</strong>
     <div style="font-size:13px;color:#8a8574;margin:6px 0 14px">${esc(ev.company)}${ev.date?' · '+esc(evMonLabel(ev)+' '+evDayNum(ev)):''}</div>
     <label style="font-size:12px;color:#6b675c;display:block;margin-bottom:4px">Fee you charge ($)</label>
@@ -1365,7 +1390,12 @@ function renderEvLedger(){
         <button class="mini" style="flex:1;color:#a3352f;border-color:#e3b7b3" onclick="deleteEv('${ev.id}')">Delete</button>
       </div>
     </div>
-  </div>`;
+  </div>
+  <div class="event-summary-panel">
+    <strong style="font-size:12px;color:#6b675c;letter-spacing:.05em">EVENT SUMMARY</strong>
+    <div style="font-size:13px;color:#8a8574;margin:6px 0 0">Ready to copy into the therapists’ calendar invitation.</div>
+    <div class="event-summary-copy">${esc(summary)}</div>
+  </div></div>`;
   ['finFee','finTaxi','finRate'].forEach(id=>{ const el=$(id); el.addEventListener('input',evLedgerRecalc); el.addEventListener('change',evLedgerSave); });
 }
 window.archiveEv=async function(id){
