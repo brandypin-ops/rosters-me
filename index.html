@@ -298,6 +298,10 @@
           <input id="clPhone" type="tel" placeholder="(212) 555-0100" autocomplete="off" />
         </div>
         <div class="field full">
+          <label for="clServiceAddress">Service address</label>
+          <input id="clServiceAddress" placeholder="1250 Broadway, New York City, NY 10001" autocomplete="off" />
+        </div>
+        <div class="field full">
           <label for="clInvoice">Invoice / quote link</label>
           <div class="code-row">
             <input id="clInvoice" type="url" placeholder="Paste the Google Drive link to the quote or invoice PDF" autocomplete="off" style="flex:1" />
@@ -542,7 +546,7 @@ const ADMIN_CODE_HASH = 'bb4a8d406d71288bf63deb6dc126dbf745907fbabb363a3e4552a98
 const WINDOW_PAD = 30; // minutes before start / after end that the therapist code is active
 
 const DEFAULT_EVENT = { company:'Demo Corporate Wellness Day', location:'New York, NY', date:'', start:'10:00', end:'14:00', session:15, buffer:3, therapists:2, therapistNames:['',''], breaks:[], therapistCodeHash:null, publicToken:null, calendarInvitesEnabled:false, client:{} };
-const CLIENT_FIELDS = { clCompany:'company', clContact:'contact', clEmail:'email', clPhone:'phone', clInvoice:'invoice', clNotes:'notes' };
+const CLIENT_FIELDS = { clCompany:'company', clContact:'contact', clEmail:'email', clPhone:'phone', clServiceAddress:'serviceAddress', clInvoice:'invoice', clNotes:'notes' };
 
 let state = { event:{...DEFAULT_EVENT, id:'demo-corporate-wellness-day'}, bookings:[], slots:[] };
 let selectedStart = null, channel = null, mode = 'admin', lastTherapistCode = '';
@@ -1358,6 +1362,7 @@ function renderEvLedger(){
     c.contact?`<div style="margin-bottom:3px">${esc(c.contact)}</div>`:'',
     c.email?`<div style="margin-bottom:3px"><a href="mailto:${esc(c.email)}" style="color:#2f4429">${esc(c.email)}</a></div>`:'',
     c.phone?`<div style="margin-bottom:3px"><a href="tel:${esc(c.phone)}" style="color:#2f4429">${esc(c.phone)}</a></div>`:'',
+    c.serviceAddress?`<div style="margin-top:6px;color:#8a8574">${esc(c.serviceAddress)}</div>`:'',
     c.invoice?`<div style="margin-bottom:3px"><a href="${esc(c.invoice)}" target="_blank" rel="noopener" style="color:#2f4429">Invoice / quote →</a></div>`:'',
     c.notes?`<div style="margin-top:6px;color:#8a8574">${esc(c.notes)}</div>`:''
   ].filter(Boolean).join('');
