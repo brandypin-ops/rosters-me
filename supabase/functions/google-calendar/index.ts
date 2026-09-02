@@ -112,20 +112,54 @@ async function googleRequest(url: string, accessToken: string, init: RequestInit
   });
 }
 
-function calendarPayload(snapshot: Record<string, unknown>, timezone: string, cancelled = false) {
+function eventTherapistNames(snapshot: Record<string, unknown>) {
+  return Array.isArray(snapshot.therapist_names)
+    ? snapshot.therapist_names.map((name) => String(name || "").trim()).filter(Boolean)
+    : [];
+}
+
+function normalizeTherapistName(value: unknown) {
+  return String(value || "").toLowerCase().replace(/\./g, "").replace(/\s+/g, " ").trim();
+}
+
+async function therapistInviteesForEvent(organizationId: string, snapshot: Record<string, unknown>) {
+  const assigned = eventTherapistNames(snapshot);
+  if (!assigned.length) throw new Error("Assign at least one therapist before sending invitations.");
+  const { data, error } = await admin.from("therapists")
+    .select("first_name,last_initial,email,archived")
+    .eq("organization_id", organizationId).eq("archived", false);
+  if (error) throw error;
+  const directory = new Map((data || []).map((therapist) => [
+    normalizeTherapistName(`${therapist.first_name} ${String(therapist.last_initial || "").charAt(0)}`),
+    String(therapist.email || "").trim(),
+  ]));
+  const missing: string[] = [];
+  const emails = assigned.map((name) => {
+    const email = directory.get(normalizeTherapistName(name)) || "";
+    if (!email) missing.push(name);
+    return email;
+  }).filter(Boolean);
+  if (missing.length) throw new Error(`Add a matching email in Therapists Info for: ${missing.join(", ")}.`);
+  return [...new Set(emails)];
+}
+
+function calendarPayload(snapshot: Record<string, unknown>, timezone: string, cancelled = false, invitees: string[] = []) {
   const date = String(snapshot.event_date || "");
   const start = String(snapshot.start_time || "");
   const end = String(snapshot.end_time || "");
   if (!date || !start || !end) throw new Error("Event date, start time, and end time are required");
   const company = String(snapshot.company || "Rosters event");
+  const invitationsEnabled = Boolean(snapshot.calendar_invites_enabled);
+  const invitedSummary = `🪑Chair Massage ✅ ${eventTherapistNames(snapshot).join(" + ")}`;
   return {
-    summary: cancelled ? `Cancelled — ${company}` : company,
+    summary: cancelled ? `Cancelled — ${invitationsEnabled ? invitedSummary : company}` : invitationsEnabled ? invitedSummary : company,
     location: String(snapshot.location || ""),
     description: `${cancelled ? "Cancelled in Rosters.me\n\n" : ""}Managed by Rosters.me\nRosters event ID: ${snapshot.id}`,
     start: { dateTime: `${date}T${start.length === 5 ? `${start}:00` : start}`, timeZone: timezone },
     end: { dateTime: `${date}T${end.length === 5 ? `${end}:00` : end}`, timeZone: timezone },
     transparency: "opaque",
     status: "confirmed",
+    ...(invitationsEnabled ? { attendees: invitees.map((email) => ({ email })) } : {}),
     extendedProperties: {
       private: {
         rostersEventId: String(snapshot.id || ""),
@@ -160,26 +194,29 @@ async function syncOne(job: SyncJob) {
   const eventId = await googleEventId(job.organization_id, job.event_id);
   const calendarId = encodeURIComponent(String(connection.calendar_id || "primary"));
   const eventUrl = `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events/${eventId}`;
+  const invitationsEnabled = Boolean(job.event_snapshot.calendar_invites_enabled);
+  const invitees = invitationsEnabled ? await therapistInviteesForEvent(job.organization_id, job.event_snapshot) : [];
+  const writeEventUrl = invitationsEnabled ? `${eventUrl}?sendUpdates=all` : eventUrl;
 
   if (job.action === "cancel") {
     const existing = await googleRequest(eventUrl, accessToken);
     if (existing.status !== 404) {
       if (!existing.ok) throw new Error(`Google event lookup failed (${existing.status})`);
-      const updated = await googleRequest(eventUrl, accessToken, {
+      const updated = await googleRequest(writeEventUrl, accessToken, {
         method: "PATCH",
-        body: JSON.stringify(calendarPayload(job.event_snapshot, timezone, true)),
+        body: JSON.stringify(calendarPayload(job.event_snapshot, timezone, true, invitees)),
       });
       if (!updated.ok) throw new Error(`Google event cancellation failed (${updated.status}): ${await updated.text()}`);
     }
   } else {
-    const payload = calendarPayload(job.event_snapshot, timezone, false);
-    const insertUrl = `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events`;
+    const payload = calendarPayload(job.event_snapshot, timezone, false, invitees);
+    const insertUrl = `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events${invitationsEnabled ? "?sendUpdates=all" : ""}`;
     const inserted = await googleRequest(insertUrl, accessToken, {
       method: "POST",
       body: JSON.stringify({ ...payload, id: eventId }),
     });
     if (inserted.status === 409) {
-      const updated = await googleRequest(eventUrl, accessToken, {
+      const updated = await googleRequest(writeEventUrl, accessToken, {
         method: "PATCH", body: JSON.stringify(payload),
       });
       if (!updated.ok) throw new Error(`Google event update failed (${updated.status}): ${await updated.text()}`);
@@ -357,6 +394,41 @@ Deno.serve(async (req) => {
       await admin.rpc("disconnect_google_calendar", { p_organization_id: organizationId });
       return json({ ok: true });
     }
+    if (action === "sync-event-invite") {
+      const eventId = String(body.event_id || "").trim();
+      if (!eventId) return json({ error: "Event ID is required." }, 400);
+      const { data: connection } = await admin.from("calendar_connections")
+        .select("status").eq("organization_id", organizationId).maybeSingle();
+      if (!connection || connection.status !== "connected") {
+        return json({ error: "Connect Google Calendar in Settings / Integrations first." }, 409);
+      }
+      const { data: event, error: eventError } = await admin.from("events")
+        .select("*").eq("organization_id", organizationId).eq("id", eventId).maybeSingle();
+      if (eventError) throw eventError;
+      if (!event) return json({ error: "Event not found." }, 404);
+      const snapshot = { ...event, calendar_invites_enabled: true } as Record<string, unknown>;
+      const invitees = await therapistInviteesForEvent(organizationId, snapshot);
+      const { data: job, error: jobError } = await admin.from("calendar_sync_jobs").insert({
+        organization_id: organizationId,
+        event_id: event.id,
+        action: "upsert",
+        event_snapshot: snapshot,
+        status: "processing",
+        attempts: 1,
+        locked_at: new Date().toISOString(),
+      }).select("*").single();
+      if (jobError) throw jobError;
+      try {
+        await syncOne(job as SyncJob);
+      } catch (syncError) {
+        await failJob(job as SyncJob, syncError);
+        throw syncError;
+      }
+      const { error: updateError } = await admin.from("events")
+        .update({ calendar_invites_enabled: true }).eq("organization_id", organizationId).eq("id", eventId);
+      if (updateError) throw updateError;
+      return json({ ok: true, invited: invitees.length });
+    }
     if (action === "sync-now") {
       const queued = await enqueueOrganizationEvents(organizationId);
       const processed = await processJobs(50);
@@ -369,4 +441,3 @@ Deno.serve(async (req) => {
     return json({ error: message }, status);
   }
 });
-
