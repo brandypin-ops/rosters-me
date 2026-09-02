@@ -1269,6 +1269,23 @@ function sentence(text){
   const value=String(text||'').trim();
   return value && !/[.!?]$/.test(value) ? value+'.' : value;
 }
+function normalizeTherapistDirectoryName(value){
+  return String(value||'').toLowerCase().replace(/\./g,'').replace(/\s+/g,' ').trim();
+}
+function eventTherapistContactLines(ev){
+  const directory=new Map(tiAll.map(t=>[
+    normalizeTherapistDirectoryName(`${t.first_name} ${String(t.last_initial||'').charAt(0)}`),
+    t
+  ]));
+  const names=Array.isArray(ev.therapistNames)?ev.therapistNames:[];
+  if(!names.length) return '—';
+  return names.map(name=>{
+    const therapist=directory.get(normalizeTherapistDirectoryName(name));
+    const phone=therapist&&therapist.phone?therapist.phone:'—';
+    const email=therapist&&therapist.email?therapist.email:'—';
+    return `${name} — Tel: ${phone} · Email: ${email}`;
+  }).join('\n');
+}
 function eventSummaryText(ev){
   const c=ev.client||{};
   const client=ev.company||c.company||'—';
@@ -1281,11 +1298,11 @@ function eventSummaryText(ev){
   } else if(ev.location){
     details=`Service address: ${sentence(ev.location)}`;
   }
-  return `Client: ${client}\nPoint of Contact: ${c.contact||'—'}\nEmail: ${c.email||'—'}\nPhone: ${c.phone||'—'}\n\nAdditional Client Details: ${details}\n\nTherapist(s): ${ev.therapistNames.join(', ')||'—'}\nDate: ${evDateLabel(ev)}\nTime: ${evTimeLabel(ev)}\nTherapist access code: ${ev.therapistCode||'—'}`;
+  return `Client: ${client}\nPoint of Contact: ${c.contact||'—'}\nEmail: ${c.email||'—'}\nPhone: ${c.phone||'—'}\n\nAdditional Client Details: ${details}\n\nTherapist(s): ${eventTherapistContactLines(ev)}\nDate: ${evDateLabel(ev)}\nTime: ${evTimeLabel(ev)}\nTherapist access code: ${ev.therapistCode||'—'}`;
 }
 
 async function renderEventsView(){
-  await loadAllEvents();
+  await Promise.all([loadAllEvents(),loadTherapistsInfo()]);
   const arch=allEvents.filter(e=>e.archived).length;
   if($('evArchCount')) $('evArchCount').textContent = arch ? ` (${arch})` : '';
   const vis=visibleEvents();
