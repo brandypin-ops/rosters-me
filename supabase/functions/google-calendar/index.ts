@@ -118,6 +118,22 @@ function eventTherapistNames(snapshot: Record<string, unknown>) {
     : [];
 }
 
+function eventClient(snapshot: Record<string, unknown>) {
+  const value = snapshot.client;
+  return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : {};
+}
+
+function legacyServiceAddress(notes: string) {
+  const match = notes.match(/service address:\s*(.+?)(?=\.\s*(?:arrival instructions|access details)|$)/i);
+  return match?.[1]?.trim() || "";
+}
+
+function eventServiceAddress(snapshot: Record<string, unknown>) {
+  const client = eventClient(snapshot);
+  const notes = String(client.notes || "");
+  return String(client.serviceAddress || legacyServiceAddress(notes) || snapshot.location || "").trim();
+}
+
 function normalizeTherapistName(value: unknown) {
   return String(value || "").toLowerCase().replace(/\./g, "").replace(/\s+/g, " ").trim();
 }
@@ -153,7 +169,7 @@ function calendarPayload(snapshot: Record<string, unknown>, timezone: string, ca
   const invitedSummary = `🪑Chair Massage ✅ ${eventTherapistNames(snapshot).join(" + ")}`;
   return {
     summary: cancelled ? `Cancelled — ${invitationsEnabled ? invitedSummary : company}` : invitationsEnabled ? invitedSummary : company,
-    location: String(snapshot.location || ""),
+    location: eventServiceAddress(snapshot),
     description: `${cancelled ? "Cancelled in Rosters.me\n\n" : ""}Managed by Rosters.me\nRosters event ID: ${snapshot.id}`,
     start: { dateTime: `${date}T${start.length === 5 ? `${start}:00` : start}`, timeZone: timezone },
     end: { dateTime: `${date}T${end.length === 5 ? `${end}:00` : end}`, timeZone: timezone },
