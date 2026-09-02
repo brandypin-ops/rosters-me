@@ -93,7 +93,7 @@
     .event-detail-grid{display:grid;grid-template-columns:minmax(280px,390px) minmax(320px,1fr);gap:16px;align-items:start}
     .event-ledger-panel{max-width:390px;background:white;border:1px solid #d4ddd6;border-radius:13px;padding:16px 18px}
     .event-summary-panel{background:white;border:1px solid #d4ddd6;border-radius:13px;padding:16px 18px}
-    .event-summary-copy{white-space:pre-wrap;font-size:13px;line-height:1.65;color:#3f443f;background:#f8faf7;border:1px solid #e1e7e1;border-radius:10px;padding:13px;margin:10px 0 0}
+    .event-summary-copy{white-space:pre-wrap;font-size:13px;line-height:1.65;color:#3f443f;background:#f8faf7;border:1px solid #e1e7e1;border-radius:10px;padding:13px;margin:10px 0 12px}
     .ti-form-grid{grid-template-columns:1fr 90px 1fr 1.2fr}
     .code-row{display:flex;gap:8px;align-items:stretch}
     @media(max-width:760px){
@@ -541,7 +541,7 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const ADMIN_CODE_HASH = 'bb4a8d406d71288bf63deb6dc126dbf745907fbabb363a3e4552a988e783cffb';
 const WINDOW_PAD = 30; // minutes before start / after end that the therapist code is active
 
-const DEFAULT_EVENT = { company:'Demo Corporate Wellness Day', location:'New York, NY', date:'', start:'10:00', end:'14:00', session:15, buffer:3, therapists:2, therapistNames:['',''], breaks:[], therapistCodeHash:null, publicToken:null, client:{} };
+const DEFAULT_EVENT = { company:'Demo Corporate Wellness Day', location:'New York, NY', date:'', start:'10:00', end:'14:00', session:15, buffer:3, therapists:2, therapistNames:['',''], breaks:[], therapistCodeHash:null, publicToken:null, calendarInvitesEnabled:false, client:{} };
 const CLIENT_FIELDS = { clCompany:'company', clContact:'contact', clEmail:'email', clPhone:'phone', clInvoice:'invoice', clNotes:'notes' };
 
 let state = { event:{...DEFAULT_EVENT, id:'demo-corporate-wellness-day'}, bookings:[], slots:[] };
@@ -740,6 +740,7 @@ async function loadEvent(id){
       date:data.event_date||'', start:data.start_time||'10:00', end:data.end_time||'14:00',
       session:data.session_min||15, buffer:data.buffer_min||3, therapists:tNames.length, therapistNames:tNames,
       breaks:Array.isArray(data.breaks)?data.breaks:[], therapistCodeHash:data.therapist_code_hash||null,
+      calendarInvitesEnabled:!!data.calendar_invites_enabled,
       client:(data.client && typeof data.client==='object' && !Array.isArray(data.client)) ? data.client : {} };
     return true;
   }
@@ -755,7 +756,8 @@ async function saveEvent(){
     organization_id:currentOrganizationId,
     event_date:state.event.date||null, start_time:state.event.start, end_time:state.event.end,
     session_min:state.event.session, buffer_min:state.event.buffer, therapists:finalNames.length, therapist_names:finalNames,
-    breaks:state.event.breaks||[], therapist_code_hash:codeHash, client:readClientForm(), updated_at:new Date().toISOString() };
+    breaks:state.event.breaks||[], therapist_code_hash:codeHash, calendar_invites_enabled:!!state.event.calendarInvitesEnabled,
+    client:readClientForm(), updated_at:new Date().toISOString() };
   const { data, error } = await sb.from('events').upsert(payload).select('public_token').single();
   if(error){ alert('Could not save the event: '+error.message); return false; }
   state.event.publicToken=data.public_token;
@@ -1242,6 +1244,7 @@ async function loadAllEvents(){
       date:e.event_date||'', start:e.start_time||'10:00', end:e.end_time||'12:00',
       therapists:therapistCount, therapistNames,
       finance:(e.finance&&typeof e.finance==='object')?e.finance:{}, archived:!!e.archived,
+      calendarInvitesEnabled:!!e.calendar_invites_enabled,
       client:(e.client&&typeof e.client==='object'&&!Array.isArray(e.client))?e.client:{}
     };
   });
@@ -1395,9 +1398,28 @@ function renderEvLedger(){
     <strong style="font-size:12px;color:#6b675c;letter-spacing:.05em">EVENT SUMMARY</strong>
     <div style="font-size:13px;color:#8a8574;margin:6px 0 0">Ready to copy into the therapists’ calendar invitation.</div>
     <div class="event-summary-copy">${esc(summary)}</div>
+    <button class="btn" id="eventInviteButton-${ev.id}" type="button" onclick="syncEventInvite('${ev.id}',this)">${ev.calendarInvitesEnabled?'Update Calendar & invitations':'Sync to Calendar & invite therapists'}</button>
+    <div id="eventInviteStatus-${ev.id}" style="font-size:12px;color:#6b675c;margin-top:9px;min-height:16px"></div>
   </div></div>`;
   ['finFee','finTaxi','finRate'].forEach(id=>{ const el=$(id); el.addEventListener('input',evLedgerRecalc); el.addEventListener('change',evLedgerSave); });
 }
+window.syncEventInvite=async function(id,button){
+  const ev=allEvents.find(item=>item.id===id); if(!ev) return;
+  const status=$('eventInviteStatus-'+id);
+  const action=ev.calendarInvitesEnabled?'update the Google Calendar event and therapist invitations':'create the Google Calendar event and email invitations to the assigned therapists';
+  if(!confirm(`This will ${action}. Continue?`)) return;
+  const label=button.textContent; button.disabled=true; button.textContent='Syncing…';
+  if(status){ status.style.color='#6b675c'; status.textContent='Sending event details to Google Calendar…'; }
+  try{
+    const data=await calendarAction('sync-event-invite',{event_id:id});
+    ev.calendarInvitesEnabled=true;
+    button.textContent='Update Calendar & invitations';
+    if(status) status.textContent=`Calendar synced. ${data.invited||0} therapist invitation${data.invited===1?'':'s'} sent.`;
+  }catch(error){
+    button.textContent=label;
+    if(status){ status.style.color='var(--danger)'; status.textContent=error.message||'Could not sync the calendar invitations.'; }
+  }finally{ button.disabled=false; }
+};
 window.archiveEv=async function(id){
   const ev=allEvents.find(e=>e.id===id); if(!ev) return;
   const { error } = await sb.from('events').update({ archived: !ev.archived }).eq('id', id).eq('organization_id',currentOrganizationId);
@@ -1448,6 +1470,7 @@ window.duplicateEv=async function(id){
   state.event.publicToken=null;
   state.event.date='';                // force a new date
   state.event.therapistCodeHash=null; // codes are one-way hashed, so each event gets its own
+  state.event.calendarInvitesEnabled=false;
   state.bookings=[];                  // bookings never copy
   computeSlots(); hydrateForm(); subscribe(); refreshUI();
   $('date').value='';
