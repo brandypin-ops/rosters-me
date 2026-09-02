@@ -545,7 +545,7 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const ADMIN_CODE_HASH = 'bb4a8d406d71288bf63deb6dc126dbf745907fbabb363a3e4552a988e783cffb';
 const WINDOW_PAD = 30; // minutes before start / after end that the therapist code is active
 
-const DEFAULT_EVENT = { company:'Demo Corporate Wellness Day', location:'New York, NY', date:'', start:'10:00', end:'14:00', session:15, buffer:3, therapists:2, therapistNames:['',''], breaks:[], therapistCodeHash:null, publicToken:null, calendarInvitesEnabled:false, client:{} };
+const DEFAULT_EVENT = { company:'Demo Corporate Wellness Day', location:'New York, NY', date:'', start:'10:00', end:'14:00', session:15, buffer:3, therapists:2, therapistNames:['',''], breaks:[], therapistCodeHash:null, therapistCode:'', publicToken:null, calendarInvitesEnabled:false, client:{} };
 const CLIENT_FIELDS = { clCompany:'company', clContact:'contact', clEmail:'email', clPhone:'phone', clServiceAddress:'serviceAddress', clInvoice:'invoice', clNotes:'notes' };
 
 let state = { event:{...DEFAULT_EVENT, id:'demo-corporate-wellness-day'}, bookings:[], slots:[] };
@@ -744,6 +744,7 @@ async function loadEvent(id){
       date:data.event_date||'', start:data.start_time||'10:00', end:data.end_time||'14:00',
       session:data.session_min||15, buffer:data.buffer_min||3, therapists:tNames.length, therapistNames:tNames,
       breaks:Array.isArray(data.breaks)?data.breaks:[], therapistCodeHash:data.therapist_code_hash||null,
+      therapistCode:data.therapist_code||'',
       calendarInvitesEnabled:!!data.calendar_invites_enabled,
       client:(data.client && typeof data.client==='object' && !Array.isArray(data.client)) ? data.client : {} };
     return true;
@@ -752,20 +753,23 @@ async function loadEvent(id){
 }
 async function saveEvent(){
   let codeHash = state.event.therapistCodeHash;
+  let therapistCode = state.event.therapistCode||'';
   const typed = $('therapistCode') ? $('therapistCode').value.trim() : '';
-  if(typed) codeHash = await sha256(typed);
+  if(typed){ codeHash = await sha256(typed); therapistCode = typed; }
   const finalNames = currentTherapistNames();
   state.event.therapistNames = finalNames; state.event.therapists = finalNames.length;
   const payload = { id:state.event.id, company:state.event.company, location:state.event.location,
     organization_id:currentOrganizationId,
     event_date:state.event.date||null, start_time:state.event.start, end_time:state.event.end,
     session_min:state.event.session, buffer_min:state.event.buffer, therapists:finalNames.length, therapist_names:finalNames,
-    breaks:state.event.breaks||[], therapist_code_hash:codeHash, calendar_invites_enabled:!!state.event.calendarInvitesEnabled,
+    breaks:state.event.breaks||[], therapist_code_hash:codeHash, therapist_code:therapistCode||null,
+    calendar_invites_enabled:!!state.event.calendarInvitesEnabled,
     client:readClientForm(), updated_at:new Date().toISOString() };
   const { data, error } = await sb.from('events').upsert(payload).select('public_token').single();
   if(error){ alert('Could not save the event: '+error.message); return false; }
   state.event.publicToken=data.public_token;
   state.event.therapistCodeHash = codeHash;
+  state.event.therapistCode = therapistCode;
   if($('therapistCode')) $('therapistCode').value='';
   return true;
 }
@@ -1246,7 +1250,7 @@ async function loadAllEvents(){
     return {
       id:e.id, publicToken:e.public_token||null, company:e.company||'Untitled', location:e.location||'',
       date:e.event_date||'', start:e.start_time||'10:00', end:e.end_time||'12:00',
-      therapists:therapistCount, therapistNames,
+      therapists:therapistCount, therapistNames, therapistCode:e.therapist_code||'',
       finance:(e.finance&&typeof e.finance==='object')?e.finance:{}, archived:!!e.archived,
       calendarInvitesEnabled:!!e.calendar_invites_enabled,
       client:(e.client&&typeof e.client==='object'&&!Array.isArray(e.client))?e.client:{}
@@ -1277,7 +1281,7 @@ function eventSummaryText(ev){
   } else if(ev.location){
     details=`Service address: ${sentence(ev.location)}`;
   }
-  return `Client: ${client}\nPoint of Contact: ${c.contact||'—'}\nEmail: ${c.email||'—'}\nPhone: ${c.phone||'—'}\n\nAdditional Client Details: ${details}\n\nTherapist(s): ${ev.therapistNames.join(', ')||'—'}\nDate: ${evDateLabel(ev)}\nTime: ${evTimeLabel(ev)}`;
+  return `Client: ${client}\nPoint of Contact: ${c.contact||'—'}\nEmail: ${c.email||'—'}\nPhone: ${c.phone||'—'}\n\nAdditional Client Details: ${details}\n\nTherapist(s): ${ev.therapistNames.join(', ')||'—'}\nDate: ${evDateLabel(ev)}\nTime: ${evTimeLabel(ev)}\nTherapist access code: ${ev.therapistCode||'—'}`;
 }
 
 async function renderEventsView(){
@@ -1475,6 +1479,7 @@ window.duplicateEv=async function(id){
   state.event.publicToken=null;
   state.event.date='';                // force a new date
   state.event.therapistCodeHash=null; // codes are one-way hashed, so each event gets its own
+  state.event.therapistCode='';
   state.event.calendarInvitesEnabled=false;
   state.bookings=[];                  // bookings never copy
   computeSlots(); hydrateForm(); subscribe(); refreshUI();
