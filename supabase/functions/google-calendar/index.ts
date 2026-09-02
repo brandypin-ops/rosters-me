@@ -134,6 +134,56 @@ function eventServiceAddress(snapshot: Record<string, unknown>) {
   return String(client.serviceAddress || legacyServiceAddress(notes) || snapshot.location || "").trim();
 }
 
+function sentence(value: unknown) {
+  const text = String(value || "").trim();
+  return text && !/[.!?]$/.test(text) ? `${text}.` : text;
+}
+
+function eventDateLabel(snapshot: Record<string, unknown>) {
+  const date = String(snapshot.event_date || "");
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return "—";
+  return new Intl.DateTimeFormat("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(`${date}T12:00:00Z`));
+}
+
+function eventTimeLabel(value: unknown) {
+  const match = String(value || "").match(/^(\d{1,2}):(\d{2})/);
+  if (!match) return "—";
+  const hour = Number(match[1]);
+  const minute = match[2];
+  return `${hour % 12 || 12}:${minute} ${hour >= 12 ? "PM" : "AM"}`;
+}
+
+function eventArrivalInstructions(notesValue: unknown) {
+  const notes = String(notesValue || "").trim();
+  if (!notes) return "";
+  const labelled = notes.match(/(?:arrival instructions(?:\s*\/\s*access details)?|access details)\s*:\s*([\s\S]+)$/i);
+  if (labelled) return labelled[1].trim();
+  if (/^service address\s*:/i.test(notes)) return "";
+  return notes;
+}
+
+function calendarDescription(snapshot: Record<string, unknown>, cancelled = false) {
+  const client = eventClient(snapshot);
+  const company = String(snapshot.company || client.company || "—").trim() || "—";
+  const address = eventServiceAddress(snapshot);
+  const arrival = eventArrivalInstructions(client.notes);
+  const details = [
+    address ? `Service address: ${sentence(address)}` : "Service address: —",
+    arrival ? `Arrival instructions / access details: ${sentence(arrival)}` : "",
+  ].filter(Boolean).join("\n");
+  const therapists = eventTherapistNames(snapshot).join(", ") || "—";
+  const start = eventTimeLabel(snapshot.start_time);
+  const end = eventTimeLabel(snapshot.end_time);
+
+  return `${cancelled ? "CANCELLED\n\n" : ""}Client: ${company}\nPoint of Contact: ${String(client.contact || "—")}\nEmail: ${String(client.email || "—")}\nPhone: ${String(client.phone || "—")}\n\nAdditional Client Details: ${details}\n\nTherapist(s): ${therapists}\nDate: ${eventDateLabel(snapshot)}\nTime: ${start} – ${end}\n\nManaged by Rosters.me\nRosters event ID: ${String(snapshot.id || "")}`;
+}
+
 function normalizeTherapistName(value: unknown) {
   return String(value || "").toLowerCase().replace(/\./g, "").replace(/\s+/g, " ").trim();
 }
@@ -170,7 +220,7 @@ function calendarPayload(snapshot: Record<string, unknown>, timezone: string, ca
   return {
     summary: cancelled ? `Cancelled — ${invitationsEnabled ? invitedSummary : company}` : invitationsEnabled ? invitedSummary : company,
     location: eventServiceAddress(snapshot),
-    description: `${cancelled ? "Cancelled in Rosters.me\n\n" : ""}Managed by Rosters.me\nRosters event ID: ${snapshot.id}`,
+    description: calendarDescription(snapshot, cancelled),
     start: { dateTime: `${date}T${start.length === 5 ? `${start}:00` : start}`, timeZone: timezone },
     end: { dateTime: `${date}T${end.length === 5 ? `${end}:00` : end}`, timeZone: timezone },
     transparency: "opaque",
