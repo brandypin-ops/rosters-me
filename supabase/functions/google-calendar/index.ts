@@ -168,7 +168,9 @@ function eventArrivalInstructions(notesValue: unknown) {
   return notes;
 }
 
-function calendarDescription(snapshot: Record<string, unknown>, cancelled = false) {
+type TherapistContact = { name: string; phone: string; email: string };
+
+function calendarDescription(snapshot: Record<string, unknown>, cancelled = false, therapistContacts: TherapistContact[] = []) {
   const client = eventClient(snapshot);
   const company = String(snapshot.company || client.company || "—").trim() || "—";
   const address = eventServiceAddress(snapshot);
@@ -177,7 +179,9 @@ function calendarDescription(snapshot: Record<string, unknown>, cancelled = fals
     address ? `Service address: ${sentence(address)}` : "Service address: —",
     arrival ? `Arrival instructions / access details: ${sentence(arrival)}` : "",
   ].filter(Boolean).join("\n");
-  const therapists = eventTherapistNames(snapshot).join(", ") || "—";
+  const therapists = therapistContacts.length
+    ? therapistContacts.map((therapist) => `${therapist.name} — Tel: ${therapist.phone || "—"} · Email: ${therapist.email || "—"}`).join("\n")
+    : eventTherapistNames(snapshot).join(", ") || "—";
   const start = eventTimeLabel(snapshot.start_time);
   const end = eventTimeLabel(snapshot.end_time);
 
@@ -188,28 +192,40 @@ function normalizeTherapistName(value: unknown) {
   return String(value || "").toLowerCase().replace(/\./g, "").replace(/\s+/g, " ").trim();
 }
 
-async function therapistInviteesForEvent(organizationId: string, snapshot: Record<string, unknown>) {
+async function therapistContactsForEvent(organizationId: string, snapshot: Record<string, unknown>) {
   const assigned = eventTherapistNames(snapshot);
-  if (!assigned.length) throw new Error("Assign at least one therapist before sending invitations.");
+  if (!assigned.length) return [];
   const { data, error } = await admin.from("therapists")
-    .select("first_name,last_initial,email,archived")
-    .eq("organization_id", organizationId).eq("archived", false);
+    .select("first_name,last_initial,phone,email,archived")
+    .eq("organization_id", organizationId);
   if (error) throw error;
   const directory = new Map((data || []).map((therapist) => [
     normalizeTherapistName(`${therapist.first_name} ${String(therapist.last_initial || "").charAt(0)}`),
-    String(therapist.email || "").trim(),
+    therapist,
   ]));
+  return assigned.map((name) => {
+    const therapist = directory.get(normalizeTherapistName(name));
+    return {
+      name,
+      phone: String(therapist?.phone || "").trim(),
+      email: String(therapist?.email || "").trim(),
+    };
+  });
+}
+
+async function therapistInviteesForEvent(organizationId: string, snapshot: Record<string, unknown>) {
+  const contacts = await therapistContactsForEvent(organizationId, snapshot);
+  if (!contacts.length) throw new Error("Assign at least one therapist before sending invitations.");
   const missing: string[] = [];
-  const emails = assigned.map((name) => {
-    const email = directory.get(normalizeTherapistName(name)) || "";
-    if (!email) missing.push(name);
-    return email;
+  const emails = contacts.map((therapist) => {
+    if (!therapist.email) missing.push(therapist.name);
+    return therapist.email;
   }).filter(Boolean);
   if (missing.length) throw new Error(`Add a matching email in Therapists Info for: ${missing.join(", ")}.`);
   return [...new Set(emails)];
 }
 
-function calendarPayload(snapshot: Record<string, unknown>, timezone: string, cancelled = false, invitees: string[] = []) {
+function calendarPayload(snapshot: Record<string, unknown>, timezone: string, cancelled = false, invitees: string[] = [], therapistContacts: TherapistContact[] = []) {
   const date = String(snapshot.event_date || "");
   const start = String(snapshot.start_time || "");
   const end = String(snapshot.end_time || "");
@@ -220,7 +236,7 @@ function calendarPayload(snapshot: Record<string, unknown>, timezone: string, ca
   return {
     summary: cancelled ? `Cancelled — ${invitationsEnabled ? invitedSummary : company}` : invitationsEnabled ? invitedSummary : company,
     location: eventServiceAddress(snapshot),
-    description: calendarDescription(snapshot, cancelled),
+    description: calendarDescription(snapshot, cancelled, therapistContacts),
     start: { dateTime: `${date}T${start.length === 5 ? `${start}:00` : start}`, timeZone: timezone },
     end: { dateTime: `${date}T${end.length === 5 ? `${end}:00` : end}`, timeZone: timezone },
     transparency: "opaque",
@@ -261,7 +277,10 @@ async function syncOne(job: SyncJob) {
   const calendarId = encodeURIComponent(String(connection.calendar_id || "primary"));
   const eventUrl = `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events/${eventId}`;
   const invitationsEnabled = Boolean(job.event_snapshot.calendar_invites_enabled);
-  const invitees = invitationsEnabled ? await therapistInviteesForEvent(job.organization_id, job.event_snapshot) : [];
+  const therapistContacts = await therapistContactsForEvent(job.organization_id, job.event_snapshot);
+  const missingInviteEmails = invitationsEnabled ? therapistContacts.filter((therapist) => !therapist.email).map((therapist) => therapist.name) : [];
+  if (missingInviteEmails.length) throw new Error(`Add a matching email in Therapists Info for: ${missingInviteEmails.join(", ")}.`);
+  const invitees = invitationsEnabled ? [...new Set(therapistContacts.map((therapist) => therapist.email).filter(Boolean))] : [];
   const writeEventUrl = invitationsEnabled ? `${eventUrl}?sendUpdates=all` : eventUrl;
 
   if (job.action === "cancel") {
@@ -270,12 +289,12 @@ async function syncOne(job: SyncJob) {
       if (!existing.ok) throw new Error(`Google event lookup failed (${existing.status})`);
       const updated = await googleRequest(writeEventUrl, accessToken, {
         method: "PATCH",
-        body: JSON.stringify(calendarPayload(job.event_snapshot, timezone, true, invitees)),
+        body: JSON.stringify(calendarPayload(job.event_snapshot, timezone, true, invitees, therapistContacts)),
       });
       if (!updated.ok) throw new Error(`Google event cancellation failed (${updated.status}): ${await updated.text()}`);
     }
   } else {
-    const payload = calendarPayload(job.event_snapshot, timezone, false, invitees);
+    const payload = calendarPayload(job.event_snapshot, timezone, false, invitees, therapistContacts);
     const insertUrl = `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events${invitationsEnabled ? "?sendUpdates=all" : ""}`;
     const inserted = await googleRequest(insertUrl, accessToken, {
       method: "POST",
