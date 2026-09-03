@@ -976,9 +976,10 @@ const BOOKING_ACKNOWLEDGMENT_STATEMENTS = {
 };
 
 let state = { event:{...DEFAULT_EVENT, id:'demo-corporate-wellness-day'}, bookings:[], slots:[] };
-let selectedStart = null, channel = null, mode = 'admin', lastTherapistCode = '';
+let selectedStart = null, channel = null, pollTimer = null, mode = 'admin', lastTherapistCode = '';
 let existingBooking = null, rescheduleMode = false;
 let lockedTherapist = null;
+let therapistAccessToken = null;
 let adminSession = null, currentOrganizationId = null;
 
 const $ = id => document.getElementById(id);
@@ -1227,7 +1228,7 @@ function computeSlots(){
   state.slots=slots;
 }
 
-const PUBLIC_EVENT_COLS = 'id,public_token,company,location,event_date,start_time,end_time,session_min,buffer_min,therapists,therapist_names,breaks,therapist_code_hash,archived';
+const PUBLIC_EVENT_COLS = 'id,public_token,company,location,event_date,start_time,end_time,session_min,buffer_min,therapists,therapist_names,breaks,archived';
 function wantsFullEvent(){ const p=params(); return !(p.get('e') && !p.has('admin')); }
 async function loadEvent(id){
   const source = adminSession ? 'events' : 'public_events';
@@ -1273,8 +1274,20 @@ async function saveEvent(){
   return true;
 }
 async function loadBookings(full){
-  const cols = full ? '*' : 'slot_id, slot_start, therapist';
-  const { data, error } = await sb.from('bookings').select(cols).eq('event_id', state.event.id);
+  let data, error;
+  if(adminSession){
+    const cols = full ? '*' : 'slot_id, slot_start, therapist';
+    ({ data, error } = await sb.from('bookings').select(cols).eq('event_id', state.event.id));
+  } else if(mode==='therapist'){
+    if(!therapistAccessToken){ state.bookings=[]; return; }
+    ({ data, error } = await sb.rpc('get_therapist_roster',{
+      p_public_token:state.event.publicToken,
+      p_access_token:therapistAccessToken,
+      p_therapist:lockedTherapist
+    }));
+  } else {
+    ({ data, error } = await sb.rpc('public_booking_slots',{p_public_token:state.event.publicToken}));
+  }
   if(error){ console.error(error); state.bookings=[]; return; }
   state.bookings = (data||[]).map(mapBooking);
 }
@@ -1409,7 +1422,10 @@ async function genCode(){
 
 async function findBookingByEmail(email){
   if(!email || !email.includes('@')) return null;
-  const { data, error } = await sb.from('bookings').select('*').eq('event_id', state.event.id).ilike('email', email).limit(1);
+  const { data, error } = await sb.rpc('public_find_booking',{
+    p_public_token:state.event.publicToken,
+    p_email:email
+  });
   if(error){ console.error(error); return null; }
   return (data && data[0]) ? mapBooking(data[0]) : null;
 }
@@ -1439,7 +1455,8 @@ window.startReschedule=function(){
 window.keepBooking=function(){
   const b=existingBooking; hideExistingNotice();
   if(!b) return;
-  $('confirmationText').innerHTML=`You're all set — no change made. ${esc(employeeDisplayName(b.first,b.last))} is booked for <strong>${clock(b.start)}</strong> on ${esc(prettyDate(state.event.date))}. Please arrive five minutes early.<br><br><strong>Screenshot this screen so you have your time saved.</strong>`;
+  const enteredName=employeeDisplayName($('firstName').value,$('lastName').value);
+  $('confirmationText').innerHTML=`You're all set — no change made. ${enteredName?`${esc(enteredName)} is`: 'You are'} booked for <strong>${clock(b.start)}</strong> on ${esc(prettyDate(state.event.date))}. Please arrive five minutes early.<br><br><strong>Screenshot this screen so you have your time saved.</strong>`;
   $('success').style.display='block'; $('selectionSummary').style.display='none';
 };
 async function reserve(){
@@ -1471,24 +1488,29 @@ async function reserve(){
   const open=state.slots.find(s=>s.start===selectedStart && !slotBlockedByBreak(s) && !state.bookings.some(b=>b.slotId===s.id));
   if(!open){ alert('That time was just reserved. Please choose another time.'); await loadBookings(mode!=='client'); renderSlots(); return; }
   $('book').disabled=true;
-  const { error } = await sb.from('bookings').insert({
-    event_id:state.event.id, slot_id:open.id, therapist:open.therapist, slot_start:open.start,
-    first_name:first, last_name:last, last_initial:last.charAt(0).toUpperCase(), email, pregnancy, attendance:'Scheduled',
-    acknowledgment_version:BOOKING_ACKNOWLEDGMENT_VERSION,
-    acknowledgments,
-    acknowledged_by:acknowledgedBy
+  const wasRescheduling=!!(rescheduleMode && existingBooking);
+  const bookingRpc=wasRescheduling?'reschedule_public_booking':'create_public_booking';
+  const { error } = await sb.rpc(bookingRpc,{
+    p_public_token:state.event.publicToken,
+    p_slot_id:open.id,
+    p_therapist:open.therapist,
+    p_slot_start:open.start,
+    p_first_name:first,
+    p_last_name:last,
+    p_email:email,
+    p_medical_concern:pregnancy,
+    p_acknowledgment_version:BOOKING_ACKNOWLEDGMENT_VERSION,
+    p_acknowledgments:acknowledgments,
+    p_acknowledged_by:acknowledgedBy
   });
   if(error){
     updateBookingFormState();
-    if(error.code==='23505'){ alert('That time was just reserved. Please choose another time.'); }
+    if(/SLOT_TAKEN|SLOT_UNAVAILABLE|23505/i.test(error.message||'')){ alert('That time was just reserved. Please choose another time.'); }
+    else if(/ALREADY_BOOKED/i.test(error.message||'')){ alert('This email already has a booking. Use the existing-booking notice to move the appointment.'); }
     else { alert('Something went wrong saving your booking. Please try again.'); console.error(error); }
     await loadBookings(mode!=='client'); renderSlots(); return;
   }
-  let rescheduled=false;
-  if(rescheduleMode && existingBooking && existingBooking.id){
-    const del=await sb.from('bookings').delete().eq('id', existingBooking.id);
-    if(del.error){ console.error(del.error); } else { rescheduled=true; }
-  }
+  const rescheduled=wasRescheduling;
   const startVal=open.start;
   rescheduleMode=false; existingBooking=null; hideExistingNotice();
   await loadBookings(mode!=='client'); selectedStart=null; refreshUI();
@@ -1544,18 +1566,29 @@ function renderRoster(){
   $('roster').innerHTML=rows.length?rows.join(''):`<div class="empty">No schedule has been created.</div>`;
 }
 window.setStatus=async function(id,status){
-  const { error } = await sb.from('bookings').update({attendance:status}).eq('id', id);
+  const { error } = await sb.rpc('set_therapist_attendance',{
+    p_public_token:state.event.publicToken,
+    p_access_token:therapistAccessToken,
+    p_booking_id:id,
+    p_status:status
+  });
   if(error){ alert('Could not update attendance.'); return; }
   await loadBookings(true); refreshUI();
 };
 
-function setLive(on){
-  const txt=on?'Live — bookings sync in real time':'Offline';
+function setLive(on,secureRefresh=false){
+  const txt=on?(secureRefresh?'Secure — refreshes automatically':'Live — bookings sync in real time'):'Offline';
   ['liveDot','liveDot2'].forEach(id=>{ const el=$(id); if(el) el.classList.toggle('live',on); });
   ['liveText','liveText2'].forEach(id=>{ const el=$(id); if(el) el.textContent=txt; });
 }
 function subscribe(){
   if(channel){ sb.removeChannel(channel); channel=null; }
+  if(pollTimer){ clearInterval(pollTimer); pollTimer=null; }
+  if(!adminSession){
+    setLive(true,true);
+    pollTimer=setInterval(async()=>{ await loadBookings(mode!=='client'); refreshUI(); },10000);
+    return;
+  }
   channel=sb.channel('bk-'+state.event.id)
     .on('postgres_changes',{event:'*',schema:'public',table:'bookings'}, async (payload)=>{
       const row=payload.new||payload.old||{};
@@ -2592,18 +2625,14 @@ async function init(){
     document.title=`${state.event.company} therapist roster | Rosters`;
     showGate('THERAPIST ACCESS', 'Therapist sign-in', `Enter the therapist code or owner master code for <strong>${esc(state.event.company)}</strong>.`, async(code)=>{
       if(!code) return gateError('Please enter the code.');
-      const { data:access, error } = await sb.rpc('verify_therapist_access',{
+      const { data:access, error } = await sb.rpc('create_therapist_session',{
         p_public_token:state.event.publicToken,
         p_code_hash:await sha256(code)
       });
       if(error) return gateError('Could not verify the code. Please try again.');
-      if(access==='master'){
-        startTherapist(p.get('t'));
-        return;
-      }
-      if(access!=='event') return gateError('Incorrect code.');
-      const w=therapistWindow();
-      if(!w.ok) return gateError(w.reason);
+      if(access?.access==='outside_window') return gateError('This event code works only from 30 minutes before the event until 30 minutes after it ends.');
+      if(!access?.token || !['master','event'].includes(access.access)) return gateError('Incorrect code.');
+      therapistAccessToken=access.token;
       startTherapist(p.get('t'));
     });
     return;
