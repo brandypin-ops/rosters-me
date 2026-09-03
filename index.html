@@ -2022,7 +2022,7 @@ function renderFinalEvRecord(record){
     ...evRecordNotes.map(note=>({title:'Correction note added',date:note.created_at,note:note.note}))
   ].sort((a,b)=>new Date(b.date)-new Date(a.date));
   const auditHtml=audit.map(item=>`<div class="records-audit-item"><span class="records-audit-dot"></span><div><strong>${esc(item.title)}</strong>${esc(evRecordDate(item.date))}${item.note?`<div style="color:var(--ink);margin-top:3px">${esc(item.note)}</div>`:''}</div></div>`).join('');
-  target.innerHTML=`<div class="records-shell"><main class="records-main"><div class="records-lock"><div class="records-lock-copy"><div class="records-lock-icon">🔒</div><div><strong>${sealed?'Official record finalized':'Official snapshot captured'}</strong><p>Stored in Supabase and visible here in Rosters. The original record cannot be overwritten.</p></div></div>${sealed?`<button class="mini" type="button" onclick="openEvRecordPdf(false)">View locked PDF</button>`:`<button class="btn" type="button" onclick="finishEvRecordPdfButton(this)">Finish PDF</button>`}</div>${recordsTableCard(bookings)}</main><aside class="records-side"><section class="records-card"><div class="records-file-head"><div class="records-file-icon">PDF</div><div><div class="records-file-name">${esc(recordFileName(record))}</div><div class="records-file-meta">${sealed?`Finalized ${esc(evRecordDate(record.finalized_at))}<br>Official, read-only copy`:'PDF creation needs to finish'}</div></div></div><div class="records-file-actions">${sealed?`<button class="btn" type="button" onclick="openEvRecordPdf(false)">View record</button><button class="mini" type="button" onclick="openEvRecordPdf(true)">Download PDF ↓</button>`:`<button class="btn" type="button" onclick="finishEvRecordPdfButton(this)">Create locked PDF</button>`}</div></section><section class="records-card"><p class="label">AUDIT HISTORY</p><div class="records-audit">${auditHtml}</div></section><section class="records-card"><p class="label">CORRECTION NOTE</p><h3>Add clarification</h3><p style="font-size:9px;color:var(--muted);line-height:1.45;margin:0">A new dated note is added. The locked original stays unchanged.</p><textarea class="records-note" id="evRecordNote" placeholder="Write a factual correction or clarification"></textarea><button class="mini" style="width:100%" type="button" onclick="addEvRecordNote(this)">Add dated note</button><div class="records-note-status" id="evRecordNoteStatus"></div></section></aside></div>`;
+  target.innerHTML=`<div class="records-shell"><main class="records-main"><div class="records-lock"><div class="records-lock-copy"><div class="records-lock-icon">🔒</div><div><strong>${sealed?'Official record finalized':'Official snapshot captured'}</strong><p>Stored in Supabase and visible here in Rosters. The original record cannot be overwritten.</p></div></div>${sealed?`<button class="mini" type="button" onclick="openEvRecordPdf(false)">View locked PDF</button>`:`<button class="btn" type="button" onclick="finishEvRecordPdfButton(this)">Finish PDF</button>`}</div>${recordsTableCard(bookings)}</main><aside class="records-side"><section class="records-card"><div class="records-file-head"><div class="records-file-icon">PDF</div><div><div class="records-file-name">${esc(recordFileName(record))}</div><div class="records-file-meta">${sealed?`Finalized ${esc(evRecordDate(record.finalized_at))}<br>Official, read-only copy`:'PDF creation needs to finish'}</div></div></div><div class="records-file-actions">${sealed?`<button class="btn" type="button" onclick="openEvRecordPdf(false)">View record</button><button class="mini" type="button" onclick="openEvRecordPdf(true)">Download PDF ↓</button><button class="mini" type="button" onclick="rebuildEvRecordPdf(this)">Rebuild PDF from locked data</button><p style="font-size:8px;color:var(--muted);line-height:1.4;margin:0">Use this only if the PDF is blank or damaged. The locked record data does not change.</p>`:`<button class="btn" type="button" onclick="finishEvRecordPdfButton(this)">Create locked PDF</button>`}</div></section><section class="records-card"><p class="label">AUDIT HISTORY</p><div class="records-audit">${auditHtml}</div></section><section class="records-card"><p class="label">CORRECTION NOTE</p><h3>Add clarification</h3><p style="font-size:9px;color:var(--muted);line-height:1.45;margin:0">A new dated note is added. The locked original stays unchanged.</p><textarea class="records-note" id="evRecordNote" placeholder="Write a factual correction or clarification"></textarea><button class="mini" style="width:100%" type="button" onclick="addEvRecordNote(this)">Add dated note</button><div class="records-note-status" id="evRecordNoteStatus"></div></section></aside></div>`;
 }
 window.finalizeEvRecord=async function(id,button){
   const ev=allEvents.find(item=>item.id===id); if(!ev) return;
@@ -2061,6 +2061,18 @@ async function finishEvRecordPdf(record){
   evRecord=completed.data;
   return evRecord;
 }
+window.rebuildEvRecordPdf=async function(button){
+  if(!evRecord?.finalized_at||!evRecord?.pdf_path){ alert('There is no finalized PDF to rebuild.'); return; }
+  if(!confirm('Rebuild this PDF from the locked record data? The official snapshot and its integrity fingerprint will not change.')) return;
+  const label=button.textContent;button.disabled=true;button.textContent='Rebuilding PDF…';
+  try{
+    const blob=await buildEventRecordPdf(evRecord);
+    const uploaded=await sb.storage.from('event-records').upload(evRecord.pdf_path,blob,{contentType:'application/pdf',upsert:true,cacheControl:'0'});
+    if(uploaded.error) throw uploaded.error;
+    button.textContent='PDF rebuilt';
+    setTimeout(()=>{button.disabled=false;button.textContent=label;},1600);
+  }catch(error){ console.error(error);alert(error.message||'The PDF could not be rebuilt.');button.disabled=false;button.textContent=label; }
+};
 window.openEvRecordPdf=async function(download){
   if(!evRecord?.pdf_path){ alert('The PDF has not been created yet.'); return; }
   const opened=download?null:window.open('about:blank','_blank');
@@ -2171,7 +2183,7 @@ function rasterImagesToPdf(images,imageWidth,imageHeight){
   beginObject(2);push(`<< /Type /Pages /Count ${images.length} /Kids [${images.map((_,i)=>`${3+i*3} 0 R`).join(' ')}] >>\nendobj\n`);
   images.forEach((image,index)=>{
     const pageObject=3+index*3,imageObject=pageObject+1,contentObject=pageObject+2,imageName=`Img${index+1}`;
-    beginObject(pageObject);push(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /XObject << /${imageName} ${imageObject} 0 R >> >> >> /Contents ${contentObject} 0 R >>\nendobj\n`);
+    beginObject(pageObject);push(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /XObject << /${imageName} ${imageObject} 0 R >> >> /Contents ${contentObject} 0 R >>\nendobj\n`);
     beginObject(imageObject);push(`<< /Type /XObject /Subtype /Image /Width ${imageWidth} /Height ${imageHeight} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${image.length} >>\nstream\n`);push(image);push('\nendstream\nendobj\n');
     const content=`q\n612 0 0 792 0 0 cm\n/${imageName} Do\nQ\n`;
     beginObject(contentObject);push(`<< /Length ${encoder.encode(content).length} >>\nstream\n${content}endstream\nendobj\n`);
