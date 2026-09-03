@@ -84,14 +84,74 @@
     #gate .btn{width:100%;margin-top:14px;justify-content:center;text-align:center}
     #gateMsg{margin-top:12px;font-size:14px;min-height:18px}
     #gateMsg.err{color:var(--danger)}
-    .event-row{border:1px solid var(--line);background:#fff;border-radius:12px;margin-bottom:10px;display:block;overflow:hidden}
-    .event-row.selected{border-color:#2f4429;background:#eef3e9}
-    .event-summary{padding:12px 14px;display:flex;align-items:center;gap:12px}
-    .event-main{flex:1;min-width:0;display:flex;align-items:center;gap:14px;cursor:pointer}
-    .event-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:flex-end}
-    .event-actions .open-booking{background:var(--accent);border-color:var(--accent);color:#fff}
-    .event-actions .ledger-toggle.active{background:var(--accent-2);border-color:#9eb0a4;color:var(--accent)}
-    .event-ledger{border-top:1px solid #c7d4ca;background:#eef3e9;padding:18px}
+    #events .events-page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:18px}
+    #events .events-page-head h2{font-family:Georgia,serif;font-size:38px;font-weight:500;line-height:1.05;margin:5px 0 7px}
+    #events .events-page-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+    #events .events-archive-toggle{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
+    #events .events-archive-toggle input{width:auto;margin:0}
+    #events .events-workspace{display:grid;grid-template-columns:minmax(650px,1fr) 310px;gap:16px;align-items:start}
+    #events .events-panel{background:white;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+    #events .events-calendar-toolbar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 18px;border-bottom:1px solid var(--line)}
+    #events .events-month-controls{display:flex;align-items:center;gap:7px}
+    #events .events-month-title{font-family:Georgia,serif;font-size:22px;margin-left:4px;white-space:nowrap}
+    #events .events-calendar-weekdays,#events .events-month-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+    #events .events-calendar-weekdays{border-bottom:1px solid var(--line);background:#fdfcf9}
+    #events .events-weekday{padding:9px 10px;color:#8a857d;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+    #events .events-day{appearance:none;border:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:white;min-height:108px;padding:8px;text-align:left;cursor:pointer;position:relative;color:var(--ink)}
+    #events .events-day:nth-child(7n){border-right:0}
+    #events .events-day:nth-last-child(-n+7){border-bottom:0}
+    #events .events-day:hover{background:#fbfcf9}
+    #events .events-day.muted{background:#fcfbf8;color:#aaa69f}
+    #events .events-day.selected{background:var(--accent-2);box-shadow:inset 0 0 0 2px var(--accent)}
+    #events .events-date-number{width:26px;height:26px;display:grid;place-items:center;border-radius:50%;font-size:11px;font-weight:800;margin-bottom:4px}
+    #events .events-day.today .events-date-number{background:var(--accent);color:white}
+    #events .events-chip{display:flex;align-items:center;gap:5px;width:100%;border-radius:7px;padding:6px 7px;margin-top:4px;background:#e3ede4;font-size:9px;font-weight:750;color:#383a37;overflow:hidden}
+    #events .events-chip.archived{background:#f0ece6;color:#8b867d}
+    #events .events-chip-time{color:var(--accent);font-weight:850;white-space:nowrap}
+    #events .events-chip-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    #events .events-more{font-size:9px;color:var(--muted);margin:5px 0 0 5px;font-weight:750}
+    #events .events-agenda{position:sticky;top:76px}
+    #events .events-agenda-head{padding:18px;border-bottom:1px solid var(--line)}
+    #events .events-agenda-date{font-family:Georgia,serif;font-size:23px;margin-top:5px}
+    #events .events-agenda-count{color:var(--muted);font-size:11px;margin-top:5px}
+    #events .events-agenda-list{padding:9px}
+    #events .events-agenda-empty{padding:34px 17px;text-align:center;color:var(--muted);font-size:11px;line-height:1.55}
+    #events .events-agenda-empty strong{display:block;color:var(--ink);font-size:13px;margin-bottom:4px}
+    #events .events-agenda-card{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:8px;background:white;cursor:pointer;text-align:left;width:100%;color:var(--ink)}
+    #events .events-agenda-card:hover{border-color:#a8b9ad;background:#fbfdfb}
+    #events .events-agenda-time{display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--accent);font-size:10px;font-weight:850}
+    #events .events-status{font-size:8px;font-weight:850;text-transform:uppercase;letter-spacing:.05em;background:var(--accent-2);color:var(--accent);padding:4px 6px;border-radius:999px}
+    #events .events-status.past{background:#f0ece6;color:#817c72}
+    #events .events-agenda-card h3{font-family:Georgia,serif;font-size:18px;font-weight:500;margin:9px 0 0}
+    #events .events-agenda-card p{font-size:10px;color:var(--muted);line-height:1.45;margin:4px 0 0}
+    #events .events-open-row{display:flex;align-items:center;justify-content:space-between;margin-top:10px;font-size:10px;font-weight:800;color:var(--accent)}
+    #events .events-detail-view{display:none}
+    #events .events-detail-view.active{display:block}
+    #events .events-calendar-view.hidden{display:none}
+    #events .events-back{border:0;background:transparent;color:var(--accent);font-weight:800;padding:0;cursor:pointer;margin:0 0 14px}
+    #events .events-detail-hero{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding:21px 22px}
+    #events .events-detail-hero h2{font-family:Georgia,serif;font-size:31px;font-weight:500;margin:5px 0 0}
+    #events .events-detail-meta{display:flex;gap:18px;flex-wrap:wrap;margin-top:15px;color:var(--muted);font-size:10px}
+    #events .events-detail-meta strong{display:block;color:var(--ink);font-size:12px;margin-bottom:2px}
+    #events .events-detail-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:flex-end;max-width:530px}
+    #events .events-detail-tabs{display:flex;gap:3px;padding:0 18px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:#fdfcf9}
+    #events .events-detail-tabs button{border:0;background:transparent;padding:12px 13px;color:var(--muted);font-size:11px;font-weight:750;cursor:pointer;border-bottom:2px solid transparent}
+    #events .events-detail-tabs button.active{color:var(--accent);border-bottom-color:var(--accent)}
+    #events .events-detail-body{padding:16px}
+    #events .events-overview-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:14px}
+    #events .events-subpanel{border:1px solid var(--line);border-radius:13px;padding:16px;background:white}
+    #events .events-subpanel h3{font-family:Georgia,serif;font-size:21px;font-weight:500;margin:0 0 13px}
+    #events .events-info-list{display:grid;gap:10px}
+    #events .events-info-line{display:grid;grid-template-columns:120px 1fr;gap:12px;font-size:11px;line-height:1.45;padding-bottom:9px;border-bottom:1px solid #f0ece6}
+    #events .events-info-line:last-child{border:0;padding-bottom:0}
+    #events .events-info-line span:first-child{color:var(--muted);font-weight:700}
+    #events .events-quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    #events .events-metric-card{padding:12px;background:var(--soft);border-radius:10px}
+    #events .events-metric-card span{display:block;color:var(--muted);font-size:9px;font-weight:750;margin-bottom:3px}
+    #events .events-metric-card strong{font-size:16px}
+    #events .events-next-actions{display:grid;gap:7px;margin-top:12px}
+    #events .events-next-actions .btn{width:100%;display:flex;justify-content:space-between;align-items:center;text-align:left;font-size:10px;padding:9px 11px}
+    .event-ledger{background:#eef3e9;padding:0}
     .event-detail-grid{display:grid;grid-template-columns:minmax(280px,390px) minmax(320px,1fr);gap:16px;align-items:start}
     .event-ledger-panel{max-width:390px;background:white;border:1px solid #d4ddd6;border-radius:13px;padding:16px 18px}
     .event-summary-panel{background:white;border:1px solid #d4ddd6;border-radius:13px;padding:16px 18px}
@@ -251,6 +311,10 @@
     #admin .editor-url-status span{display:block;color:#5f6b63;font-size:8px;margin-top:4px;line-height:1.4}
     #admin .editor-summary-actions{display:grid;gap:7px;padding:12px 18px;border-top:1px solid var(--line)}
     #admin .editor-summary-actions .btn{width:100%;font-size:10px;padding:9px 10px}
+    @media(max-width:1040px){
+      #events .events-workspace{grid-template-columns:1fr}
+      #events .events-agenda{position:static}
+    }
     @media(max-width:760px){
       .shell{padding:14px}
       header{align-items:flex-start;flex-direction:column;gap:12px}
@@ -266,10 +330,26 @@
       .roster-item{grid-template-columns:72px 1fr}
       .status-actions{grid-column:1/-1;justify-content:flex-start}
       .slots{grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px}
-      .event-summary{align-items:stretch;flex-direction:column}
-      .event-actions{display:grid;grid-template-columns:1fr 1fr;width:100%}
-      .event-actions button{width:100%}
-      .event-actions .open-booking{grid-column:1/-1}
+      #events .events-page-head{align-items:flex-start;flex-direction:column}
+      #events .events-page-actions{width:100%;justify-content:space-between}
+      #events .events-page-actions .btn{margin-left:auto}
+      #events .events-workspace{grid-template-columns:1fr}
+      #events .events-agenda{position:static}
+      #events .events-calendar-toolbar{padding:12px}
+      #events .events-month-title{font-size:18px}
+      #events .events-weekday{padding:7px 3px;text-align:center}
+      #events .events-day{min-height:70px;padding:5px}
+      #events .events-date-number{width:22px;height:22px;font-size:10px}
+      #events .events-chip{padding:4px 3px}
+      #events .events-chip-name{display:none}
+      #events .events-chip-time{font-size:8px}
+      #events .events-more{display:none}
+      #events .events-detail-hero{flex-direction:column;padding:17px}
+      #events .events-detail-actions{justify-content:flex-start;max-width:none}
+      #events .events-detail-actions .btn,#events .events-detail-actions .mini{flex:1}
+      #events .events-detail-tabs{overflow:auto;padding:0 8px}
+      #events .events-overview-grid{grid-template-columns:1fr}
+      #events .events-info-line{grid-template-columns:1fr;gap:3px}
       .event-detail-grid{grid-template-columns:1fr}
       .event-ledger-panel{max-width:none}
       .ti-form-grid{grid-template-columns:1fr;gap:8px}
@@ -489,26 +569,57 @@
   </section>
 
   <section id="events" class="view active">
-    <div class="hero">
-      <div class="card">
-        <p class="label">EVENT LINE-UP</p>
-        <h2>Every event, at a glance.</h2>
-        <p class="sub">See all your events as a list or a calendar. Track the money for each one in the ledger, kept off to the side.</p>
-        <div class="actions"><button class="btn" id="createEvent" type="button">+ Create event</button></div>
-      </div>
-      <div class="card">
-        <p class="label">VIEW</p>
-        <div style="display:inline-flex;border:1px solid #e2dccc;border-radius:10px;overflow:hidden;margin-top:8px">
-          <button class="mini" id="evTabList" style="border:none;border-radius:0;background:#efe9db;font-weight:700">List</button>
-          <button class="mini" id="evTabCal" style="border:none;border-radius:0;background:transparent">Calendar</button>
+    <div class="events-calendar-view" id="evCalendarView">
+      <div class="events-page-head">
+        <div>
+          <p class="label">SCHEDULE</p>
+          <h2>Events</h2>
+          <p class="sub">Select a date, then open the event you need.</p>
         </div>
-        <label style="display:block;margin-top:12px;font-size:13px;color:#6b675c;cursor:pointer"><input type="checkbox" id="evArchToggle" style="vertical-align:-2px;margin-right:6px">Show archived<span id="evArchCount"></span></label>
+        <div class="events-page-actions">
+          <label class="events-archive-toggle"><input type="checkbox" id="evArchToggle">Show archived<span id="evArchCount"></span></label>
+          <button class="btn" id="createEvent" type="button">+ Create event</button>
+        </div>
       </div>
+
+      <div class="events-workspace">
+        <section class="events-panel" aria-label="Event calendar">
+          <div class="events-calendar-toolbar">
+            <div class="events-month-controls">
+              <button class="mini" id="evPrevMonth" type="button" aria-label="Previous month">←</button>
+              <button class="mini" id="evNextMonth" type="button" aria-label="Next month">→</button>
+              <div class="events-month-title" id="evMonthTitle">Month</div>
+            </div>
+            <button class="mini" id="evToday" type="button">Today</button>
+          </div>
+          <div class="events-calendar-weekdays" aria-hidden="true">
+            <div class="events-weekday">Sun</div><div class="events-weekday">Mon</div><div class="events-weekday">Tue</div><div class="events-weekday">Wed</div><div class="events-weekday">Thu</div><div class="events-weekday">Fri</div><div class="events-weekday">Sat</div>
+          </div>
+          <div class="events-month-grid" id="evMonthGrid"></div>
+        </section>
+
+        <aside class="events-panel events-agenda" aria-label="Selected day agenda">
+          <div class="events-agenda-head">
+            <p class="label">DAILY AGENDA</p>
+            <div class="events-agenda-date" id="evAgendaDate">Select a date</div>
+            <div class="events-agenda-count" id="evAgendaCount"></div>
+          </div>
+          <div class="events-agenda-list" id="evAgendaList"></div>
+        </aside>
+      </div>
+      <div id="evEmpty" class="empty" style="display:none;margin-top:16px">No events yet. Use Create event above.</div>
     </div>
-    <div class="card">
-      <div id="evList"></div>
-      <div id="evCal" style="display:none"></div>
-      <div id="evEmpty" class="empty" style="display:none">No events yet. Use Create event above.</div>
+
+    <div class="events-detail-view" id="evDetailView">
+      <button class="events-back" id="evBackCalendar" type="button">← Back to calendar</button>
+      <article class="events-panel">
+        <div id="evDetailHeader"></div>
+        <nav class="events-detail-tabs" aria-label="Event sections">
+          <button class="active" type="button" data-ev-detail-tab="overview">Overview</button>
+          <button type="button" data-ev-detail-tab="ledger">Ledger &amp; summary</button>
+        </nav>
+        <div class="events-detail-body" id="evDetailBody"></div>
+      </article>
     </div>
   </section>
 
@@ -1123,6 +1234,11 @@ async function generate(){
   localStorage.setItem('kneadCurrentEvent', state.event.id);
   await loadBookings(true); computeSlots(); subscribe(); selectedStart=null; refreshUI();
   if(uid!==base) alert(`Heads up: an event named "${state.event.company}" already existed, so this one's link is unique:\n\n${employeeBookingUrl()}`);
+  evSelectedDate=state.event.date;
+  const savedDate=eventDate(state.event.date);
+  evCalMonth=new Date(savedDate.getFullYear(),savedDate.getMonth(),1);
+  evSelId=state.event.id;
+  evDetailTab='overview';
   showView('events');
 }
 
@@ -1535,8 +1651,8 @@ window.tiDelete = async function(id){
 };
 
 /* ---------- Events line-up + ledger ---------- */
-let allEvents=[], evSelId=null, evView='list', evCalMonth=new Date(), evShowArchived=false;
-function visibleEvents(){ return allEvents.filter(e=> evShowArchived ? e.archived : !e.archived); }
+let allEvents=[], evSelId=null, evCalMonth=new Date(), evSelectedDate='', evDetailTab='overview', evShowArchived=false;
+function visibleEvents(){ return allEvents.filter(e=>!e.archived||evShowArchived); }
 const fmtMoney=n=>{ const v=Math.round(n); return (v<0?'-$':'$')+Math.abs(v).toLocaleString(); };
 const fmtH=x=> (Math.round(x*10)/10);
 async function loadAllEvents(){
@@ -1553,8 +1669,9 @@ async function loadAllEvents(){
     return {
       id:e.id, publicToken:e.public_token||null, company:e.company||'Untitled', location:e.location||'',
       date:e.event_date||'', start:e.start_time||'10:00', end:e.end_time||'12:00',
+      session:e.session_minutes||15, buffer:e.buffer_minutes||0,
       therapists:therapistCount, therapistNames, therapistCode:e.therapist_code||'',
-      finance:(e.finance&&typeof e.finance==='object')?e.finance:{}, archived:!!e.archived,
+      breaks:Array.isArray(e.breaks)?e.breaks:[], finance:(e.finance&&typeof e.finance==='object')?e.finance:{}, archived:!!e.archived,
       calendarInvitesEnabled:!!e.calendar_invites_enabled,
       client:(e.client&&typeof e.client==='object'&&!Array.isArray(e.client))?e.client:{}
     };
@@ -1609,35 +1726,25 @@ async function renderEventsView(){
   const arch=allEvents.filter(e=>e.archived).length;
   if($('evArchCount')) $('evArchCount').textContent = arch ? ` (${arch})` : '';
   const vis=visibleEvents();
-  if(!vis.length){ $('evList').innerHTML=''; $('evCal').innerHTML=''; $('evEmpty').style.display='block'; $('evEmpty').textContent=evShowArchived?'No archived events.':'No events yet. Use Create event above.'; return; }
-  $('evEmpty').style.display='none';
-  if(evSelId===null || !vis.some(e=>e.id===evSelId)) evSelId=vis[0].id;
-  renderEvList(); renderEvCal(); setEvView(evView);
-}
-function renderEvList(){
-  $('evList').innerHTML=visibleEvents().map(ev=>{
-    const on=ev.id===evSelId;
-    return `<div class="event-row${on?' selected':''}">
-      <div class="event-summary">
-        <div class="event-main" onclick="toggleEvLedger('${ev.id}')">
-          <div style="min-width:50px"><div style="font-size:12px;color:#8a8574">${esc(evMonLabel(ev))}</div><div style="font-size:20px;font-weight:800;line-height:1">${evDayNum(ev)}</div></div>
-          <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:700;margin-bottom:3px">${esc(ev.company)}${ev.location?' · '+esc(ev.location):''}</div>
-          <div style="font-size:13px;color:#6b675c">${evTimeLabel(ev)} · ${ev.therapists} therapist${ev.therapists>1?'s':''}</div>
-          <div style="font-size:12px;color:#817c72;margin-top:3px">${ev.therapists===1?'Therapist':'Therapists'}: ${ev.therapistNames.map(esc).join(', ')}</div></div>
-        </div>
-        <div class="event-actions">
-          <button class="mini open-booking" onclick="openBookingPage('${ev.id}')">Open booking page ↗</button>
-          <button class="mini" onclick="openTherapistPage('${ev.id}')">Therapist view ↗</button>
-          <button class="mini ledger-toggle${on?' active':''}" onclick="toggleEvLedger('${ev.id}')">Ledger ${on?'▲':'▼'}</button>
-          <button class="mini" onclick="copyBookingPage('${ev.id}',this)">Copy link</button>
-          <button class="mini" onclick="duplicateEv('${ev.id}')">Duplicate</button>
-          <button class="mini" onclick="editEv('${ev.id}')">Edit</button>
-        </div>
-      </div>
-      ${on?`<div class="event-ledger" id="eventLedger-${ev.id}"></div>`:''}
-    </div>`;
-  }).join('');
-  if(evSelId) renderEvLedger();
+  if(!vis.length){
+    evSelId=null;
+    $('evEmpty').style.display='block';
+    $('evEmpty').textContent='No events yet. Use Create event above.';
+  } else {
+    $('evEmpty').style.display='none';
+    if(!evSelectedDate){
+      const today=dateKey(new Date());
+      const firstUpcoming=vis.find(ev=>ev.date>=today)||vis.find(ev=>ev.date);
+      evSelectedDate=vis.some(ev=>ev.date===today)?today:(firstUpcoming?.date||today);
+      const initial=eventDate(evSelectedDate);
+      evCalMonth=new Date(initial.getFullYear(),initial.getMonth(),1);
+    }
+  }
+  if(evSelId&&!vis.some(ev=>ev.id===evSelId)) evSelId=null;
+  renderEvCalendar();
+  renderEvAgenda();
+  if(evSelId) renderEvDetail();
+  else showEvCalendar();
 }
 window.openBookingPage=function(id){
   const ev=allEvents.find(item=>item.id===id); if(!ev) return;
@@ -1655,27 +1762,101 @@ window.copyBookingPage=async function(id,button){
     setTimeout(()=>button.textContent=label,1500);
   }catch{ alert('Copy this booking link:\n'+employeeBookingUrl(ev)); }
 };
-function renderEvCal(){
-  const y=evCalMonth.getFullYear(), m=evCalMonth.getMonth();
-  const first=new Date(y,m,1).getDay(), dim=new Date(y,m+1,0).getDate();
-  const byDay={};
-  visibleEvents().forEach(ev=>{ if(ev.date){ const d=new Date(ev.date+'T12:00:00'); if(d.getFullYear()===y&&d.getMonth()===m){ (byDay[d.getDate()]=byDay[d.getDate()]||[]).push(ev); } } });
-  let cells='';
-  for(let i=0;i<first;i++) cells+='<div></div>';
-  for(let d=1;d<=dim;d++){
-    const evs=byDay[d]||[], has=evs.length>0;
-    const dot=has?`<span style="display:block;margin-top:3px;font-size:11px;color:#2f4429;font-weight:700">●${evs.length>1?' '+evs.length:''}</span>`:'';
-    const click=has?`onclick="selectEv('${evs[0].id}');setEvView('list')"`:'';
-    cells+=`<div ${click} style="min-height:48px;border:1px solid #e6e0d2;border-radius:8px;padding:5px 7px;background:${has?'#fff':'#faf7f0'};cursor:${has?'pointer':'default'}"><span style="font-size:12px;color:#6b675c">${d}</span>${dot}</div>`;
-  }
-  const head=['S','M','T','W','T','F','S'].map(x=>`<div style="text-align:center;font-size:11px;color:#8a8574;padding-bottom:4px">${x}</div>`).join('');
-  $('evCal').innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-    <button class="mini" onclick="evMonthShift(-1)">‹ Prev</button>
-    <strong style="font-size:15px">${evCalMonth.toLocaleDateString(undefined,{month:'long',year:'numeric'})}</strong>
-    <button class="mini" onclick="evMonthShift(1)">Next ›</button></div>
-    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px">${head}${cells}</div>`;
+window.copyEventSummary=async function(id,button){
+  const ev=allEvents.find(item=>item.id===id); if(!ev) return;
+  try{
+    await navigator.clipboard.writeText(eventSummaryText(ev));
+    const label=button?.textContent;
+    if(button){ button.textContent='Copied'; setTimeout(()=>button.textContent=label,1500); }
+  }catch{ alert('Copy this event summary:\n\n'+eventSummaryText(ev)); }
+};
+function dateKey(date){
+  return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
 }
-window.evMonthShift=function(n){ evCalMonth=new Date(evCalMonth.getFullYear(), evCalMonth.getMonth()+n, 1); renderEvCal(); };
+function eventDate(value){
+  const parsed=value?new Date(value+'T12:00:00'):new Date();
+  return Number.isNaN(parsed.getTime())?new Date():parsed;
+}
+function evStatus(ev){
+  if(ev.archived) return ['Archived','past'];
+  const today=dateKey(new Date());
+  if(ev.date<today) return ['Completed','past'];
+  if(ev.date===today) return ['Today',''];
+  return ['Upcoming',''];
+}
+function renderEvCalendar(){
+  const y=evCalMonth.getFullYear(), m=evCalMonth.getMonth();
+  $('evMonthTitle').textContent=evCalMonth.toLocaleDateString(undefined,{month:'long',year:'numeric'});
+  const byDate={};
+  visibleEvents().forEach(ev=>{ if(ev.date) (byDate[ev.date]=byDate[ev.date]||[]).push(ev); });
+  Object.values(byDate).forEach(events=>events.sort((a,b)=>minutes(a.start)-minutes(b.start)));
+  const first=new Date(y,m,1), gridStart=new Date(y,m,1-first.getDay());
+  const today=dateKey(new Date());
+  let cells='';
+  for(let i=0;i<42;i++){
+    const cellDate=new Date(gridStart); cellDate.setDate(gridStart.getDate()+i);
+    const key=dateKey(cellDate), evs=byDate[key]||[], muted=cellDate.getMonth()!==m;
+    const chips=evs.slice(0,2).map(ev=>`<span class="events-chip${ev.archived?' archived':''}"><span class="events-chip-time">${esc(clock(minutes(ev.start)).replace(' AM','a').replace(' PM','p'))}</span><span class="events-chip-name">${esc(ev.company)}</span></span>`).join('');
+    cells+=`<button class="events-day${muted?' muted':''}${key===evSelectedDate?' selected':''}${key===today?' today':''}" type="button" data-event-date="${key}" aria-label="${cellDate.toLocaleDateString(undefined,{month:'long',day:'numeric',year:'numeric'})}, ${evs.length} event${evs.length===1?'':'s'}"><span class="events-date-number">${cellDate.getDate()}</span>${chips}${evs.length>2?`<span class="events-more">+${evs.length-2} more</span>`:''}</button>`;
+  }
+  $('evMonthGrid').innerHTML=cells;
+  $('evMonthGrid').querySelectorAll('[data-event-date]').forEach(button=>button.addEventListener('click',()=>selectEvDate(button.dataset.eventDate)));
+}
+function renderEvAgenda(){
+  const selected=eventDate(evSelectedDate||dateKey(evCalMonth));
+  $('evAgendaDate').textContent=selected.toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'});
+  const events=visibleEvents().filter(ev=>ev.date===evSelectedDate).sort((a,b)=>minutes(a.start)-minutes(b.start));
+  $('evAgendaCount').textContent=events.length?`${events.length} event${events.length===1?'':'s'} · ordered by time`:'No events scheduled';
+  $('evAgendaList').innerHTML=events.length?events.map(ev=>{
+    const [status,statusClass]=evStatus(ev);
+    const names=ev.therapistNames.filter(Boolean).join(', ')||`${ev.therapists} therapist${ev.therapists===1?'':'s'}`;
+    return `<button class="events-agenda-card" type="button" onclick="openEvDetail('${ev.id}')"><span class="events-agenda-time"><span>${esc(evTimeLabel(ev))}</span><span class="events-status ${statusClass}">${status}</span></span><h3>${esc(ev.company)}</h3><p>${esc(ev.location||'Location not added')}<br>${esc(names)}</p><span class="events-open-row"><span>Open event</span><span>→</span></span></button>`;
+  }).join(''):`<div class="events-agenda-empty"><strong>Nothing scheduled</strong>Select another date or create a new event.<div style="margin-top:12px"><button class="mini" type="button" onclick="createEvent('${evSelectedDate}')">+ Create on this date</button></div></div>`;
+}
+function selectEvDate(value){
+  evSelectedDate=value;
+  const selected=eventDate(value);
+  evCalMonth=new Date(selected.getFullYear(),selected.getMonth(),1);
+  renderEvCalendar(); renderEvAgenda();
+}
+window.evMonthShift=function(amount){
+  evCalMonth=new Date(evCalMonth.getFullYear(),evCalMonth.getMonth()+amount,1);
+  const monthEvents=visibleEvents().filter(ev=>{
+    if(!ev.date) return false;
+    const date=eventDate(ev.date); return date.getFullYear()===evCalMonth.getFullYear()&&date.getMonth()===evCalMonth.getMonth();
+  }).sort((a,b)=>a.date.localeCompare(b.date)||minutes(a.start)-minutes(b.start));
+  evSelectedDate=monthEvents[0]?.date||dateKey(evCalMonth);
+  renderEvCalendar(); renderEvAgenda();
+};
+function showEvCalendar(){
+  $('evCalendarView').classList.remove('hidden');
+  $('evDetailView').classList.remove('active');
+}
+window.openEvDetail=function(id){
+  if(!allEvents.some(ev=>ev.id===id)) return;
+  evSelId=id; evDetailTab='overview'; renderEvDetail(); window.scrollTo({top:0,behavior:'smooth'});
+};
+window.setEvDetailTab=function(tab){
+  if(!['overview','ledger'].includes(tab)) return;
+  evDetailTab=tab; renderEvDetail();
+};
+function renderEvDetail(){
+  const ev=allEvents.find(item=>item.id===evSelId); if(!ev){ evSelId=null; showEvCalendar(); return; }
+  $('evCalendarView').classList.add('hidden');
+  $('evDetailView').classList.add('active');
+  const names=ev.therapistNames.filter(Boolean).join(', ')||`${ev.therapists} therapist${ev.therapists===1?'':'s'}`;
+  $('evBackCalendar').textContent=`← Back to ${evCalMonth.toLocaleDateString(undefined,{month:'long'})} calendar`;
+  $('evDetailHeader').innerHTML=`<div class="events-detail-hero"><div><p class="label">EVENT · ${esc(eventDate(ev.date).toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'}).toUpperCase())}</p><h2>${esc(ev.company)}</h2><div class="events-detail-meta"><div><strong>${esc(evTimeLabel(ev))}</strong>Time</div><div><strong>${esc(ev.location||'Not added')}</strong>Location</div><div><strong>${esc(names)}</strong>Therapist${ev.therapists===1?'':'s'}</div></div></div><div class="events-detail-actions"><button class="btn" type="button" onclick="openBookingPage('${ev.id}')">Open booking page ↗</button><button class="mini" type="button" onclick="openTherapistPage('${ev.id}')">Therapist view ↗</button><button class="mini" type="button" onclick="copyBookingPage('${ev.id}',this)">Copy link</button><button class="mini" type="button" onclick="duplicateEv('${ev.id}')">Duplicate</button><button class="mini" type="button" onclick="editEv('${ev.id}')">Edit</button></div></div>`;
+  document.querySelectorAll('[data-ev-detail-tab]').forEach(button=>button.classList.toggle('active',button.dataset.evDetailTab===evDetailTab));
+  if(evDetailTab==='ledger'){
+    $('evDetailBody').innerHTML=`<div class="event-ledger" id="eventLedger-${ev.id}"></div>`;
+    renderEvLedger();
+    return;
+  }
+  const client=ev.client||{};
+  const contact=[client.contact,client.phone].filter(Boolean).join(' · ')||'Not added';
+  $('evDetailBody').innerHTML=`<div class="events-overview-grid"><section class="events-subpanel"><h3>Event overview</h3><div class="events-info-list"><div class="events-info-line"><span>Point of contact</span><strong>${esc(contact)}</strong></div><div class="events-info-line"><span>Email</span><strong>${esc(client.email||'Not added')}</strong></div><div class="events-info-line"><span>Service address</span><strong>${esc(client.serviceAddress||ev.location||'Not added')}</strong></div><div class="events-info-line"><span>Arrival instructions</span><div>${esc(client.notes||'No arrival instructions added.')}</div></div><div class="events-info-line"><span>Therapist access</span><strong>${ev.therapistCode?'Code saved · Therapist link ready':'Therapist link ready'}</strong></div></div></section><aside class="events-subpanel"><h3>At a glance</h3><div class="events-quick-grid"><div class="events-metric-card"><span>Duration</span><strong>${fmtH(evDurationH(ev))} hrs</strong></div><div class="events-metric-card"><span>Therapists</span><strong>${ev.therapists}</strong></div><div class="events-metric-card"><span>Profit</span><strong>${fmtMoney(evProfit(ev))}</strong></div><div class="events-metric-card"><span>Calendar</span><strong>${ev.calendarInvitesEnabled?'Synced':'Not synced'}</strong></div></div><div class="events-next-actions"><button class="btn secondary" type="button" onclick="openTherapistPage('${ev.id}')"><span>Open therapist view</span><span>→</span></button><button class="btn secondary" type="button" onclick="copyEventSummary('${ev.id}',this)"><span>Copy event summary</span><span>⧉</span></button><button class="btn" type="button" onclick="setEvDetailTab('ledger')"><span>Open ledger & summary</span><span>→</span></button></div></aside></div>`;
+}
 function renderEvLedger(){
   const ev=allEvents.find(e=>e.id===evSelId); if(!ev) return;
   const target=$('eventLedger-'+ev.id); if(!target) return;
@@ -1777,11 +1958,12 @@ async function evLedgerSave(){
   const { error } = await sb.from('events').update({ finance: ev.finance }).eq('id', ev.id).eq('organization_id',currentOrganizationId);
   const note=$('finSaved'); if(note){ note.textContent = error ? 'Could not save.' : 'Saved.'; setTimeout(()=>{ if(note) note.textContent=''; }, 1500); }
 }
-window.selectEv=function(id){ evSelId=id; renderEvList(); };
-window.toggleEvLedger=function(id){ evSelId=evSelId===id?null:id; renderEvList(); };
-window.createEvent=function(){
+window.selectEv=function(id){ openEvDetail(id); };
+window.toggleEvLedger=function(id){ evSelId=id; evDetailTab='ledger'; renderEvDetail(); };
+window.createEvent=function(selectedDate=defaultDate()){
   if(channel){ sb.removeChannel(channel); channel=null; }
-  state.event={...DEFAULT_EVENT,id:'new-event',date:defaultDate(),therapistNames:['',''],breaks:[],client:{}};
+  const date=/^\d{4}-\d{2}-\d{2}$/.test(selectedDate)?selectedDate:defaultDate();
+  state.event={...DEFAULT_EVENT,id:'new-event',date,therapistNames:['',''],breaks:[],client:{}};
   state.bookings=[]; selectedStart=null; existingBooking=null; rescheduleMode=false; lastTherapistCode='';
   computeSlots(); hydrateForm();
   if($('therapistCode')) $('therapistCode').value='';
@@ -1818,14 +2000,6 @@ window.editEv=async function(id){
   await loadBookings(true); computeSlots(); subscribe(); hydrateForm(); refreshUI();
   showEditorSection('basics'); showView('admin'); window.scrollTo(0,0);
 };
-function setEvView(v){
-  evView=v; const isList=v==='list';
-  $('evList').style.display=isList?'block':'none';
-  $('evCal').style.display=isList?'none':'block';
-  $('evTabList').style.background=isList?'#efe9db':'transparent'; $('evTabList').style.fontWeight=isList?'700':'400';
-  $('evTabCal').style.background=isList?'transparent':'#efe9db'; $('evTabCal').style.fontWeight=isList?'400':'700';
-}
-window.setEvView=setEvView;
 
 /* ---------- Access gate ---------- */
 function showApp(){ $('gate').style.display='none'; $('app').style.display='block'; }
@@ -1937,7 +2111,7 @@ document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
   showView(t.dataset.view);
 }));
 $('settingsNav').addEventListener('click',()=>showView('calendarSettings'));
-$('createEvent').addEventListener('click',createEvent);
+$('createEvent').addEventListener('click',()=>createEvent());
 $('backToEvents').addEventListener('click',()=>showView('events'));
 $('editorCancel').addEventListener('click',()=>showView('events'));
 document.querySelectorAll('[data-editor-section]').forEach(button=>button.addEventListener('click',()=>showEditorSection(button.dataset.editorSection)));
@@ -1966,8 +2140,11 @@ $('editorPreviewBooking').addEventListener('click',()=>{
   window.open(employeeBookingUrl(state.event),'_blank','noopener');
 });
 $('editorCopySummary').addEventListener('click',()=>copy(eventSummaryText(eventEditorDraft()),$('editorCopySummary')));
-$('evTabList').addEventListener('click',()=>setEvView('list'));
-$('evTabCal').addEventListener('click',()=>setEvView('cal'));
+$('evPrevMonth').addEventListener('click',()=>evMonthShift(-1));
+$('evNextMonth').addEventListener('click',()=>evMonthShift(1));
+$('evToday').addEventListener('click',()=>selectEvDate(dateKey(new Date())));
+$('evBackCalendar').addEventListener('click',()=>{ evSelId=null; showEvCalendar(); window.scrollTo({top:0,behavior:'smooth'}); });
+document.querySelectorAll('[data-ev-detail-tab]').forEach(button=>button.addEventListener('click',()=>setEvDetailTab(button.dataset.evDetailTab)));
 $('evArchToggle').addEventListener('change',e=>{ evShowArchived=e.target.checked; evSelId=null; renderEventsView(); });
 $('tiAdd').addEventListener('click',tiSubmit);
 $('tiCancel').addEventListener('click',tiResetForm);
