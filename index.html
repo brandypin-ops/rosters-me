@@ -785,7 +785,7 @@
             <div class="booking-section-head"><div><h3>2. Your information</h3><p>Use your work email for this event.</p></div><span class="required-pill">Required</span></div>
             <div class="grid">
               <div class="field"><label for="firstName">First name</label><input id="firstName" autocomplete="given-name" /></div>
-              <div class="field"><label for="lastInitial">Last initial</label><input id="lastInitial" maxlength="1" /></div>
+              <div class="field"><label for="lastName">Last name</label><input id="lastName" autocomplete="family-name" maxlength="80" required /></div>
               <div class="field full"><label for="email">Work email</label><input id="email" type="email" autocomplete="email" placeholder="name@company.com" /></div>
             </div>
           </section>
@@ -947,7 +947,12 @@ function therapistRosterUrl(event=state.event,therapistNumber=null){
 }
 function isPublicToken(value){ return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value||''); }
 
-function mapBooking(r){ return { id:r.id, slotId:r.slot_id, therapist:r.therapist, start:r.slot_start, first:r.first_name, last:r.last_initial, email:r.email, pregnancy:r.pregnancy, attendance:r.attendance, acknowledgmentVersion:r.acknowledgment_version||null, acknowledgments:r.acknowledgments||{}, acknowledgedBy:r.acknowledged_by||'', acknowledgedAt:r.acknowledged_at||null }; }
+function bookingLastName(record){ return String(record?.last_name||record?.last_initial||record?.last||'').trim(); }
+function employeeDisplayName(first,last){
+  const given=String(first||'').trim(), family=String(last||'').trim();
+  return `${given}${family?` ${family}${family.length===1?'.':''}`:''}`.trim();
+}
+function mapBooking(r){ return { id:r.id, slotId:r.slot_id, therapist:r.therapist, start:r.slot_start, first:r.first_name, last:bookingLastName(r), email:r.email, pregnancy:r.pregnancy, attendance:r.attendance, acknowledgmentVersion:r.acknowledgment_version||null, acknowledgments:r.acknowledgments||{}, acknowledgedBy:r.acknowledged_by||'', acknowledgedAt:r.acknowledged_at||null }; }
 
 const EDITOR_SECTIONS={
   basics:['SECTION 1 OF 5','Basics & schedule','The event name, date, location, and working hours.'],
@@ -1199,13 +1204,13 @@ function bookingAcknowledgmentInputs(){
 }
 function bookingEmployeeDisplay(){
   const first=$('firstName').value.trim();
-  const last=$('lastInitial').value.trim().slice(0,1).toUpperCase();
-  return first ? `${first}${last?' '+last+'.':''}` : 'Not entered';
+  const last=$('lastName').value.trim();
+  return first ? employeeDisplayName(first,last) : 'Not entered';
 }
 function updateBookingFormState(){
   if(mode!=='client') return;
   const first=$('firstName').value.trim();
-  const last=$('lastInitial').value.trim().slice(0,1).toUpperCase();
+  const last=$('lastName').value.trim();
   const email=$('email').value.trim();
   const medical=$('pregnant').value;
   const detail=$('pregnantDetail').value.trim();
@@ -1346,12 +1351,12 @@ window.startReschedule=function(){
 window.keepBooking=function(){
   const b=existingBooking; hideExistingNotice();
   if(!b) return;
-  $('confirmationText').innerHTML=`You're all set — no change made. ${esc(b.first||'')} ${esc(b.last||'')}. is booked for <strong>${clock(b.start)}</strong> on ${esc(prettyDate(state.event.date))}. Please arrive five minutes early.<br><br><strong>Screenshot this screen so you have your time saved.</strong>`;
+  $('confirmationText').innerHTML=`You're all set — no change made. ${esc(employeeDisplayName(b.first,b.last))} is booked for <strong>${clock(b.start)}</strong> on ${esc(prettyDate(state.event.date))}. Please arrive five minutes early.<br><br><strong>Screenshot this screen so you have your time saved.</strong>`;
   $('success').style.display='block'; $('selectionSummary').style.display='none';
 };
 async function reserve(){
   const first=$('firstName').value.trim();
-  const last=$('lastInitial').value.trim().slice(0,1).toUpperCase();
+  const last=$('lastName').value.trim().replace(/\s+/g,' ');
   const email=$('email').value.trim(); const pregnantAnswer=$('pregnant').value;
   const pregnantDetail=$('pregnantDetail').value.trim();
   const acknowledgmentInputs=bookingAcknowledgmentInputs();
@@ -1360,7 +1365,7 @@ async function reserve(){
   if(pregnantAnswer==='Yes' && !pregnantDetail) return alert('Please tell us about your medical condition.');
   if(acknowledgmentInputs.some(el=>!el.checked)) return alert('Please confirm each acknowledgment before reserving your appointment.');
   const pregnancy = pregnantAnswer==='Yes' ? `Yes: ${pregnantDetail}` : 'No';
-  const acknowledgedBy=`${first} ${last}.`;
+  const acknowledgedBy=employeeDisplayName(first,last);
   const acknowledgments={
     accurate_today:true,
     not_medical_diagnosis_or_treatment:true,
@@ -1380,7 +1385,7 @@ async function reserve(){
   $('book').disabled=true;
   const { error } = await sb.from('bookings').insert({
     event_id:state.event.id, slot_id:open.id, therapist:open.therapist, slot_start:open.start,
-    first_name:first, last_initial:last, email, pregnancy, attendance:'Scheduled',
+    first_name:first, last_name:last, last_initial:last.charAt(0).toUpperCase(), email, pregnancy, attendance:'Scheduled',
     acknowledgment_version:BOOKING_ACKNOWLEDGMENT_VERSION,
     acknowledgments,
     acknowledged_by:acknowledgedBy
@@ -1400,10 +1405,10 @@ async function reserve(){
   rescheduleMode=false; existingBooking=null; hideExistingNotice();
   await loadBookings(mode!=='client'); selectedStart=null; refreshUI();
   const lead=rescheduled?`Your time has been changed. `:``;
-  $('confirmationText').innerHTML=`${lead}${esc(first)} ${esc(last)}. is booked for <strong>${clock(startVal)}</strong> on ${esc(prettyDate(state.event.date))}. Please arrive five minutes early.<br><br><strong>Screenshot this screen now — no confirmation email is sent.</strong>`;
+  $('confirmationText').innerHTML=`${lead}${esc(employeeDisplayName(first,last))} is booked for <strong>${clock(startVal)}</strong> on ${esc(prettyDate(state.event.date))}. Please arrive five minutes early.<br><br><strong>Screenshot this screen now — no confirmation email is sent.</strong>`;
   $('confirmationTimestamp').textContent=`Submitted ${new Date().toLocaleString(undefined,{month:'long',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'})}`;
   $('success').style.display='block'; $('selectionSummary').style.display='none';
-  $('firstName').value=''; $('lastInitial').value=''; $('email').value='';
+  $('firstName').value=''; $('lastName').value=''; $('email').value='';
   resetBookingAcknowledgments();
   updateBookingFormState();
 }
@@ -1441,7 +1446,7 @@ function renderRoster(){
     const statuses=['Arrived','Completed','No-show'];
     return `<div class="roster-item"><div class="time">${clock(s.start)}</div>
       <div class="person">
-        <strong>${esc(b.first||'Booked')} ${esc(b.last||'')}.</strong>
+        <strong>${esc(employeeDisplayName(b.first||'Booked',b.last))}</strong>
         <small>${esc(b.email||'')}</small>
         <small class="medical-concern"><strong>Medical Condition Concern:</strong> ${esc(b.pregnancy||'Not recorded')}</small>
         <small><strong>Status:</strong> ${esc(b.attendance||'Scheduled')}</small>
@@ -1960,7 +1965,7 @@ function recordRows(bookings){
   const list=Array.isArray(bookings)?bookings:[];
   if(!list.length) return '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:22px">No employee bookings were recorded.</td></tr>';
   return list.map(booking=>{
-    const name=`${booking.first_name||booking.first||'—'} ${booking.last_initial||booking.last||''}`.trim();
+    const name=employeeDisplayName(booking.first_name||booking.first||'—',bookingLastName(booking));
     const concern=recordConcernText(booking.medical_condition_concern??booking.pregnancy);
     const status=recordStatusText(booking.attendance);
     const search=esc(`${name} ${booking.email||''} ${concern} ${status}`.toLowerCase());
@@ -1988,7 +1993,7 @@ async function loadEvRecord(ev){
   return evRecord;
 }
 async function loadLiveRecordBookings(ev){
-  const { data, error }=await sb.from('bookings').select('id,slot_start,therapist,first_name,last_initial,email,pregnancy,attendance,acknowledgment_version,acknowledgments,acknowledged_by,acknowledged_at').eq('organization_id',currentOrganizationId).eq('event_id',ev.id).order('slot_start',{ascending:true});
+  const { data, error }=await sb.from('bookings').select('id,slot_start,therapist,first_name,last_name,last_initial,email,pregnancy,attendance,acknowledgment_version,acknowledgments,acknowledged_by,acknowledged_at').eq('organization_id',currentOrganizationId).eq('event_id',ev.id).order('slot_start',{ascending:true});
   if(error) throw error;
   return (data||[]).map(booking=>({...booking,medical_condition_concern:booking.pregnancy}));
 }
@@ -2150,7 +2155,7 @@ async function buildEventRecordPdf(record){
   const metrics=recordMetrics(bookings);ctx.fillStyle='#77736d';ctx.font='400 17px Arial';ctx.fillText(`${metrics.bookings} bookings  ·  ${metrics.completed} completed  ·  ${metrics.noShow} no-show  ·  ${metrics.concerns} concern noted`,margin,y);y+=32;
   tableHeader();
   bookings.forEach((booking,index)=>{
-    const name=`${booking.first_name||'—'} ${booking.last_initial||''}`.trim(), concern=recordConcernText(booking.medical_condition_concern), status=recordStatusText(booking.attendance);
+    const name=employeeDisplayName(booking.first_name||'—',bookingLastName(booking)), concern=recordConcernText(booking.medical_condition_concern), status=recordStatusText(booking.attendance);
     ctx.font='400 17px Arial';const concernLines=canvasWrap(ctx,concern,465);let acknowledgment='';
     if(booking.acknowledgment_version){ acknowledgment=`Acknowledged by ${booking.acknowledged_by||name} · ${evRecordDate(booking.acknowledged_at)} · ${booking.acknowledgment_version}`; }
     const ackLines=acknowledgment?canvasWrap(ctx,acknowledgment,465):[];
@@ -2495,7 +2500,7 @@ $('ownerMasterCode').addEventListener('keydown',e=>{
 ['tiFirst','tiLast','tiPhone','tiEmail'].forEach(id=>$(id).addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); tiSubmit(); } }));
 $('book').addEventListener('click',reserve);
 $('email').addEventListener('blur',checkExisting);
-['firstName','lastInitial','email','pregnantDetail'].forEach(id=>$(id).addEventListener('input',updateBookingFormState));
+['firstName','lastName','email','pregnantDetail'].forEach(id=>$(id).addEventListener('input',updateBookingFormState));
 bookingAcknowledgmentInputs().forEach(el=>el.addEventListener('change',updateBookingFormState));
 document.querySelectorAll('input[name="medicalConcern"]').forEach(radio=>radio.addEventListener('change',()=>{
   $('pregnant').value=radio.value;
@@ -2517,7 +2522,7 @@ $('copyTherapist').addEventListener('click',()=>copy($('therapistLink').textCont
 function copy(text,btn){ navigator.clipboard.writeText(text).then(()=>{ const o=btn.textContent; btn.textContent='Copied'; setTimeout(()=>btn.textContent=o,1200); }).catch(()=>alert('Copy the link shown in the box.')); }
 $('export').addEventListener('click',()=>{
   if(!state.bookings.length){ alert('There are no bookings to export.'); return; }
-  const header=['Time','Therapist','First Name','Last Initial','Email','Medical Condition','Attendance'];
+  const header=['Time','Therapist','First Name','Last Name','Email','Medical Condition','Attendance'];
   const rows=state.bookings.slice().sort((a,b)=>a.start-b.start).map(b=>[clock(b.start),therapistName(b.therapist),b.first,b.last,b.email,b.pregnancy||'',b.attendance]);
   const csv=[header,...rows].map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
   const blob=new Blob([csv],{type:'text/csv'}); const a=document.createElement('a');
