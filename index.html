@@ -62,7 +62,9 @@
     .roster{display:grid;gap:10px}
     .roster-item{display:grid;grid-template-columns:92px 1fr auto;gap:12px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:13px;background:white}
     .time{font-weight:800}
-    .person small{display:block;color:var(--muted);margin-top:3px}
+    .person small{display:block;color:var(--muted);margin-top:3px;overflow-wrap:anywhere}
+    .person .medical-concern{color:var(--ink);margin-top:7px;line-height:1.4}
+    .person .medical-concern strong{font-weight:800}
     .status-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
     .mini{border:1px solid var(--line);background:white;border-radius:9px;padding:7px 9px;cursor:pointer;font-size:12px;font-weight:700;color:var(--muted)}
     .mini.active{background:var(--accent);color:white;border-color:var(--accent)}
@@ -971,7 +973,12 @@ function renderRoster(){
     if(!b) return `<div class="roster-item"><div class="time">${clock(s.start)}</div><div class="person"><strong>Available</strong><small>Open appointment</small></div></div>`;
     const statuses=['Arrived','Completed','No-show'];
     return `<div class="roster-item"><div class="time">${clock(s.start)}</div>
-      <div class="person"><strong>${esc(b.first||'Booked')} ${esc(b.last||'')}.</strong><small>${esc(b.email||'')} · Medical: ${esc(b.pregnancy||'Not recorded')} · ${esc(b.attendance||'Scheduled')}</small></div>
+      <div class="person">
+        <strong>${esc(b.first||'Booked')} ${esc(b.last||'')}.</strong>
+        <small>${esc(b.email||'')}</small>
+        <small class="medical-concern"><strong>Medical Condition Concern:</strong> ${esc(b.pregnancy||'Not recorded')}</small>
+        <small><strong>Status:</strong> ${esc(b.attendance||'Scheduled')}</small>
+      </div>
       <div class="status-actions">${statuses.map(st=>`<button class="mini ${b.attendance===st?'active':''}" onclick="setStatus('${b.id}','${st}')">${st}</button>`).join('')}</div></div>`;
   });
   $('roster').innerHTML=rows.length?rows.join(''):`<div class="empty">No schedule has been created.</div>`;
