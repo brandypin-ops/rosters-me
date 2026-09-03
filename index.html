@@ -151,6 +151,50 @@
     #events .events-metric-card strong{font-size:16px}
     #events .events-next-actions{display:grid;gap:7px;margin-top:12px}
     #events .events-next-actions .btn{width:100%;display:flex;justify-content:space-between;align-items:center;text-align:left;font-size:10px;padding:9px 11px}
+    #events .records-loading{padding:48px 18px;text-align:center;color:var(--muted);font-size:12px}
+    #events .records-empty{max-width:720px;margin:6px auto;padding:32px;border:1px solid var(--line);border-radius:14px;background:white;text-align:center}
+    #events .records-empty-icon{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;margin:0 auto 13px;background:var(--accent-2);color:var(--accent);font-size:20px}
+    #events .records-empty h3{font-family:Georgia,serif;font-size:24px;font-weight:500;margin:0 0 8px}
+    #events .records-empty p{max-width:560px;margin:0 auto 17px;color:var(--muted);font-size:11px;line-height:1.55}
+    #events .records-empty .btn{min-width:210px}
+    #events .records-shell{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:14px;align-items:start}
+    #events .records-main,#events .records-side{display:grid;gap:12px}
+    #events .records-lock{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:15px 17px;border:1px solid #b7c8bb;border-radius:13px;background:#edf4ee}
+    #events .records-lock-copy{display:flex;align-items:flex-start;gap:11px}
+    #events .records-lock-icon{width:34px;height:34px;flex:0 0 auto;border-radius:9px;display:grid;place-items:center;background:var(--accent);color:white;font-size:15px}
+    #events .records-lock strong{display:block;font-size:13px;margin-bottom:3px;color:var(--accent)}
+    #events .records-lock p{font-size:10px;line-height:1.45;color:#647069;margin:0}
+    #events .records-card{border:1px solid var(--line);border-radius:13px;padding:16px;background:white}
+    #events .records-card h3{font-family:Georgia,serif;font-size:21px;font-weight:500;margin:4px 0 12px}
+    #events .records-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:13px}
+    #events .records-search{width:190px;padding:8px 10px;font-size:10px}
+    #events .records-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:13px 0}
+    #events .records-metric{padding:10px;background:var(--soft);border-radius:9px}
+    #events .records-metric span{display:block;color:var(--muted);font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+    #events .records-metric strong{font-size:17px}
+    #events .records-metric.concern strong{color:#a3352f}
+    #events .records-table-wrap{overflow:auto;border:1px solid #ece8e2;border-radius:10px}
+    #events .records-table{width:100%;border-collapse:collapse;font-size:10px}
+    #events .records-table th{text-align:left;color:var(--muted);font-size:8px;text-transform:uppercase;letter-spacing:.05em;padding:8px;border-bottom:1px solid var(--line);background:#fdfcf9;white-space:nowrap}
+    #events .records-table td{padding:10px 8px;border-bottom:1px solid #f0ece6;vertical-align:top;line-height:1.4}
+    #events .records-table tr:last-child td{border-bottom:0}
+    #events .records-person{font-weight:800;font-size:11px}
+    #events .records-email{display:block;color:var(--muted);font-size:9px;margin-top:2px;overflow-wrap:anywhere}
+    #events .records-concern.yes{color:#a3352f;font-weight:750}
+    #events .records-pill{display:inline-block;border-radius:999px;padding:4px 7px;background:var(--accent-2);color:var(--accent);font-size:8px;font-weight:800;white-space:nowrap}
+    #events .records-pill.pending{background:#f1ede7;color:#817b72}
+    #events .records-file-head{display:flex;gap:10px;align-items:flex-start}
+    #events .records-file-icon{width:35px;height:40px;display:grid;place-items:center;flex:0 0 auto;border-radius:7px;background:#f6e8e5;color:#9f3e37;font-size:9px;font-weight:900}
+    #events .records-file-name{font-size:11px;font-weight:800;overflow-wrap:anywhere}
+    #events .records-file-meta{font-size:9px;color:var(--muted);line-height:1.45;margin-top:4px}
+    #events .records-file-actions{display:grid;gap:7px;margin-top:13px}
+    #events .records-file-actions .btn,#events .records-file-actions .mini{width:100%;text-align:center}
+    #events .records-audit{display:grid;gap:10px;margin-top:10px}
+    #events .records-audit-item{display:grid;grid-template-columns:7px 1fr;gap:8px;color:var(--muted);font-size:9px;line-height:1.4}
+    #events .records-audit-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);margin-top:3px}
+    #events .records-audit-item strong{display:block;color:var(--ink);font-size:10px}
+    #events .records-note{width:100%;min-height:74px;resize:vertical;border:1px solid var(--line);border-radius:10px;padding:10px;font:inherit;font-size:10px;color:var(--ink);margin:9px 0 7px}
+    #events .records-note-status{min-height:14px;color:var(--muted);font-size:9px;margin-top:6px}
     .event-ledger{background:#eef3e9;padding:0}
     .event-detail-grid{display:grid;grid-template-columns:minmax(280px,390px) minmax(320px,1fr);gap:16px;align-items:start}
     .event-ledger-panel{max-width:390px;background:white;border:1px solid #d4ddd6;border-radius:13px;padding:16px 18px}
@@ -350,6 +394,18 @@
       #events .events-detail-tabs{overflow:auto;padding:0 8px}
       #events .events-overview-grid{grid-template-columns:1fr}
       #events .events-info-line{grid-template-columns:1fr;gap:3px}
+      #events .records-shell{grid-template-columns:1fr}
+      #events .records-lock{align-items:flex-start;flex-direction:column}
+      #events .records-lock .btn{width:100%}
+      #events .records-card-head{align-items:flex-start;flex-direction:column}
+      #events .records-search{width:100%}
+      #events .records-metrics{grid-template-columns:1fr 1fr}
+      #events .records-table thead{display:none}
+      #events .records-table,#events .records-table tbody,#events .records-table tr,#events .records-table td{display:block}
+      #events .records-table tr{padding:8px 0;border-bottom:1px solid var(--line)}
+      #events .records-table tr:last-child{border-bottom:0}
+      #events .records-table td{border:0;padding:3px 9px}
+      #events .records-table td[data-label]:before{content:attr(data-label) ": ";color:var(--muted);font-weight:700}
       .event-detail-grid{grid-template-columns:1fr}
       .event-ledger-panel{max-width:none}
       .ti-form-grid{grid-template-columns:1fr;gap:8px}
@@ -617,6 +673,7 @@
         <nav class="events-detail-tabs" aria-label="Event sections">
           <button class="active" type="button" data-ev-detail-tab="overview">Overview</button>
           <button type="button" data-ev-detail-tab="ledger">Ledger &amp; summary</button>
+          <button type="button" data-ev-detail-tab="records">Records</button>
         </nav>
         <div class="events-detail-body" id="evDetailBody"></div>
       </article>
@@ -1652,6 +1709,7 @@ window.tiDelete = async function(id){
 
 /* ---------- Events line-up + ledger ---------- */
 let allEvents=[], evSelId=null, evCalMonth=new Date(), evSelectedDate='', evDetailTab='overview', evShowArchived=false;
+let evRecord=null, evRecordNotes=[], evRecordRenderToken=0;
 function visibleEvents(){ return allEvents.filter(e=>!e.archived||evShowArchived); }
 const fmtMoney=n=>{ const v=Math.round(n); return (v<0?'-$':'$')+Math.abs(v).toLocaleString(); };
 const fmtH=x=> (Math.round(x*10)/10);
@@ -1834,10 +1892,10 @@ function showEvCalendar(){
 }
 window.openEvDetail=function(id){
   if(!allEvents.some(ev=>ev.id===id)) return;
-  evSelId=id; evDetailTab='overview'; renderEvDetail(); window.scrollTo({top:0,behavior:'smooth'});
+  evSelId=id; evDetailTab='overview'; evRecord=null; evRecordNotes=[]; renderEvDetail(); window.scrollTo({top:0,behavior:'smooth'});
 };
 window.setEvDetailTab=function(tab){
-  if(!['overview','ledger'].includes(tab)) return;
+  if(!['overview','ledger','records'].includes(tab)) return;
   evDetailTab=tab; renderEvDetail();
 };
 function renderEvDetail(){
@@ -1853,9 +1911,275 @@ function renderEvDetail(){
     renderEvLedger();
     return;
   }
+  if(evDetailTab==='records'){
+    $('evDetailBody').innerHTML='<div class="records-loading">Loading the protected event record…</div>';
+    renderEvRecords(ev);
+    return;
+  }
   const client=ev.client||{};
   const contact=[client.contact,client.phone].filter(Boolean).join(' · ')||'Not added';
   $('evDetailBody').innerHTML=`<div class="events-overview-grid"><section class="events-subpanel"><h3>Event overview</h3><div class="events-info-list"><div class="events-info-line"><span>Point of contact</span><strong>${esc(contact)}</strong></div><div class="events-info-line"><span>Email</span><strong>${esc(client.email||'Not added')}</strong></div><div class="events-info-line"><span>Service address</span><strong>${esc(client.serviceAddress||ev.location||'Not added')}</strong></div><div class="events-info-line"><span>Arrival instructions</span><div>${esc(client.notes||'No arrival instructions added.')}</div></div><div class="events-info-line"><span>Therapist access</span><strong>${ev.therapistCode?'Code saved · Therapist link ready':'Therapist link ready'}</strong></div></div></section><aside class="events-subpanel"><h3>At a glance</h3><div class="events-quick-grid"><div class="events-metric-card"><span>Duration</span><strong>${fmtH(evDurationH(ev))} hrs</strong></div><div class="events-metric-card"><span>Therapists</span><strong>${ev.therapists}</strong></div><div class="events-metric-card"><span>Profit</span><strong>${fmtMoney(evProfit(ev))}</strong></div><div class="events-metric-card"><span>Calendar</span><strong>${ev.calendarInvitesEnabled?'Synced':'Not synced'}</strong></div></div><div class="events-next-actions"><button class="btn secondary" type="button" onclick="openTherapistPage('${ev.id}')"><span>Open therapist view</span><span>→</span></button><button class="btn secondary" type="button" onclick="copyEventSummary('${ev.id}',this)"><span>Copy event summary</span><span>⧉</span></button><button class="btn" type="button" onclick="setEvDetailTab('ledger')"><span>Open ledger & summary</span><span>→</span></button></div></aside></div>`;
+}
+function evEndDate(ev){
+  if(!ev.date) return null;
+  const dateParts=ev.date.split('-').map(Number), timeParts=String(ev.end||'00:00').split(':').map(Number);
+  const end=new Date(dateParts[0],dateParts[1]-1,dateParts[2],timeParts[0]||0,timeParts[1]||0,0,0);
+  return Number.isNaN(end.getTime())?null:end;
+}
+function evRecordDate(value){
+  if(!value) return '—';
+  const date=new Date(value);
+  return Number.isNaN(date.getTime())?'—':date.toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'});
+}
+function recordFileName(record){
+  const event=record?.snapshot?.event||{};
+  const company=String(event.company||'Event').replace(/[^a-z0-9]+/gi,'-').replace(/^-|-$/g,'')||'Event';
+  const date=String(event.event_date||'Record').replace(/-/g,'');
+  return `${company}_${date}_Record.pdf`;
+}
+function recordConcernText(value){
+  const text=String(value||'').trim();
+  return text||'Not answered';
+}
+function recordConcernIsYes(value){ return /^yes\b/i.test(String(value||'').trim()); }
+function recordStatusText(value){ return String(value||'Scheduled').trim()||'Scheduled'; }
+function recordTimeText(value){
+  const number=Number(value);
+  return Number.isFinite(number)?clock(number):String(value||'—');
+}
+function recordMetrics(bookings){
+  const list=Array.isArray(bookings)?bookings:[];
+  return {
+    bookings:list.length,
+    completed:list.filter(b=>recordStatusText(b.attendance).toLowerCase()==='completed').length,
+    noShow:list.filter(b=>recordStatusText(b.attendance).toLowerCase()==='no-show').length,
+    concerns:list.filter(b=>recordConcernIsYes(b.medical_condition_concern??b.pregnancy)).length
+  };
+}
+function recordRows(bookings){
+  const list=Array.isArray(bookings)?bookings:[];
+  if(!list.length) return '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:22px">No employee bookings were recorded.</td></tr>';
+  return list.map(booking=>{
+    const name=`${booking.first_name||booking.first||'—'} ${booking.last_initial||booking.last||''}`.trim();
+    const concern=recordConcernText(booking.medical_condition_concern??booking.pregnancy);
+    const status=recordStatusText(booking.attendance);
+    const search=esc(`${name} ${booking.email||''} ${concern} ${status}`.toLowerCase());
+    return `<tr data-record-search="${search}"><td><span class="records-person">${esc(name)}</span><span class="records-email">${esc(booking.email||'No email')}</span></td><td data-label="Time">${esc(recordTimeText(booking.slot_start??booking.start))}</td><td data-label="Medical Condition Concern"><span class="records-concern${recordConcernIsYes(concern)?' yes':''}">${esc(concern)}</span></td><td data-label="Final status"><span class="records-pill${status==='Completed'?'':' pending'}">${esc(status)}</span></td></tr>`;
+  }).join('');
+}
+function recordsTableCard(bookings,title='Event record'){
+  const metrics=recordMetrics(bookings);
+  return `<section class="records-card"><div class="records-card-head"><div><p class="label">FINAL ATTENDANCE</p><h3>${esc(title)}</h3></div><input class="records-search" type="search" placeholder="Search employee" aria-label="Search employee record" oninput="filterEvRecordTable(this.value)"></div><div class="records-metrics"><div class="records-metric"><span>Bookings</span><strong>${metrics.bookings}</strong></div><div class="records-metric"><span>Completed</span><strong>${metrics.completed}</strong></div><div class="records-metric"><span>No-show</span><strong>${metrics.noShow}</strong></div><div class="records-metric concern"><span>Concern noted</span><strong>${metrics.concerns}</strong></div></div><div class="records-table-wrap"><table class="records-table"><thead><tr><th>Employee</th><th>Time</th><th>Medical Condition Concern</th><th>Final status</th></tr></thead><tbody id="evRecordRows">${recordRows(bookings)}</tbody></table></div></section>`;
+}
+window.filterEvRecordTable=function(value){
+  const query=String(value||'').trim().toLowerCase();
+  document.querySelectorAll('#evRecordRows [data-record-search]').forEach(row=>{ row.style.display=!query||row.dataset.recordSearch.includes(query)?'':'none'; });
+};
+async function loadEvRecord(ev){
+  const { data, error }=await sb.from('event_records').select('*').eq('organization_id',currentOrganizationId).eq('event_id',ev.id).maybeSingle();
+  if(error) throw error;
+  evRecord=data||null;
+  evRecordNotes=[];
+  if(evRecord){
+    const notes=await sb.from('event_record_notes').select('*').eq('organization_id',currentOrganizationId).eq('event_record_id',evRecord.id).order('created_at',{ascending:false});
+    if(notes.error) throw notes.error;
+    evRecordNotes=notes.data||[];
+  }
+  return evRecord;
+}
+async function loadLiveRecordBookings(ev){
+  const { data, error }=await sb.from('bookings').select('id,slot_start,therapist,first_name,last_initial,email,pregnancy,attendance,acknowledgment_version,acknowledgments,acknowledged_by,acknowledged_at').eq('organization_id',currentOrganizationId).eq('event_id',ev.id).order('slot_start',{ascending:true});
+  if(error) throw error;
+  return (data||[]).map(booking=>({...booking,medical_condition_concern:booking.pregnancy}));
+}
+async function renderEvRecords(ev){
+  const token=++evRecordRenderToken;
+  const target=$('evDetailBody');
+  try{
+    const record=await loadEvRecord(ev);
+    if(token!==evRecordRenderToken||evSelId!==ev.id||evDetailTab!=='records') return;
+    if(record){ renderFinalEvRecord(record); return; }
+    const liveBookings=await loadLiveRecordBookings(ev);
+    if(token!==evRecordRenderToken||evSelId!==ev.id||evDetailTab!=='records') return;
+    const end=evEndDate(ev), ended=end&&new Date()>=end;
+    if(!ended){
+      target.innerHTML=`<section class="records-empty"><div class="records-empty-icon">◷</div><h3>Record available after the event</h3><p>The official record can be finalized after <strong>${esc(end?end.toLocaleString('en-US',{weekday:'long',month:'long',day:'numeric',hour:'numeric',minute:'2-digit'}):'the event end time')}</strong>. Until then, attendance may still change.</p></section>`;
+      return;
+    }
+    target.innerHTML=`<div class="records-shell"><main class="records-main"><div class="records-lock" style="background:#fbf5df;border-color:#e4d093"><div class="records-lock-copy"><div class="records-lock-icon" style="background:#8b7132">✓</div><div><strong style="color:#6d5725">Ready to finalize</strong><p>The event has ended. Review the attendance below, then create the official read-only snapshot and PDF.</p></div></div><button class="btn" type="button" onclick="finalizeEvRecord('${ev.id}',this)">Finalize official record</button></div>${recordsTableCard(liveBookings,'Current roster')}</main><aside class="records-side"><section class="records-card"><p class="label">BEFORE YOU FINALIZE</p><h3>One permanent original</h3><p style="font-size:10px;color:var(--muted);line-height:1.55;margin:0">Finalizing preserves the event and employee answers exactly as they are now. The original cannot be edited or deleted. Later clarifications are saved as dated correction notes.</p></section></aside></div>`;
+  }catch(error){
+    console.error(error);
+    if(token===evRecordRenderToken) target.innerHTML=`<section class="records-empty"><div class="records-empty-icon">!</div><h3>Records are not available yet</h3><p>${esc(error.message||'The protected record could not be loaded.')}</p><button class="mini" type="button" onclick="renderEvRecords(allEvents.find(e=>e.id===evSelId))">Try again</button></section>`;
+  }
+}
+function renderFinalEvRecord(record){
+  const target=$('evDetailBody'); if(!target) return;
+  const snapshot=record.snapshot||{}, event=snapshot.event||{}, bookings=Array.isArray(snapshot.bookings)?snapshot.bookings:[];
+  const sealed=!!record.finalized_at;
+  const audit=[
+    ...(sealed?[{title:'PDF sealed',date:record.finalized_at}]:[]),
+    {title:'Official snapshot captured',date:record.captured_at},
+    ...evRecordNotes.map(note=>({title:'Correction note added',date:note.created_at,note:note.note}))
+  ].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const auditHtml=audit.map(item=>`<div class="records-audit-item"><span class="records-audit-dot"></span><div><strong>${esc(item.title)}</strong>${esc(evRecordDate(item.date))}${item.note?`<div style="color:var(--ink);margin-top:3px">${esc(item.note)}</div>`:''}</div></div>`).join('');
+  target.innerHTML=`<div class="records-shell"><main class="records-main"><div class="records-lock"><div class="records-lock-copy"><div class="records-lock-icon">🔒</div><div><strong>${sealed?'Official record finalized':'Official snapshot captured'}</strong><p>Stored in Supabase and visible here in Rosters. The original record cannot be overwritten.</p></div></div>${sealed?`<button class="mini" type="button" onclick="openEvRecordPdf(false)">View locked PDF</button>`:`<button class="btn" type="button" onclick="finishEvRecordPdfButton(this)">Finish PDF</button>`}</div>${recordsTableCard(bookings)}</main><aside class="records-side"><section class="records-card"><div class="records-file-head"><div class="records-file-icon">PDF</div><div><div class="records-file-name">${esc(recordFileName(record))}</div><div class="records-file-meta">${sealed?`Finalized ${esc(evRecordDate(record.finalized_at))}<br>Official, read-only copy`:'PDF creation needs to finish'}</div></div></div><div class="records-file-actions">${sealed?`<button class="btn" type="button" onclick="openEvRecordPdf(false)">View record</button><button class="mini" type="button" onclick="openEvRecordPdf(true)">Download PDF ↓</button>`:`<button class="btn" type="button" onclick="finishEvRecordPdfButton(this)">Create locked PDF</button>`}</div></section><section class="records-card"><p class="label">AUDIT HISTORY</p><div class="records-audit">${auditHtml}</div></section><section class="records-card"><p class="label">CORRECTION NOTE</p><h3>Add clarification</h3><p style="font-size:9px;color:var(--muted);line-height:1.45;margin:0">A new dated note is added. The locked original stays unchanged.</p><textarea class="records-note" id="evRecordNote" placeholder="Write a factual correction or clarification"></textarea><button class="mini" style="width:100%" type="button" onclick="addEvRecordNote(this)">Add dated note</button><div class="records-note-status" id="evRecordNoteStatus"></div></section></aside></div>`;
+}
+window.finalizeEvRecord=async function(id,button){
+  const ev=allEvents.find(item=>item.id===id); if(!ev) return;
+  if(!confirm('Create the official record now? The saved snapshot and PDF cannot be edited or deleted.')) return;
+  const label=button.textContent; button.disabled=true; button.textContent='Capturing record…';
+  try{
+    const result=await sb.rpc('finalize_event_record',{p_event_id:id}).single();
+    if(result.error) throw result.error;
+    evRecord=result.data;
+    button.textContent='Creating PDF…';
+    await finishEvRecordPdf(evRecord);
+    await loadEvRecord(ev);
+    renderFinalEvRecord(evRecord);
+  }catch(error){
+    console.error(error); alert(error.message||'The official record could not be finalized.');
+    button.disabled=false; button.textContent=label;
+  }
+};
+window.finishEvRecordPdfButton=async function(button){
+  const ev=allEvents.find(item=>item.id===evSelId); if(!ev||!evRecord) return;
+  const label=button.textContent; button.disabled=true; button.textContent='Creating PDF…';
+  try{
+    await finishEvRecordPdf(evRecord);
+    await loadEvRecord(ev);
+    renderFinalEvRecord(evRecord);
+  }catch(error){ console.error(error); alert(error.message||'The PDF could not be created.'); button.disabled=false; button.textContent=label; }
+};
+async function finishEvRecordPdf(record){
+  if(record.finalized_at&&record.pdf_path) return record;
+  const blob=await buildEventRecordPdf(record);
+  const path=`${record.organization_id}/${record.id}.pdf`;
+  const uploaded=await sb.storage.from('event-records').upload(path,blob,{contentType:'application/pdf',upsert:false,cacheControl:'3600'});
+  if(uploaded.error&&!/already exists|duplicate/i.test(uploaded.error.message||'')) throw uploaded.error;
+  const completed=await sb.rpc('complete_event_record_pdf',{p_record_id:record.id,p_pdf_path:path}).single();
+  if(completed.error) throw completed.error;
+  evRecord=completed.data;
+  return evRecord;
+}
+window.openEvRecordPdf=async function(download){
+  if(!evRecord?.pdf_path){ alert('The PDF has not been created yet.'); return; }
+  const opened=download?null:window.open('about:blank','_blank');
+  try{
+    const result=await sb.storage.from('event-records').download(evRecord.pdf_path);
+    if(result.error) throw result.error;
+    const url=URL.createObjectURL(result.data);
+    if(download){ const link=document.createElement('a'); link.href=url; link.download=recordFileName(evRecord); document.body.appendChild(link); link.click(); link.remove(); }
+    else if(opened) opened.location.href=url;
+    else window.open(url,'_blank','noopener');
+    setTimeout(()=>URL.revokeObjectURL(url),60000);
+  }catch(error){ if(opened) opened.close(); alert(error.message||'The PDF could not be opened.'); }
+};
+window.addEvRecordNote=async function(button){
+  if(!evRecord) return;
+  const field=$('evRecordNote'), status=$('evRecordNoteStatus'), note=field.value.trim();
+  if(!note){ status.textContent='Write the correction or clarification first.'; field.focus(); return; }
+  button.disabled=true; button.textContent='Saving…'; status.textContent='';
+  const result=await sb.from('event_record_notes').insert({organization_id:currentOrganizationId,event_record_id:evRecord.id,note}).select().single();
+  if(result.error){ status.textContent=result.error.message; button.disabled=false; button.textContent='Add dated note'; return; }
+  const ev=allEvents.find(item=>item.id===evSelId);
+  await loadEvRecord(ev); renderFinalEvRecord(evRecord);
+};
+function canvasWrap(ctx,text,maxWidth){
+  const paragraphs=String(text??'').split(/\n/), lines=[];
+  paragraphs.forEach((paragraph,index)=>{
+    const words=(paragraph||' ').split(/\s+/), current=[];
+    words.forEach(word=>{
+      const test=[...current,word].join(' ');
+      if(current.length&&ctx.measureText(test).width>maxWidth){ lines.push(current.join(' ')); current.length=0; }
+      current.push(word);
+    });
+    lines.push(current.join(' '));
+    if(index<paragraphs.length-1) lines.push('');
+  });
+  return lines;
+}
+function canvasBlob(canvas,type='image/jpeg',quality=.92){
+  return new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(new Error('Could not render the PDF page')),type,quality));
+}
+async function buildEventRecordPdf(record){
+  const snapshot=record.snapshot||{}, event=snapshot.event||{}, bookings=Array.isArray(snapshot.bookings)?snapshot.bookings:[];
+  const width=1224,height=1584,margin=86,contentWidth=width-margin*2,pages=[];
+  let canvas,ctx,y;
+  function newPage(continued=false){
+    canvas=document.createElement('canvas'); canvas.width=width; canvas.height=height; ctx=canvas.getContext('2d');
+    ctx.fillStyle='#ffffff';ctx.fillRect(0,0,width,height);ctx.fillStyle='#20372c';ctx.font='700 30px Arial';ctx.fillText('Rosters',margin,72);
+    ctx.textAlign='right';ctx.font='700 16px Arial';ctx.fillText('LOCKED ORIGINAL',width-margin,68);ctx.textAlign='left';
+    ctx.strokeStyle='#2f493b';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(margin,92);ctx.lineTo(width-margin,92);ctx.stroke();
+    y=continued?145:155; pages.push(canvas);
+    if(continued){ctx.fillStyle='#171a18';ctx.font='700 28px Arial';ctx.fillText('Completed Event Record (continued)',margin,y);y+=48;}
+  }
+  function drawWrapped(text,x,maxWidth,lineHeight=28,font='400 21px Arial',color='#252a27'){
+    ctx.font=font;ctx.fillStyle=color;const lines=canvasWrap(ctx,text,maxWidth);lines.forEach(line=>{ctx.fillText(line,x,y);y+=lineHeight;});return lines.length;
+  }
+  function info(label,value){
+    ctx.font='700 18px Arial';ctx.fillStyle='#77736d';ctx.fillText(label,margin,y);
+    const top=y;drawWrapped(value||'—',margin+210,contentWidth-210,26,'600 20px Arial','#232724');
+    y=Math.max(y,top+30)+7;
+  }
+  function tableHeader(){
+    ctx.fillStyle='#f2f0eb';ctx.fillRect(margin,y,contentWidth,42);ctx.fillStyle='#6d6963';ctx.font='700 15px Arial';
+    ctx.fillText('EMPLOYEE',margin+10,y+27);ctx.fillText('TIME',margin+280,y+27);ctx.fillText('MEDICAL CONDITION CONCERN',margin+420,y+27);ctx.fillText('STATUS',margin+910,y+27);y+=42;
+  }
+  newPage(false);
+  ctx.fillStyle='#171a18';ctx.font='700 48px Georgia';ctx.fillText('Completed Event Record',margin,y);y+=44;
+  ctx.fillStyle='#77736d';ctx.font='400 19px Arial';ctx.fillText('Generated from the official record captured when the event was finalized.',margin,y);y+=55;
+  info('Client',event.company);
+  const eventDateValue=event.event_date?new Date(event.event_date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}):'—';
+  info('Event date',eventDateValue);info('Time',`${clock(minutes(event.start_time||'00:00'))} – ${clock(minutes(event.end_time||'00:00'))}`);
+  info('Therapist(s)',Array.isArray(event.therapist_names)?event.therapist_names.join(', '):String(event.therapist_names||'—'));
+  const client=event.client||{};info('Location',client.serviceAddress||event.location||'—');
+  y+=12;ctx.strokeStyle='#ddd8cf';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(margin,y);ctx.lineTo(width-margin,y);ctx.stroke();y+=42;
+  ctx.fillStyle='#171a18';ctx.font='700 31px Georgia';ctx.fillText('Final attendance and concerns',margin,y);y+=26;
+  const metrics=recordMetrics(bookings);ctx.fillStyle='#77736d';ctx.font='400 17px Arial';ctx.fillText(`${metrics.bookings} bookings  ·  ${metrics.completed} completed  ·  ${metrics.noShow} no-show  ·  ${metrics.concerns} concern noted`,margin,y);y+=32;
+  tableHeader();
+  bookings.forEach((booking,index)=>{
+    const name=`${booking.first_name||'—'} ${booking.last_initial||''}`.trim(), concern=recordConcernText(booking.medical_condition_concern), status=recordStatusText(booking.attendance);
+    ctx.font='400 17px Arial';const concernLines=canvasWrap(ctx,concern,465);let acknowledgment='';
+    if(booking.acknowledgment_version){ acknowledgment=`Acknowledged by ${booking.acknowledged_by||name} · ${evRecordDate(booking.acknowledged_at)} · ${booking.acknowledgment_version}`; }
+    const ackLines=acknowledgment?canvasWrap(ctx,acknowledgment,465):[];
+    const rowHeight=Math.max(64,26+concernLines.length*23+ackLines.length*19);
+    if(y+rowHeight>1470){ newPage(true); tableHeader(); }
+    if(index%2===1){ctx.fillStyle='#fbfaf8';ctx.fillRect(margin,y,contentWidth,rowHeight);}
+    ctx.fillStyle='#1f2421';ctx.font='700 19px Arial';ctx.fillText(name,margin+10,y+27);ctx.font='400 15px Arial';ctx.fillStyle='#77736d';ctx.fillText(String(booking.email||''),margin+10,y+49);
+    ctx.fillStyle='#252a27';ctx.font='600 17px Arial';ctx.fillText(recordTimeText(booking.slot_start),margin+280,y+28);
+    ctx.fillStyle=recordConcernIsYes(concern)?'#9b342f':'#252a27';ctx.font=recordConcernIsYes(concern)?'700 17px Arial':'400 17px Arial';
+    concernLines.forEach((line,lineIndex)=>ctx.fillText(line,margin+420,y+27+lineIndex*23));
+    if(ackLines.length){ctx.fillStyle='#77736d';ctx.font='400 13px Arial';ackLines.forEach((line,lineIndex)=>ctx.fillText(line,margin+420,y+31+concernLines.length*23+lineIndex*18));}
+    ctx.fillStyle='#2f493b';ctx.font='700 16px Arial';ctx.fillText(status,margin+910,y+28);
+    ctx.strokeStyle='#e4e0da';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(margin,y+rowHeight);ctx.lineTo(width-margin,y+rowHeight);ctx.stroke();y+=rowHeight;
+  });
+  pages.forEach((page,index)=>{
+    const pageCtx=page.getContext('2d');pageCtx.fillStyle='#77736d';pageCtx.font='400 12px ui-monospace, monospace';pageCtx.fillText(`Record ID: ${record.id}`,margin,height-48);
+    pageCtx.fillText(`Integrity fingerprint: ${record.snapshot_hash}`,margin,height-29);
+    pageCtx.textAlign='right';pageCtx.fillText(`Page ${index+1} of ${pages.length}`,width-margin,height-29);pageCtx.textAlign='left';
+  });
+  const images=[];for(const page of pages){ const blob=await canvasBlob(page);images.push(new Uint8Array(await blob.arrayBuffer())); }
+  return rasterImagesToPdf(images,width,height);
+}
+function rasterImagesToPdf(images,imageWidth,imageHeight){
+  const encoder=new TextEncoder(),chunks=[];let length=0;const offsets=[];
+  const push=value=>{const bytes=typeof value==='string'?encoder.encode(value):value;chunks.push(bytes);length+=bytes.length;};
+  push('%PDF-1.4\n%Rosters\n');
+  const objectCount=2+images.length*3;
+  function beginObject(number){offsets[number]=length;push(`${number} 0 obj\n`);}
+  beginObject(1);push('<< /Type /Catalog /Pages 2 0 R >>\nendobj\n');
+  beginObject(2);push(`<< /Type /Pages /Count ${images.length} /Kids [${images.map((_,i)=>`${3+i*3} 0 R`).join(' ')}] >>\nendobj\n`);
+  images.forEach((image,index)=>{
+    const pageObject=3+index*3,imageObject=pageObject+1,contentObject=pageObject+2,imageName=`Img${index+1}`;
+    beginObject(pageObject);push(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /XObject << /${imageName} ${imageObject} 0 R >> >> >> /Contents ${contentObject} 0 R >>\nendobj\n`);
+    beginObject(imageObject);push(`<< /Type /XObject /Subtype /Image /Width ${imageWidth} /Height ${imageHeight} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${image.length} >>\nstream\n`);push(image);push('\nendstream\nendobj\n');
+    const content=`q\n612 0 0 792 0 0 cm\n/${imageName} Do\nQ\n`;
+    beginObject(contentObject);push(`<< /Length ${encoder.encode(content).length} >>\nstream\n${content}endstream\nendobj\n`);
+  });
+  const xrefOffset=length;push(`xref\n0 ${objectCount+1}\n0000000000 65535 f \n`);
+  for(let i=1;i<=objectCount;i++) push(`${String(offsets[i]).padStart(10,'0')} 00000 n \n`);
+  push(`trailer\n<< /Size ${objectCount+1} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`);
+  return new Blob(chunks,{type:'application/pdf'});
 }
 function renderEvLedger(){
   const ev=allEvents.find(e=>e.id===evSelId); if(!ev) return;
