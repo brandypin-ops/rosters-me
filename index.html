@@ -159,6 +159,98 @@
     #signup .booking-success{margin:0;border-radius:0;padding:22px}
     #signup .booking-success .submission-time{font-size:11px;margin-top:10px;opacity:.82}
     #signup .booking-footer{padding:0 20px 18px;margin:0;font-size:10px}
+    #admin .editor-page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:16px}
+    #admin .editor-heading{min-width:0}
+    #admin .editor-heading-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+    #admin .editor-heading h2{font-size:31px;margin:0 0 6px}
+    #admin .editor-booking-status{display:flex;align-items:center;gap:14px;min-width:230px;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:white;box-shadow:var(--shadow)}
+    #admin .editor-booking-status strong{display:block;font-family:Georgia,serif;font-size:27px;font-weight:500;line-height:1}
+    #admin .editor-booking-status small{display:block;color:var(--muted);font-size:10px;line-height:1.35;margin-top:4px}
+    #admin .editor-booking-status .synced{margin-left:auto;white-space:nowrap}
+    #admin .editor-duplicate{margin:0 0 16px}
+    #admin .event-editor-layout{display:grid;grid-template-columns:190px minmax(0,1fr) 290px;gap:16px;align-items:start}
+    #admin .editor-panel{background:white;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+    #admin .editor-section-nav{position:sticky;top:76px;padding:10px}
+    #admin .editor-section-nav h3{font-family:inherit;font-size:10px;letter-spacing:.09em;color:var(--muted);margin:5px 8px 10px}
+    #admin .editor-nav-button{width:100%;display:flex;align-items:center;gap:9px;border:0;border-radius:10px;background:transparent;color:var(--muted);padding:10px 9px;margin:2px 0;text-align:left;font-size:11px;font-weight:750;cursor:pointer}
+    #admin .editor-nav-button:hover{background:#f7f4ef}
+    #admin .editor-nav-button.active{background:var(--accent-2);color:var(--accent)}
+    #admin .editor-nav-button .num{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:#e9e4dc;color:#7d786f;font-size:9px;flex:0 0 auto}
+    #admin .editor-nav-button.active .num{background:var(--accent);color:white}
+    #admin .editor-nav-button .check{margin-left:auto;color:#698b70}
+    #admin .editor-nav-help{border-top:1px solid var(--line);margin-top:10px;padding:12px 9px 3px;color:var(--muted);font-size:9px;line-height:1.5}
+    #admin .editor-main-panel{overflow:hidden}
+    #admin .editor-main-head{padding:20px 22px 15px;border-bottom:1px solid var(--line)}
+    #admin .editor-main-head h3{font-size:24px;margin:4px 0 5px}
+    #admin .editor-main-head .sub{font-size:10px}
+    #admin .editor-form-section{display:none;padding:20px 22px}
+    #admin .editor-form-section.active{display:block}
+    #admin .editor-field-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+    #admin .editor-field{display:grid;gap:6px;min-width:0}
+    #admin .editor-field.full{grid-column:1/-1}
+    #admin .editor-field label{font-size:11px}
+    #admin .editor-field input,#admin .editor-field select,#admin .editor-field textarea{width:100%;border:1px solid var(--line);border-radius:11px;padding:11px 12px;background:#fff;color:var(--ink);outline:none}
+    #admin .editor-field textarea{min-height:98px;resize:vertical;line-height:1.5}
+    #admin .editor-field input:focus,#admin .editor-field select:focus,#admin .editor-field textarea:focus{border-color:#8b978f;box-shadow:0 0 0 3px var(--accent-2)}
+    #admin .editor-required{color:#8b3d3d}
+    #admin .editor-helper{font-size:9px;color:var(--muted);line-height:1.45}
+    #admin .editor-divider{height:1px;background:var(--line);margin:19px 0}
+    #admin .editor-subhead{font-size:13px;font-weight:800;margin-bottom:12px}
+    #admin .editor-duration-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:11px}
+    #admin .editor-duration-box{border:1px solid var(--line);border-radius:10px;padding:11px}
+    #admin .editor-duration-box span{display:block;font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:800}
+    #admin .editor-duration-box strong{display:block;margin-top:4px;font-size:13px}
+    #admin .editor-capacity{display:flex;justify-content:space-between;gap:14px;align-items:center;background:var(--soft);border-radius:10px;padding:12px 13px;margin-top:14px}
+    #admin .editor-capacity strong{font-size:11px}
+    #admin .editor-capacity span{display:block;color:var(--muted);font-size:9px;margin-top:3px}
+    #admin .editor-capacity .count{color:var(--accent);font-size:20px;margin:0;font-weight:800}
+    #admin .editor-therapist-list{display:grid;gap:9px}
+    #admin .editor-therapist-row{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:11px;padding:10px}
+    #admin .editor-avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--accent-2);color:var(--accent);font-weight:850;flex:0 0 auto}
+    #admin .editor-therapist-main{flex:1;min-width:0}
+    #admin .editor-therapist-main input{padding:8px 9px;font-weight:750}
+    #admin .editor-therapist-main small{display:block;color:var(--muted);font-size:9px;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    #admin .editor-add-therapist{width:100%;margin-top:10px;border-style:dashed;background:#fbfdfb}
+    #admin .editor-break-grid{display:grid;grid-template-columns:1.1fr .8fr .8fr auto;gap:9px;align-items:end}
+    #admin .editor-break-list{margin-top:11px}
+    #admin .editor-break-list .roster-item{grid-template-columns:74px 1fr auto;padding:10px;font-size:11px}
+    #admin .editor-protected{display:flex;align-items:flex-start;gap:9px;background:#f8e9bd;border:1px solid #e6cd8e;border-radius:10px;padding:12px;color:#67552e;font-size:9px;line-height:1.5}
+    #admin .editor-protected strong{display:block;margin-bottom:2px}
+    #admin .editor-code-card{display:flex;align-items:center;justify-content:space-between;gap:14px;border:1px solid #c7d4ca;background:var(--accent-2);border-radius:11px;padding:13px}
+    #admin .editor-code-card .label{font-size:8px}
+    #admin .editor-code-card .code-row{flex:1}
+    #admin .editor-code-current{font:25px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.07em;color:var(--accent);margin-top:4px}
+    #admin .editor-url-group{display:grid;gap:12px}
+    #admin .editor-url-box{border:1px solid var(--line);border-radius:10px;padding:11px;background:#fdfcf9;font:9px ui-monospace,SFMono-Regular,Menlo,monospace;color:#555c57;word-break:break-all}
+    #admin .editor-link-row{display:flex;gap:7px;align-items:stretch}
+    #admin .editor-link-row .editor-url-box{flex:1}
+    #admin .editor-record-actions{display:flex;gap:8px;flex-wrap:wrap}
+    #admin .editor-safety-note{padding:12px 13px;border-radius:10px;background:#f8e9bd;color:#67552e;font-size:9px;line-height:1.5;margin-top:16px}
+    #admin .editor-form-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 22px;border-top:1px solid var(--line);background:#fdfcf9}
+    #admin .editor-form-footer .footer-actions{display:flex;gap:8px}
+    #admin .editor-form-footer .footer-hint{font-size:9px;color:var(--muted)}
+    #admin .editor-live-summary{position:sticky;top:76px;overflow:hidden;padding:0}
+    #admin .editor-summary-head{padding:17px 18px 13px;border-bottom:1px solid var(--line)}
+    #admin .editor-summary-head h3{font-size:21px;margin:4px 0 0}
+    #admin .editor-summary-body{padding:16px 18px}
+    #admin .editor-summary-name{font-family:Georgia,serif;font-size:21px;line-height:1.15}
+    #admin .editor-summary-location{font-size:10px;color:var(--muted);margin-top:4px;overflow-wrap:anywhere}
+    #admin .editor-summary-date{display:flex;gap:10px;margin-top:15px;background:var(--soft);border-radius:10px;padding:11px}
+    #admin .editor-date-box{width:39px;height:44px;border-radius:7px;background:white;display:grid;place-items:center;line-height:1;flex:0 0 auto}
+    #admin .editor-date-box span{display:block;text-align:center;font-size:8px;color:var(--muted);text-transform:uppercase;font-weight:850}
+    #admin .editor-date-box strong{display:block;text-align:center;font-size:18px;margin-top:2px}
+    #admin .editor-date-info strong{font-size:10px}
+    #admin .editor-date-info span{display:block;color:var(--muted);font-size:9px;margin-top:4px}
+    #admin .editor-summary-list{display:grid;gap:10px;margin-top:14px}
+    #admin .editor-summary-line{display:flex;justify-content:space-between;gap:12px;font-size:10px;padding-bottom:9px;border-bottom:1px solid #f0ece6}
+    #admin .editor-summary-line:last-child{border:0;padding:0}
+    #admin .editor-summary-line span{color:var(--muted)}
+    #admin .editor-summary-line strong{text-align:right}
+    #admin .editor-url-status{margin:15px -18px -16px;padding:13px 18px;background:var(--accent-2);border-top:1px solid #c7d4ca}
+    #admin .editor-url-status strong{display:block;color:var(--accent);font-size:10px}
+    #admin .editor-url-status span{display:block;color:#5f6b63;font-size:8px;margin-top:4px;line-height:1.4}
+    #admin .editor-summary-actions{display:grid;gap:7px;padding:12px 18px;border-top:1px solid var(--line)}
+    #admin .editor-summary-actions .btn{width:100%;font-size:10px;padding:9px 10px}
     @media(max-width:760px){
       .shell{padding:14px}
       header{align-items:flex-start;flex-direction:column;gap:12px}
@@ -195,6 +287,21 @@
       #signup .booking-review{position:static;border-top:1px solid var(--line);padding:16px}
       #signup .booking-existing{margin:0 16px 16px}
       #signup .booking-footer{padding:0 16px 16px}
+      #admin .editor-page-head{align-items:flex-start;flex-direction:column}
+      #admin .editor-booking-status{width:100%;min-width:0}
+      #admin .event-editor-layout{grid-template-columns:1fr}
+      #admin .editor-section-nav{position:static;display:flex;overflow:auto;padding:6px}
+      #admin .editor-section-nav h3,#admin .editor-nav-help,#admin .editor-nav-button .check{display:none}
+      #admin .editor-nav-button{min-width:max-content;width:auto;margin:0;padding:9px}
+      #admin .editor-field-grid,#admin .editor-duration-row,#admin .editor-break-grid{grid-template-columns:1fr}
+      #admin .editor-field.full{grid-column:auto}
+      #admin .editor-main-head,#admin .editor-form-section{padding:17px}
+      #admin .editor-form-footer{position:sticky;bottom:0;z-index:4;padding:11px}
+      #admin .editor-form-footer .footer-hint{display:none}
+      #admin .editor-form-footer .footer-actions{width:100%}
+      #admin .editor-form-footer .btn{flex:1}
+      #admin .editor-live-summary{position:static}
+      #admin .editor-link-row,#admin .editor-code-card{align-items:stretch;flex-direction:column}
     }
   </style>
 </head>
@@ -238,185 +345,146 @@
   <datalist id="therapistDirectoryList"></datalist>
 
   <section id="admin" class="view">
-    <div class="hero">
-      <div class="card">
-        <button class="mini" id="backToEvents" type="button" style="margin-bottom:16px">← Back to Events</button>
-        <p class="label">EVENT EDITOR</p>
-        <h2>Set up the event. Share the right links.</h2>
-        <p class="sub">Set the schedule, therapists and session length. Set a therapist code so only your team can open the roster. The app builds the slots and shares them live.</p>
+    <div class="editor-page-head">
+      <div class="editor-heading">
+        <div class="editor-heading-top">
+          <button class="mini" id="backToEvents" type="button">← Events</button>
+          <span class="label">EVENT EDITOR</span>
+        </div>
+        <h2 id="editorPageTitle">Edit event</h2>
+        <p class="sub">Edit one organized section at a time, then check the summary before saving.</p>
       </div>
-      <div class="card">
-        <p class="label">CURRENT BOOKINGS</p>
-        <div class="metric" id="bookingCount">0</div>
-        <p class="sub" id="capacityText">of 0 appointment slots reserved</p>
-        <p class="synced" style="margin-top:10px"><span class="dot" id="liveDot"></span><span id="liveText">Connecting…</span></p>
+      <div class="editor-booking-status">
+        <div><span class="label">CURRENT BOOKINGS</span><strong id="bookingCount">0</strong><small id="capacityText">of 0 appointment slots reserved</small></div>
+        <p class="synced"><span class="dot" id="liveDot"></span><span id="liveText">Connecting…</span></p>
       </div>
     </div>
 
-    <div class="card">
-            <div id="dupNotice" class="notice" style="display:none;background:#f6e7bf;color:#5c4a1a;border:1px solid #e6cd8e;margin-top:0;margin-bottom:18px;line-height:1.5">
-        <strong>This is an unsaved copy.</strong> <span id="dupNoticeText"></span>
-      </div>
-      <h3>Event details</h3>
-      <div class="grid">
-        <div class="field">
-          <label for="company">Client or event name</label>
-          <input id="company" value="Demo Corporate Wellness Day" />
+    <div id="dupNotice" class="notice editor-duplicate" style="display:none;background:#f6e7bf;color:#5c4a1a;border:1px solid #e6cd8e;line-height:1.5">
+      <strong>This is an unsaved copy.</strong> <span id="dupNoticeText"></span>
+    </div>
+
+    <div class="event-editor-layout">
+      <nav class="editor-panel editor-section-nav" aria-label="Event editor sections">
+        <h3>EVENT SETUP</h3>
+        <button class="editor-nav-button active" type="button" data-editor-section="basics"><span class="num">1</span><span>Basics &amp; schedule</span><span class="check">✓</span></button>
+        <button class="editor-nav-button" type="button" data-editor-section="therapists"><span class="num">2</span><span>Therapists</span><span class="check">✓</span></button>
+        <button class="editor-nav-button" type="button" data-editor-section="client"><span class="num">3</span><span>Client details</span><span class="check">✓</span></button>
+        <button class="editor-nav-button" type="button" data-editor-section="booking"><span class="num">4</span><span>Booking settings</span><span class="check">✓</span></button>
+        <button class="editor-nav-button" type="button" data-editor-section="access"><span class="num">5</span><span>Access &amp; links</span><span class="check">✓</span></button>
+        <div class="editor-nav-help">Only the selected section appears here. The event summary stays visible for a quick final check.</div>
+      </nav>
+
+      <section class="editor-panel editor-main-panel">
+        <div class="editor-main-head">
+          <span class="label" id="editorSectionEyebrow">SECTION 1 OF 5</span>
+          <h3 id="editorSectionTitle">Basics &amp; schedule</h3>
+          <p class="sub" id="editorSectionDescription">The event name, date, location, and working hours.</p>
         </div>
-        <div class="field">
-          <label for="location">Location</label>
-          <input id="location" value="New York, NY" />
-        </div>
-        <div class="field">
-          <label for="date">Event date</label>
-          <input id="date" type="date" />
-        </div>
-        <div class="field full">
-          <label>Therapists working this event</label>
-          <div id="therapistNames"></div>
-          <button class="btn secondary" id="addTherapist" type="button" style="margin-top:8px">+ Add therapist</button>
-          <small style="color:var(--muted);line-height:1.45">Type each therapist's name. These names appear on the roster and the therapist sign-in.</small>
-        </div>
-        <div class="field">
-          <label for="start">Start time</label>
-          <input id="start" type="time" value="10:00" />
-        </div>
-        <div class="field">
-          <label for="end">End time</label>
-          <input id="end" type="time" value="14:00" />
-        </div>
-        <div class="field">
-          <label for="session">Massage time</label>
-          <select id="session">
-            <option value="10">10 minutes</option>
-            <option value="12">12 minutes</option>
-            <option value="15" selected>15 minutes</option>
-            <option value="20">20 minutes</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="buffer">Reset / cleaning time</label>
-          <select id="buffer">
-            <option value="0">No buffer</option>
-            <option value="2">2 minutes</option>
-            <option value="3" selected>3 minutes</option>
-            <option value="5">5 minutes</option>
-          </select>
-        </div>
-        <div class="field full">
-          <label for="therapistCode">Therapist access code</label>
-          <div class="code-row">
-            <input id="therapistCode" placeholder="Leave blank to keep the current code" autocomplete="off" style="flex:1" />
-            <button class="btn secondary" id="genCode" type="button" style="white-space:nowrap">Generate new code</button>
+
+        <div class="editor-form-section active" data-editor-panel="basics">
+          <div class="editor-field-grid">
+            <div class="editor-field full"><label for="company">Client or event name <span class="editor-required">*</span></label><input id="company" value="Demo Corporate Wellness Day" /></div>
+            <div class="editor-field"><label for="date">Event date <span class="editor-required">*</span></label><input id="date" type="date" /></div>
+            <div class="editor-field"><label for="location">Location <span class="editor-required">*</span></label><input id="location" value="New York, NY" /></div>
           </div>
-          <small style="color:var(--muted);line-height:1.45">Therapists type this to open the roster. It only works from 30 minutes before the event start to 30 minutes after the end.</small>
+          <div class="editor-divider"></div>
+          <div class="editor-subhead">Working hours</div>
+          <div class="editor-field-grid">
+            <div class="editor-field"><label for="start">Start time</label><input id="start" type="time" value="10:00" /></div>
+            <div class="editor-field"><label for="end">End time</label><input id="end" type="time" value="14:00" /></div>
+          </div>
+          <div class="editor-duration-row">
+            <div class="editor-duration-box"><span>Massage</span><strong id="editorBasicSession">15 minutes</strong></div>
+            <div class="editor-duration-box"><span>Reset / cleaning</span><strong id="editorBasicBuffer">3 minutes</strong></div>
+          </div>
+          <div class="editor-capacity"><div><strong>Estimated booking capacity</strong><span>Calculated from working hours and therapist count</span></div><strong class="count" id="editorCapacity">0 slots</strong></div>
+        </div>
+
+        <div class="editor-form-section" data-editor-panel="therapists">
+          <div id="therapistNames" class="editor-therapist-list"></div>
+          <button class="btn secondary editor-add-therapist" id="addTherapist" type="button">+ Add therapist</button>
+          <p class="editor-helper" style="margin-top:9px">Choose a saved therapist name. Their contact information stays in the therapist directory.</p>
+          <div class="editor-divider"></div>
+          <div class="editor-subhead">Therapist breaks</div>
+          <p class="editor-helper" style="margin:-7px 0 11px">Appointments that overlap a saved break are automatically removed from public availability.</p>
+          <div class="editor-break-grid">
+            <div class="editor-field"><label for="breakTherapist">Therapist</label><select id="breakTherapist"></select></div>
+            <div class="editor-field"><label for="breakStart">Starts</label><input id="breakStart" type="time" value="12:00" /></div>
+            <div class="editor-field"><label for="breakDuration">Length</label><select id="breakDuration"><option value="15">15 minutes</option><option value="20">20 minutes</option><option value="30" selected>30 minutes</option><option value="45">45 minutes</option><option value="60">60 minutes</option></select></div>
+            <button class="btn secondary" id="addBreak" type="button">Add break</button>
+          </div>
+          <div id="breakList" class="roster editor-break-list"></div>
+        </div>
+
+        <div class="editor-form-section" data-editor-panel="client">
+          <div class="editor-field-grid">
+            <div class="editor-field"><label for="clContact">Point of contact</label><input id="clContact" placeholder="Name and title" autocomplete="off" /></div>
+            <div class="editor-field"><label for="clPhone">Phone</label><input id="clPhone" type="tel" placeholder="(212) 555-0100" autocomplete="off" /></div>
+            <div class="editor-field full"><label for="clEmail">Email</label><input id="clEmail" type="email" placeholder="name@company.com" autocomplete="off" /></div>
+            <div class="editor-field full"><label for="clServiceAddress">Service address</label><input id="clServiceAddress" placeholder="1250 Broadway, New York City, NY 10001" autocomplete="off" /><span class="editor-helper">This is used as the location in the therapist calendar invitation.</span></div>
+            <div class="editor-field full"><label for="clNotes">Arrival instructions / access details</label><textarea id="clNotes" placeholder="Building entrance, check-in desk, floor, elevator or security instructions"></textarea><span class="editor-helper">These details appear in the event summary and therapist calendar invitation.</span></div>
+            <div class="editor-field"><label for="clCompany">Billing company name</label><input id="clCompany" placeholder="Legal name for invoicing" autocomplete="off" /></div>
+            <div class="editor-field"><label for="clInvoice">Invoice / quote link</label><div class="code-row"><input id="clInvoice" type="url" placeholder="Google Drive link" autocomplete="off" style="flex:1" /><button class="mini" id="clOpenInvoice" type="button">Open</button></div><span class="editor-helper">Nothing is uploaded to Rosters.</span></div>
+          </div>
+          <button id="clSave" type="button" style="display:none">Save client details</button>
+          <span id="clSaved" class="editor-helper"></span>
+        </div>
+
+        <div class="editor-form-section" data-editor-panel="booking">
+          <div class="editor-field-grid">
+            <div class="editor-field"><label for="session">Massage time</label><select id="session"><option value="10">10 minutes</option><option value="12">12 minutes</option><option value="15" selected>15 minutes</option><option value="20">20 minutes</option></select></div>
+            <div class="editor-field"><label for="buffer">Reset / cleaning time</label><select id="buffer"><option value="0">No buffer</option><option value="2">2 minutes</option><option value="3" selected>3 minutes</option><option value="5">5 minutes</option></select></div>
+          </div>
+          <div class="editor-capacity"><div><strong>Employee booking page</strong><span>Available until every open appointment is filled</span></div><strong style="color:var(--accent)">Published</strong></div>
+          <div class="editor-divider"></div>
+          <div class="editor-subhead">Attendee records</div>
+          <div class="editor-record-actions"><button class="btn secondary" id="export" type="button">Export attendee list</button><button class="btn danger" id="reset" type="button">Clear all bookings</button></div>
+          <div class="editor-safety-note">Collect only the minimum safety information needed. Medical answers are private and visible only to the assigned therapist and authorized Rosters admin.</div>
+        </div>
+
+        <div class="editor-form-section" data-editor-panel="access">
+          <div class="editor-protected"><span>🔒</span><div><strong>Existing links are protected</strong>This redesign does not replace booking or therapist links that have already been sent.</div></div>
+          <div class="editor-divider"></div>
+          <div class="editor-subhead">Therapist access code</div>
+          <div class="editor-field full">
+            <label for="therapistCode">Enter a new code, or generate one</label>
+            <div class="code-row"><input id="therapistCode" placeholder="Leave blank to keep the current code" autocomplete="off" style="flex:1" /><button class="btn secondary" id="genCode" type="button" style="white-space:nowrap">Generate new code</button></div>
+            <span class="editor-helper">The event code works from 30 minutes before the event until 30 minutes after it ends. The owner master code is not time-limited.</span>
+          </div>
           <div id="codeShare" class="share" style="display:none">
-            <div style="flex:1">
-              <div class="label" style="margin-bottom:4px">SEND THIS CODE TO YOUR THERAPIST</div>
-              <code id="codeShareVal" style="font-size:18px;font-weight:800;color:var(--ink)"></code>
-            </div>
-            <button class="mini" id="copyCode">Copy code</button>
+            <div style="flex:1"><div class="label" style="margin-bottom:4px">CURRENT THERAPIST CODE</div><code id="codeShareVal" class="editor-code-current"></code></div><button class="mini" id="copyCode" type="button">Copy code</button>
+          </div>
+          <div class="editor-divider"></div>
+          <div class="editor-url-group">
+            <div class="editor-field"><label>Employee booking page</label><div class="editor-link-row"><div class="editor-url-box" id="shareLink">…</div><button class="mini" id="copyLink" type="button">Copy</button></div><span class="editor-helper">Safe to send to the client or employees.</span></div>
+            <div class="editor-field"><label>Therapist view — whole team</label><div class="editor-link-row"><div class="editor-url-box" id="therapistLink">…</div><button class="mini" id="copyTherapist" type="button">Copy</button></div><span class="editor-helper">Still requires the event code or owner master code.</span></div>
+            <div class="editor-field"><label>Personal therapist links</label><div id="therapistLinksPerPerson"></div><span class="editor-helper">Each therapist sees only their assigned schedule.</span></div>
           </div>
         </div>
-      </div>
 
-      <div style="height:24px"></div>
-      <h3>Therapist breaks</h3>
-      <p class="sub">Add breaks before sharing the booking link. Any appointment that overlaps a break is automatically removed from public availability.</p>
-      <div style="height:14px"></div>
-      <div class="grid">
-        <div class="field">
-          <label for="breakTherapist">Therapist</label>
-          <select id="breakTherapist"></select>
-        </div>
-        <div class="field">
-          <label for="breakStart">Break starts</label>
-          <input id="breakStart" type="time" value="12:00" />
-        </div>
-        <div class="field">
-          <label for="breakDuration">Break duration</label>
-          <select id="breakDuration">
-            <option value="15">15 minutes</option>
-            <option value="20">20 minutes</option>
-            <option value="30" selected>30 minutes</option>
-            <option value="45">45 minutes</option>
-            <option value="60">60 minutes</option>
-          </select>
-        </div>
-        <div class="field" style="justify-content:flex-end">
-          <button class="btn secondary" id="addBreak" type="button">Add therapist break</button>
-        </div>
-      </div>
-      <div style="height:14px"></div>
-      <div id="breakList" class="roster"></div>
+        <footer class="editor-form-footer">
+          <span class="footer-hint">Required fields are marked with *</span>
+          <div class="footer-actions"><button class="btn ghost" id="editorCancel" type="button">Cancel</button><button class="btn" id="generate" type="button">Save changes</button></div>
+        </footer>
+      </section>
 
-      <div style="height:24px"></div>
-      <h3>Client details</h3>
-      <p class="sub">Who booked this event and how to reach them. Saved with the event, so everything about this job lives in one record.</p>
-      <div style="height:14px"></div>
-      <div class="grid">
-        <div class="field">
-          <label for="clCompany">Billing company name</label>
-          <input id="clCompany" placeholder="e.g. Walleye Capital Management LLC" autocomplete="off" />
-          <small style="color:var(--muted);line-height:1.45">The legal name for invoicing, if it differs from the event name above.</small>
-        </div>
-        <div class="field">
-          <label for="clContact">Point of contact</label>
-          <input id="clContact" placeholder="Name and title" autocomplete="off" />
-        </div>
-        <div class="field">
-          <label for="clEmail">Client email</label>
-          <input id="clEmail" type="email" placeholder="name@company.com" autocomplete="off" />
-        </div>
-        <div class="field">
-          <label for="clPhone">Client phone</label>
-          <input id="clPhone" type="tel" placeholder="(212) 555-0100" autocomplete="off" />
-        </div>
-        <div class="field full">
-          <label for="clServiceAddress">Service address</label>
-          <input id="clServiceAddress" placeholder="1250 Broadway, New York City, NY 10001" autocomplete="off" />
-        </div>
-        <div class="field full">
-          <label for="clInvoice">Invoice / quote link</label>
-          <div class="code-row">
-            <input id="clInvoice" type="url" placeholder="Paste the Google Drive link to the quote or invoice PDF" autocomplete="off" style="flex:1" />
-            <button class="btn secondary" id="clOpenInvoice" type="button" style="white-space:nowrap">Open</button>
+      <aside class="editor-panel editor-live-summary" aria-label="Live event summary">
+        <div class="editor-summary-head"><span class="label">LIVE PREVIEW</span><h3>Event summary</h3></div>
+        <div class="editor-summary-body">
+          <div class="editor-summary-name" id="editorSummaryName">Demo Corporate Wellness Day</div>
+          <div class="editor-summary-location" id="editorSummaryLocation">New York, NY</div>
+          <div class="editor-summary-date"><div class="editor-date-box"><div><span id="editorSummaryMonth">—</span><strong id="editorSummaryDay">—</strong></div></div><div class="editor-date-info"><strong id="editorSummaryDate">Date not set</strong><span id="editorSummaryTime">10:00 AM – 2:00 PM</span></div></div>
+          <div class="editor-summary-list">
+            <div class="editor-summary-line"><span>Therapists</span><strong id="editorSummaryTherapists">0 assigned</strong></div>
+            <div class="editor-summary-line"><span>Massage + reset</span><strong id="editorSummaryTiming">15 + 3 min</strong></div>
+            <div class="editor-summary-line"><span>Capacity</span><strong id="editorSummaryCapacity">0 slots</strong></div>
+            <div class="editor-summary-line"><span>Booking page</span><strong>Published</strong></div>
           </div>
-          <small style="color:var(--muted);line-height:1.45">Paste the Drive link from your TBD folder. Nothing is uploaded here.</small>
+          <div class="editor-url-status"><strong>✓ Existing event links stay valid</strong><span>The permanent event token is not changed by this interface redesign.</span></div>
         </div>
-        <div class="field full">
-          <label for="clNotes">Notes</label>
-          <input id="clNotes" placeholder="Building access, COI, check-in desk, floor, anything the team needs on the day" autocomplete="off" />
-        </div>
-      </div>
-      <div style="display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap">
-        <button class="btn secondary" id="clSave" type="button">Save client details</button>
-        <span id="clSaved" style="font-size:13px;color:var(--muted)"></span>
-      </div>
-
-      <div class="actions">
-        <button class="btn" id="generate">Save event &amp; publish slots</button>
-        <button class="btn secondary" id="export">Export attendee list</button>
-        <button class="btn danger" id="reset">Clear all bookings</button>
-      </div>
-
-      <div class="notice">
-        Collect only the minimum safety information needed. Pregnancy answers should be private and visible only to the assigned therapist and authorized Rosters admin.
-      </div>
-
-      <p class="label" style="margin-top:20px">CLIENT / EMPLOYEE BOOKING LINK</p>
-      <div class="share">
-        <code id="shareLink">…</code>
-        <button class="mini" id="copyLink">Copy</button>
-      </div>
-      <p class="label" style="margin-top:14px">THERAPIST LINK — whole team (dropdown, still needs the code)</p>
-      <div class="share">
-        <code id="therapistLink">…</code>
-        <button class="mini" id="copyTherapist">Copy</button>
-      </div>
-      <p class="label" style="margin-top:14px">PERSONAL LINK PER THERAPIST — each sees only their own schedule (same code)</p>
-      <div id="therapistLinksPerPerson"></div>
-      <p class="footer-note">Send the booking link to the client. Send the therapist link to your team. Keep your own admin link private.</p>
+        <div class="editor-summary-actions"><button class="btn secondary" id="editorPreviewBooking" type="button">Preview booking page ↗</button><button class="btn" id="editorCopySummary" type="button">Copy event summary</button></div>
+      </aside>
     </div>
   </section>
 
@@ -713,6 +781,60 @@ function isPublicToken(value){ return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}
 
 function mapBooking(r){ return { id:r.id, slotId:r.slot_id, therapist:r.therapist, start:r.slot_start, first:r.first_name, last:r.last_initial, email:r.email, pregnancy:r.pregnancy, attendance:r.attendance, acknowledgmentVersion:r.acknowledgment_version||null, acknowledgments:r.acknowledgments||{}, acknowledgedBy:r.acknowledged_by||'', acknowledgedAt:r.acknowledged_at||null }; }
 
+const EDITOR_SECTIONS={
+  basics:['SECTION 1 OF 5','Basics & schedule','The event name, date, location, and working hours.'],
+  therapists:['SECTION 2 OF 5','Therapists','Assign therapists and keep breaks with the people they affect.'],
+  client:['SECTION 3 OF 5','Client details','Contact, service address, arrival instructions, and invoice reference.'],
+  booking:['SECTION 4 OF 5','Booking settings','Appointment timing and attendee-record actions.'],
+  access:['SECTION 5 OF 5','Access & links','Therapist code and the permanent links already shared.']
+};
+function showEditorSection(name){
+  if(!EDITOR_SECTIONS[name]) return;
+  document.querySelectorAll('[data-editor-section]').forEach(button=>button.classList.toggle('active',button.dataset.editorSection===name));
+  document.querySelectorAll('[data-editor-panel]').forEach(panel=>panel.classList.toggle('active',panel.dataset.editorPanel===name));
+  const info=EDITOR_SECTIONS[name];
+  $('editorSectionEyebrow').textContent=info[0];
+  $('editorSectionTitle').textContent=info[1];
+  $('editorSectionDescription').textContent=info[2];
+  if(innerWidth<761) document.querySelector('.editor-main-panel')?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function eventEditorDraft(){
+  const names=rawTherapistNames().map(name=>String(name||'').trim());
+  const normalizedNames=names.map((name,i)=>name||`Therapist ${i+1}`);
+  const client={};
+  Object.entries(CLIENT_FIELDS).forEach(([id,key])=>{ const value=$(id)?.value.trim(); if(value) client[key]=value; });
+  return {...state.event,
+    company:$('company')?.value.trim()||'Chair Massage Event',
+    location:$('location')?.value.trim()||'New York, NY',
+    date:$('date')?.value||'', start:$('start')?.value||'10:00', end:$('end')?.value||'14:00',
+    session:Number($('session')?.value)||15, buffer:Number($('buffer')?.value)||0,
+    therapists:Math.max(normalizedNames.length,1), therapistNames:normalizedNames.length?normalizedNames:['Therapist 1'],
+    therapistCode:$('therapistCode')?.value.trim()||state.event.therapistCode||'', client};
+}
+function updateEventEditorPreview(){
+  if(!$('editorSummaryName')) return;
+  const draft=eventEditorDraft();
+  const filledNames=rawTherapistNames().map(name=>String(name||'').trim()).filter(Boolean);
+  const startMinutes=minutes(draft.start), endMinutes=minutes(draft.end), step=draft.session+draft.buffer;
+  const perTherapist=endMinutes>startMinutes && step>0 && endMinutes-startMinutes>=draft.session
+    ? Math.floor((endMinutes-startMinutes-draft.session)/step)+1 : 0;
+  const capacity=perTherapist*draft.therapists;
+  const date=draft.date?new Date(draft.date+'T12:00:00'):null;
+  $('editorPageTitle').textContent=`${state.event.id==='new-event'?'Create':'Edit'} “${draft.company}”`;
+  $('editorSummaryName').textContent=draft.company;
+  $('editorSummaryLocation').textContent=draft.location;
+  $('editorSummaryMonth').textContent=date?date.toLocaleDateString('en-US',{month:'short'}):'—';
+  $('editorSummaryDay').textContent=date?String(date.getDate()):'—';
+  $('editorSummaryDate').textContent=date?date.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'}):'Date not set';
+  $('editorSummaryTime').textContent=`${clock(startMinutes)} – ${clock(endMinutes)}`;
+  $('editorSummaryTherapists').textContent=`${filledNames.length} assigned`;
+  $('editorSummaryTiming').textContent=`${draft.session} + ${draft.buffer} min`;
+  $('editorSummaryCapacity').textContent=`${capacity} slot${capacity===1?'':'s'}`;
+  $('editorCapacity').textContent=`${capacity} slot${capacity===1?'':'s'}`;
+  $('editorBasicSession').textContent=`${draft.session} minutes`;
+  $('editorBasicBuffer').textContent=draft.buffer?`${draft.buffer} minutes`:'No reset time';
+}
+
 // ----- Therapist names -----
 function rawTherapistNames(){ const box=document.getElementById('therapistNames'); return box ? [...box.querySelectorAll('input')].map(inp=>inp.value) : []; }
 function currentTherapistNames(){
@@ -725,15 +847,24 @@ function currentTherapistNames(){
 }
 function therapistNamesList(){ const n=state.event.therapists||0; const arr=state.event.therapistNames||[]; return Array.from({length:n},(_,i)=> (arr[i]&&String(arr[i]).trim()) ? String(arr[i]).trim() : ('Therapist '+(i+1))); }
 function therapistName(i){ const arr=state.event.therapistNames||[]; return (arr[i-1]&&String(arr[i-1]).trim()) ? String(arr[i-1]).trim() : ('Therapist '+i); }
+function therapistDirectoryRecord(name){
+  const key=String(name||'').toLowerCase().replace(/\./g,'').replace(/\s+/g,' ').trim();
+  return tiAll.find(t=>`${t.first_name} ${String(t.last_initial||'').charAt(0)}`.toLowerCase().replace(/\./g,'').replace(/\s+/g,' ').trim()===key) || null;
+}
 function renderTherapistNameRows(){
   const box=$('therapistNames'); if(!box) return;
   let names=(state.event.therapistNames&&state.event.therapistNames.length)?state.event.therapistNames.slice():['',''];
-  box.innerHTML=names.map((nm,i)=>`<div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
-    <input class="tname" placeholder="Therapist ${i+1} name" value="${esc(nm||'')}" style="flex:1" list="therapistDirectoryList" autocomplete="off" />
-    <button class="mini" type="button" onclick="removeTherapistRow(${i})">Remove</button></div>`).join('');
+  box.innerHTML=names.map((nm,i)=>{
+    const therapist=therapistDirectoryRecord(nm);
+    const contact=therapist ? `${therapist.email} · ${therapist.phone}` : 'Choose from the saved therapist directory';
+    const initial=String(nm||'T').trim().charAt(0).toUpperCase()||'T';
+    return `<div class="editor-therapist-row"><div class="editor-avatar">${esc(initial)}</div><div class="editor-therapist-main">
+      <input class="tname" aria-label="Therapist ${i+1} name" placeholder="Therapist ${i+1} name" value="${esc(nm||'')}" list="therapistDirectoryList" autocomplete="off" />
+      <small>${esc(contact)}</small></div><button class="mini" type="button" onclick="removeTherapistRow(${i})">Remove</button></div>`;
+  }).join('');
 }
-window.addTherapistRow=function(){ const n=rawTherapistNames(); n.push(''); state.event.therapistNames=n; renderTherapistNameRows(); renderBreakTherapistSelect(); };
-window.removeTherapistRow=function(i){ let n=rawTherapistNames(); n.splice(i,1); if(!n.length) n=['']; state.event.therapistNames=n; renderTherapistNameRows(); renderBreakTherapistSelect(); };
+window.addTherapistRow=function(){ const n=rawTherapistNames(); n.push(''); state.event.therapistNames=n; renderTherapistNameRows(); renderBreakTherapistSelect(); updateEventEditorPreview(); };
+window.removeTherapistRow=function(i){ let n=rawTherapistNames(); n.splice(i,1); if(!n.length) n=['']; state.event.therapistNames=n; renderTherapistNameRows(); renderBreakTherapistSelect(); updateEventEditorPreview(); };
 async function ensureUniqueId(base, currentId){
   if(base===currentId) return base;
   let id=base, n=2;
@@ -769,6 +900,10 @@ function hydrateForm(){
   $('buffer').value=state.event.buffer;
   renderTherapistNameRows();
   hydrateClientForm();
+  lastTherapistCode=state.event.therapistCode||'';
+  $('codeShareVal').textContent=lastTherapistCode;
+  $('codeShare').style.display=lastTherapistCode?'flex':'none';
+  updateEventEditorPreview();
 }
 
 /* ---------- Client details ---------- */
@@ -1174,6 +1309,7 @@ function refreshUI(){
   if($('therapistLink')) $('therapistLink').textContent=therapistRosterUrl();
   $('bookingCount').textContent=state.bookings.length;
   $('capacityText').textContent=`of ${state.slots.filter(s=>!slotBlockedByBreak(s)).length} available appointment slots reserved`;
+  if(mode==='admin') updateEventEditorPreview();
   renderSlots();
   if(mode==='admin'){ renderBreakTherapistSelect(); renderBreaks(); renderTherapistLinks(); }
   renderTherapistSelect();
@@ -1192,6 +1328,7 @@ function showView(id,{updateUrl=true,replaceUrl=false}={}){
   }
   if(id==='therapist') renderRoster();
   if(id==='events') renderEventsView();
+  if(id==='admin') updateEventEditorPreview();
   if(id==='therapistsInfo') renderTherapistsInfo();
   if(id==='calendarSettings'){
     loadCalendarConnection();
@@ -1649,7 +1786,7 @@ window.createEvent=function(){
   computeSlots(); hydrateForm();
   if($('therapistCode')) $('therapistCode').value='';
   if($('dupNotice')) $('dupNotice').style.display='none';
-  refreshUI(); showView('admin'); window.scrollTo(0,0);
+  refreshUI(); showEditorSection('basics'); showView('admin'); window.scrollTo(0,0);
   $('company').focus(); $('company').select();
 };
 window.duplicateEv=async function(id){
@@ -1668,10 +1805,10 @@ window.duplicateEv=async function(id){
   computeSlots(); hydrateForm(); subscribe(); refreshUI();
   $('date').value='';
   if($('dupNotice')){
-    $('dupNoticeText').textContent='Copied from "'+sourceName+'". Set the event date, change anything you need, then press "Save event & publish slots". Nothing is saved until you do. The therapist access code was not copied — generate a new one below.';
+    $('dupNoticeText').textContent='Copied from "'+sourceName+'". Set the event date, change anything you need, then press "Save changes". Nothing is saved until you do. The therapist access code was not copied — generate a new one below.';
     $('dupNotice').style.display='block';
   }
-  showView('admin'); window.scrollTo(0,0);
+  showEditorSection('basics'); showView('admin'); window.scrollTo(0,0);
   $('date').focus();
 };
 window.editEv=async function(id){
@@ -1679,7 +1816,7 @@ window.editEv=async function(id){
   if($('dupNotice')) $('dupNotice').style.display='none';
   localStorage.setItem('kneadCurrentEvent', id);
   await loadBookings(true); computeSlots(); subscribe(); hydrateForm(); refreshUI();
-  showView('admin'); window.scrollTo(0,0);
+  showEditorSection('basics'); showView('admin'); window.scrollTo(0,0);
 };
 function setEvView(v){
   evView=v; const isList=v==='list';
@@ -1731,8 +1868,8 @@ async function startAdmin(preEventId){
   mode='admin'; showApp(); $('tabBar').style.display='grid'; $('settingsNav').style.display='';
   const id = preEventId || localStorage.getItem('kneadCurrentEvent') || 'demo-corporate-wellness-day';
   if(!await loadEvent(id)){ state.event={...DEFAULT_EVENT, id, date:defaultDate()}; await saveEvent(); }
+  await loadTherapistsInfo();
   hydrateForm(); await loadBookings(true); computeSlots(); subscribe(); refreshUI();
-  loadTherapistsInfo();
   const calendarResult=params().get('calendar');
   showView(calendarResult?'calendarSettings':adminViewFromUrl(),{replaceUrl:true});
   if(calendarResult){
@@ -1802,6 +1939,12 @@ document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
 $('settingsNav').addEventListener('click',()=>showView('calendarSettings'));
 $('createEvent').addEventListener('click',createEvent);
 $('backToEvents').addEventListener('click',()=>showView('events'));
+$('editorCancel').addEventListener('click',()=>showView('events'));
+document.querySelectorAll('[data-editor-section]').forEach(button=>button.addEventListener('click',()=>showEditorSection(button.dataset.editorSection)));
+['company','location','date','start','end','session','buffer'].forEach(id=>{
+  $(id).addEventListener('input',updateEventEditorPreview);
+  $(id).addEventListener('change',updateEventEditorPreview);
+});
 window.addEventListener('popstate',()=>{
   if(mode==='admin') showView(adminViewFromUrl(),{updateUrl:false});
 });
@@ -1817,7 +1960,12 @@ $('clOpenInvoice').addEventListener('click',()=>{
   if(!/^https?:\/\//i.test(url)) return alert('That link must start with http:// or https://');
   window.open(url,'_blank','noopener');
 });
-$('therapistNames').addEventListener('input',renderBreakTherapistSelect);
+$('therapistNames').addEventListener('input',()=>{ renderBreakTherapistSelect(); updateEventEditorPreview(); });
+$('editorPreviewBooking').addEventListener('click',()=>{
+  if(!state.event.publicToken) return alert('Save this event first to create its permanent booking link.');
+  window.open(employeeBookingUrl(state.event),'_blank','noopener');
+});
+$('editorCopySummary').addEventListener('click',()=>copy(eventSummaryText(eventEditorDraft()),$('editorCopySummary')));
 $('evTabList').addEventListener('click',()=>setEvView('list'));
 $('evTabCal').addEventListener('click',()=>setEvView('cal'));
 $('evArchToggle').addEventListener('change',e=>{ evShowArchived=e.target.checked; evSelId=null; renderEventsView(); });
