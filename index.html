@@ -12,7 +12,7 @@
     }
     *{box-sizing:border-box}
     body{margin:0;font-family:Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;background:var(--paper);color:var(--ink);}
-    button,input,select{font:inherit}
+    button,input,select,textarea{font:inherit}
     .shell{max-width:1180px;margin:0 auto;padding:22px}
     header{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:16px 0 22px;}
     .brand{display:flex;align-items:center;gap:12px}
@@ -98,6 +98,67 @@
     .event-summary-copy{white-space:pre-wrap;font-size:13px;line-height:1.65;color:#3f443f;background:#f8faf7;border:1px solid #e1e7e1;border-radius:10px;padding:13px;margin:10px 0 12px}
     .ti-form-grid{grid-template-columns:1fr 90px 1fr 1.2fr}
     .code-row{display:flex;gap:8px;align-items:stretch}
+    #signup .signup-event-head{display:flex;align-items:center;justify-content:space-between;gap:22px;padding:18px 22px;margin-bottom:14px}
+    #signup .signup-event-head h2{font-size:28px;margin:5px 0 4px}
+    #signup .signup-event-head .sub{font-size:13px}
+    #signup .booking-shell{padding:0;overflow:hidden}
+    #signup .booking-notice{margin:0;border:0;border-bottom:1px solid #e6cd8e;border-radius:0;padding:11px 18px;font-size:12px}
+    #signup .booking-progress{display:grid;grid-template-columns:repeat(3,1fr);background:#fdfcf9;border-bottom:1px solid var(--line)}
+    #signup .booking-step{display:flex;align-items:center;gap:9px;padding:12px 16px;border-right:1px solid var(--line);font-size:11px;font-weight:750;color:var(--muted)}
+    #signup .booking-step:last-child{border-right:0}
+    #signup .booking-step span{width:21px;height:21px;border-radius:50%;display:grid;place-items:center;background:#e8e3dc;color:#746f68;font-size:10px}
+    #signup .booking-step.current{color:var(--accent)}
+    #signup .booking-step.current span{background:var(--accent);color:white}
+    #signup .booking-layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;align-items:start}
+    #signup .booking-form{border-right:1px solid var(--line)}
+    #signup .booking-section{padding:18px 20px;border-bottom:1px solid var(--line)}
+    #signup .booking-section:last-child{border-bottom:0}
+    #signup .booking-section-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:13px}
+    #signup .booking-section-head h3{font-size:20px;margin:0}
+    #signup .booking-section-head p{font-size:10px;color:var(--muted);line-height:1.4;margin:3px 0 0}
+    #signup .required-pill{background:var(--accent-2);color:var(--accent);border-radius:999px;padding:5px 8px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+    #signup .selection-summary{margin:12px 0 0;padding:11px 12px;border:1px solid #bdcdc2;border-radius:10px;background:#edf3ef;font-size:12px}
+    #signup .medical-question{font-size:13px;font-weight:800}
+    #signup .medical-help{font-size:10px;color:var(--muted);line-height:1.45;margin:4px 0 0}
+    #signup .medical-choices{display:flex;gap:8px;margin-top:10px}
+    #signup .medical-choice{position:relative;min-width:100px}
+    #signup .medical-choice input{position:absolute;opacity:0;pointer-events:none}
+    #signup .medical-choice span{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:9px;padding:9px 12px;background:white;font-size:12px;font-weight:750;cursor:pointer}
+    #signup .medical-choice span::before{content:"";width:14px;height:14px;border-radius:50%;border:1.5px solid #a59f97}
+    #signup .medical-choice input:checked + span{border-color:var(--accent);background:var(--accent-2);color:var(--accent)}
+    #signup .medical-choice input:checked + span::before{border:4px solid var(--accent)}
+    #signup #pregnantDetail{margin-top:10px;min-height:78px;resize:vertical;line-height:1.45}
+    #signup textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px 13px;background:#fff;color:var(--ink);outline:none}
+    #signup textarea:focus{border-color:#8b978f;box-shadow:0 0 0 3px var(--accent-2)}
+    #signup .ack-divider{height:1px;background:var(--line);margin:16px 0}
+    #signup .ack-title{font-size:12px;font-weight:800}
+    #signup .ack-help{font-size:10px;color:var(--muted);line-height:1.4;margin:3px 0 7px}
+    #signup .ack-row{display:grid;grid-template-columns:18px 1fr;gap:9px;align-items:start;padding:9px 0;border-bottom:1px solid #eeeae4;cursor:pointer}
+    #signup .ack-row:last-child{border-bottom:0;color:var(--accent);font-weight:750}
+    #signup .ack-row input{appearance:none;width:17px;height:17px;border:1.5px solid #9d978f;border-radius:5px;padding:0;margin:0;background:white}
+    #signup .ack-row input:checked{background:var(--accent);border-color:var(--accent);position:relative}
+    #signup .ack-row input:checked::after{content:"✓";position:absolute;left:3px;top:-1px;color:white;font-size:11px;font-weight:900}
+    #signup .ack-row span{font-size:11px;line-height:1.4}
+    #signup .automatic-time{display:flex;gap:9px;margin-top:11px;padding:10px 11px;border-radius:10px;background:var(--soft);font-size:10px;color:var(--muted);line-height:1.4}
+    #signup .automatic-time strong{display:block;color:var(--ink);font-size:10px;margin-bottom:2px}
+    #signup .booking-review{position:sticky;top:76px;padding:18px}
+    #signup .booking-review h3{font-size:21px;margin:5px 0 15px}
+    #signup .review-time{display:flex;justify-content:space-between;gap:12px;padding:11px;border-radius:10px;background:var(--accent-2);font-size:11px;color:#59655e;margin-bottom:13px}
+    #signup .review-time strong{color:var(--accent);font-size:13px}
+    #signup .review-list{display:grid;gap:10px}
+    #signup .review-row{display:flex;justify-content:space-between;gap:12px;padding-bottom:9px;border-bottom:1px solid #eeeae4;font-size:10px}
+    #signup .review-row span{color:var(--muted)}
+    #signup .review-row strong{text-align:right;max-width:160px;overflow-wrap:anywhere}
+    #signup .review-status{display:flex;gap:7px;align-items:flex-start;margin:12px 0;color:var(--muted);font-size:10px;line-height:1.35}
+    #signup .review-status::before{content:"";width:7px;height:7px;border-radius:50%;background:#bbb4aa;margin-top:3px;flex:0 0 auto}
+    #signup .review-status.ready{color:#386549}
+    #signup .review-status.ready::before{background:#4c8a63}
+    #signup .booking-review .btn{width:100%}
+    #signup .booking-review-note{text-align:center;color:var(--muted);font-size:9px;line-height:1.4;margin:8px 0 0}
+    #signup .booking-existing{margin:0 20px 18px}
+    #signup .booking-success{margin:0;border-radius:0;padding:22px}
+    #signup .booking-success .submission-time{font-size:11px;margin-top:10px;opacity:.82}
+    #signup .booking-footer{padding:0 20px 18px;margin:0;font-size:10px}
     @media(max-width:760px){
       .shell{padding:14px}
       header{align-items:flex-start;flex-direction:column;gap:12px}
@@ -122,6 +183,18 @@
       .ti-form-grid{grid-template-columns:1fr;gap:8px}
       .code-row{flex-direction:column;align-items:stretch}
       .code-row button{width:100%}
+      #signup .signup-event-head{align-items:flex-start;padding:16px}
+      #signup .signup-event-head .synced{display:none}
+      #signup .booking-progress{grid-template-columns:1fr}
+      #signup .booking-step{display:none}
+      #signup .booking-step.current{display:flex;border-right:0}
+      #signup .booking-layout{grid-template-columns:1fr}
+      #signup .booking-form{border-right:0}
+      #signup .booking-section{padding:16px}
+      #signup .booking-section-head{flex-direction:column;gap:7px}
+      #signup .booking-review{position:static;border-top:1px solid var(--line);padding:16px}
+      #signup .booking-existing{margin:0 16px 16px}
+      #signup .booking-footer{padding:0 16px 16px}
     }
   </style>
 </head>
@@ -443,73 +516,95 @@
   </section>
 
   <section id="signup" class="view">
-    <div class="hero">
-      <div class="card">
+    <div class="card signup-event-head">
+      <div>
         <p class="label">EMPLOYEE BOOKING PAGE</p>
         <h2 id="signupTitle">Loading…</h2>
         <p class="sub"><span id="signupDate"></span> · <span id="signupLocation"></span></p>
       </div>
-      <div class="card">
-        <p class="label">HOW IT WORKS</p>
-        <p class="sub">Choose an available time, enter your name and work email, then receive an on-screen confirmation.</p>
-        <p class="synced" style="margin-top:10px"><span class="dot" id="liveDot2"></span><span id="liveText2">Connecting…</span></p>
-      </div>
+      <p class="synced"><span class="dot" id="liveDot2"></span><span id="liveText2">Connecting…</span></p>
     </div>
 
-    <div class="card">
-      <div class="notice" style="background:#f6e7bf;color:#5c4a1a;font-weight:700;margin-top:0;margin-bottom:18px;border:1px solid #e6cd8e">
+    <div class="card booking-shell">
+      <div class="notice booking-notice" style="background:#f6e7bf;color:#5c4a1a;font-weight:700">
         Please note: your confirmation shows on this screen only — no email is sent. After you book, take a screenshot of your confirmation so you have your time saved.
       </div>
-      <h3>1. Choose a time</h3>
-      <div id="slotList" class="slots"></div>
+      <div class="booking-progress">
+        <div class="booking-step"><span>1</span>Choose a time</div>
+        <div class="booking-step"><span>2</span>Your information</div>
+        <div class="booking-step current"><span>3</span>Health &amp; acknowledgment</div>
+      </div>
+      <div class="booking-layout">
+        <div class="booking-form">
+          <section class="booking-section">
+            <div class="booking-section-head"><div><h3>1. Choose a time</h3><p>Select one available appointment.</p></div></div>
+            <div id="slotList" class="slots"></div>
+            <div class="selection-summary" id="selectionSummary" style="display:none">
+              <div class="row"><span>Selected time</span><strong id="chosenTime">—</strong></div>
+              <div class="row"><span>Appointment length</span><strong id="chosenLength">—</strong></div>
+            </div>
+          </section>
 
-      <div class="summary" id="selectionSummary" style="display:none">
-        <div class="row"><span>Selected time</span><strong id="chosenTime">—</strong></div>
-        <div class="row"><span>Appointment length</span><strong id="chosenLength">—</strong></div>
+          <section class="booking-section">
+            <div class="booking-section-head"><div><h3>2. Your information</h3><p>Use your work email for this event.</p></div><span class="required-pill">Required</span></div>
+            <div class="grid">
+              <div class="field"><label for="firstName">First name</label><input id="firstName" autocomplete="given-name" /></div>
+              <div class="field"><label for="lastInitial">Last initial</label><input id="lastInitial" maxlength="1" /></div>
+              <div class="field full"><label for="email">Work email</label><input id="email" type="email" autocomplete="email" placeholder="name@company.com" /></div>
+            </div>
+          </section>
+
+          <section class="booking-section">
+            <div class="booking-section-head"><div><h3>3. Health information &amp; acknowledgment</h3><p>Answer based on what you know and disclose today.</p></div><span class="required-pill">Required</span></div>
+            <div class="medical-question">Medical Condition Concern:</div>
+            <p class="medical-help">Do you have a medical condition, injury, sensitivity, or other concern the therapist should know about?</p>
+            <input id="pregnant" type="hidden" value="" />
+            <div class="medical-choices" role="radiogroup" aria-label="Medical Condition Concern">
+              <label class="medical-choice"><input type="radio" name="medicalConcern" value="No" /><span>No</span></label>
+              <label class="medical-choice"><input type="radio" name="medicalConcern" value="Yes" /><span>Yes</span></label>
+            </div>
+            <textarea id="pregnantDetail" placeholder="Please provide details..." style="display:none"></textarea>
+            <small style="display:block;margin-top:7px;color:var(--muted);font-size:10px;line-height:1.45">This answer is shared only with the assigned therapist and authorized Rosters admin.</small>
+
+            <div class="ack-divider"></div>
+            <div class="ack-title">Please confirm each statement</div>
+            <p class="ack-help">These acknowledgments are saved with the booking record.</p>
+            <label class="ack-row"><input id="ackAccurate" type="checkbox" /><span>I confirm this information is accurate today</span></label>
+            <label class="ack-row"><input id="ackNotMedical" type="checkbox" /><span>I understand chair massage is not medical diagnosis or treatment</span></label>
+            <label class="ack-row"><input id="ackStop" type="checkbox" /><span>I may ask the therapist to stop at any time</span></label>
+            <label class="ack-row"><input id="ackName" type="checkbox" /><span>I acknowledge the statements above as <strong id="acknowledgmentName">the employee named above</strong></span></label>
+            <div class="automatic-time"><span>◷</span><div><strong>Submission date and time</strong><span id="submissionTimeNote">Recorded automatically when you reserve the appointment.</span></div></div>
+          </section>
+        </div>
+
+        <aside class="booking-review" aria-label="Booking summary">
+          <p class="label">REVIEW</p><h3>Booking summary</h3>
+          <div class="review-time"><span>Appointment</span><strong id="reviewTime">Choose a time</strong></div>
+          <div class="review-list">
+            <div class="review-row"><span>Employee</span><strong id="reviewEmployee">Not entered</strong></div>
+            <div class="review-row"><span>Work email</span><strong id="reviewEmail">Not entered</strong></div>
+            <div class="review-row"><span>Medical concern</span><strong id="reviewMedical">Not answered</strong></div>
+            <div class="review-row"><span>Acknowledgments</span><strong id="reviewAcknowledgments">0 of 4 complete</strong></div>
+          </div>
+          <div class="review-status" id="bookingReadyText">Complete all required information</div>
+          <button class="btn" id="book" disabled>Reserve appointment</button>
+          <p class="booking-review-note">Your confirmation appears on this screen. No email is sent.</p>
+        </aside>
       </div>
 
-      <div style="height:18px"></div>
-      <h3>2. Your information</h3>
-      <div class="grid">
-        <div class="field">
-          <label for="firstName">First name</label>
-          <input id="firstName" autocomplete="given-name" />
-        </div>
-        <div class="field">
-          <label for="lastInitial">Last initial</label>
-          <input id="lastInitial" maxlength="1" />
-        </div>
-        <div class="field full">
-          <label for="email">Work email</label>
-          <input id="email" type="email" autocomplete="email" placeholder="name@company.com" />
-        </div>
-        <div class="field full">
-          <label for="pregnant">Do you have any medical condition concern?</label>
-          <select id="pregnant" required>
-            <option value="">Select an answer</option>
-            <option value="No">No</option>
-            <option value="Yes">Yes</option>
-          </select>
-          <input id="pregnantDetail" placeholder="Tell me what it is..." style="margin-top:8px;display:none" />
-          <small style="color:var(--muted);line-height:1.45">This answer is shared only with the assigned therapist and authorized Rosters admin.</small>
-        </div>
-      </div>
-
-      <div id="existingNotice" style="display:none;background:#e8efe6;border:1px solid #b9ccb0;border-radius:12px;padding:14px 16px;margin-bottom:16px">
+      <div id="existingNotice" class="booking-existing" style="display:none;background:#e8efe6;border:1px solid #b9ccb0;border-radius:12px;padding:14px 16px">
         <div id="existingMsg" style="font-weight:700;color:#2f4429;margin-bottom:10px;line-height:1.5"></div>
         <div id="existingActions" style="display:flex;gap:10px;flex-wrap:wrap">
           <button type="button" class="btn" id="rescheduleBtn" onclick="startReschedule()">Reschedule</button>
           <button type="button" class="btn secondary" id="keepBtn" onclick="keepBooking()">Keep my time</button>
         </div>
       </div>
-      <div class="actions">
-        <button class="btn" id="book">Reserve appointment</button>
-      </div>
-      <div class="success" id="success">
+      <div class="success booking-success" id="success">
         <h3>Appointment reserved</h3>
         <div id="confirmationText"></div>
+        <div class="submission-time" id="confirmationTimestamp"></div>
       </div>
-      <p class="footer-note">By reserving, the attendee agrees to arrive five minutes early. This form is for scheduling only and does not provide medical advice.</p>
+      <p class="footer-note booking-footer">Please arrive five minutes early. Chair massage is not medical diagnosis or treatment, and you may ask the therapist to stop at any time.</p>
     </div>
   </section>
 
@@ -549,6 +644,12 @@ const WINDOW_PAD = 30; // minutes before start / after end that the therapist co
 
 const DEFAULT_EVENT = { company:'Demo Corporate Wellness Day', location:'New York, NY', date:'', start:'10:00', end:'14:00', session:15, buffer:3, therapists:2, therapistNames:['',''], breaks:[], therapistCodeHash:null, therapistCode:'', publicToken:null, calendarInvitesEnabled:false, client:{} };
 const CLIENT_FIELDS = { clCompany:'company', clContact:'contact', clEmail:'email', clPhone:'phone', clServiceAddress:'serviceAddress', clInvoice:'invoice', clNotes:'notes' };
+const BOOKING_ACKNOWLEDGMENT_VERSION = '2026-09-03';
+const BOOKING_ACKNOWLEDGMENT_STATEMENTS = {
+  accurate_today:'I confirm this information is accurate today',
+  not_medical_diagnosis_or_treatment:'I understand chair massage is not medical diagnosis or treatment',
+  may_stop_anytime:'I may ask the therapist to stop at any time'
+};
 
 let state = { event:{...DEFAULT_EVENT, id:'demo-corporate-wellness-day'}, bookings:[], slots:[] };
 let selectedStart = null, channel = null, mode = 'admin', lastTherapistCode = '';
@@ -610,7 +711,7 @@ function therapistRosterUrl(event=state.event,therapistNumber=null){
 }
 function isPublicToken(value){ return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value||''); }
 
-function mapBooking(r){ return { id:r.id, slotId:r.slot_id, therapist:r.therapist, start:r.slot_start, first:r.first_name, last:r.last_initial, email:r.email, pregnancy:r.pregnancy, attendance:r.attendance }; }
+function mapBooking(r){ return { id:r.id, slotId:r.slot_id, therapist:r.therapist, start:r.slot_start, first:r.first_name, last:r.last_initial, email:r.email, pregnancy:r.pregnancy, attendance:r.attendance, acknowledgmentVersion:r.acknowledgment_version||null, acknowledgments:r.acknowledgments||{}, acknowledgedBy:r.acknowledged_by||'', acknowledgedAt:r.acknowledged_at||null }; }
 
 // ----- Therapist names -----
 function rawTherapistNames(){ const box=document.getElementById('therapistNames'); return box ? [...box.querySelectorAll('input')].map(inp=>inp.value) : []; }
@@ -790,6 +891,46 @@ function groupedSlots(){
     open:map[start].filter(s => !slotBlockedByBreak(s) && !state.bookings.some(b=>b.slotId===s.id)).length
   }));
 }
+function bookingAcknowledgmentInputs(){
+  return ['ackAccurate','ackNotMedical','ackStop','ackName'].map(id=>$(id)).filter(Boolean);
+}
+function bookingEmployeeDisplay(){
+  const first=$('firstName').value.trim();
+  const last=$('lastInitial').value.trim().slice(0,1).toUpperCase();
+  return first ? `${first}${last?' '+last+'.':''}` : 'Not entered';
+}
+function updateBookingFormState(){
+  if(mode!=='client') return;
+  const first=$('firstName').value.trim();
+  const last=$('lastInitial').value.trim().slice(0,1).toUpperCase();
+  const email=$('email').value.trim();
+  const medical=$('pregnant').value;
+  const detail=$('pregnantDetail').value.trim();
+  const checks=bookingAcknowledgmentInputs();
+  const checkCount=checks.filter(el=>el.checked).length;
+  const displayName=bookingEmployeeDisplay();
+  $('acknowledgmentName').textContent=displayName==='Not entered'?'the employee named above':displayName;
+  $('reviewEmployee').textContent=displayName;
+  $('reviewEmail').textContent=email||'Not entered';
+  $('reviewTime').textContent=selectedStart===null?'Choose a time':clock(selectedStart);
+  $('reviewMedical').textContent=medical==='Yes'?(detail?'Yes · details provided':'Yes · details required'):(medical||'Not answered');
+  $('reviewAcknowledgments').textContent=`${checkCount} of ${checks.length} complete`;
+
+  const validEmail=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const medicalComplete=medical==='No'||(medical==='Yes'&&!!detail);
+  const complete=selectedStart!==null && !!first && !!last && validEmail && medicalComplete && checkCount===checks.length;
+  const existingBlocked=$('existingNotice').style.display!=='none' && !rescheduleMode;
+  $('book').disabled=!complete||existingBlocked;
+  $('bookingReadyText').classList.toggle('ready',complete&&!existingBlocked);
+  $('bookingReadyText').textContent=existingBlocked?'Review your existing booking below.':(complete?'Ready to reserve':'Complete all required information');
+}
+function resetBookingAcknowledgments(){
+  bookingAcknowledgmentInputs().forEach(el=>{ el.checked=false; });
+  document.querySelectorAll('input[name="medicalConcern"]').forEach(el=>{ el.checked=false; });
+  $('pregnant').value='';
+  $('pregnantDetail').value='';
+  $('pregnantDetail').style.display='none';
+}
 function renderSlots(){
   const groups=groupedSlots();
   $('slotList').innerHTML=groups.length ? groups.map(g=>{
@@ -804,6 +945,7 @@ window.chooseSlot=function(start){
   $('chosenLength').textContent=`${state.event.session} minutes`;
   $('success').style.display='none';
   renderSlots();
+  updateBookingFormState();
 };
 
 function renderBreakTherapistSelect(){
@@ -874,9 +1016,9 @@ function showExistingNotice(b){
   $('existingMsg').innerHTML=`You already have a booking at <strong>${clock(b.start)}</strong> on ${esc(prettyDate(state.event.date))}. Keep it, or move to a different time?`;
   $('existingActions').style.display='flex';
   $('existingNotice').style.display='block';
-  $('book').disabled=true;
+  updateBookingFormState();
 }
-function hideExistingNotice(){ $('existingNotice').style.display='none'; $('book').disabled=false; }
+function hideExistingNotice(){ $('existingNotice').style.display='none'; updateBookingFormState(); }
 async function checkExisting(){
   if(rescheduleMode) return;
   const prior=await findBookingByEmail($('email').value.trim());
@@ -889,8 +1031,8 @@ window.startReschedule=function(){
   $('existingMsg').innerHTML=`Pick your new time below, then tap Reserve. Your <strong>${clock(existingBooking.start)}</strong> spot is held until you confirm the new one.`;
   $('existingActions').style.display='none';
   $('existingNotice').style.display='block';
-  $('book').disabled=false;
   selectedStart=null; $('selectionSummary').style.display='none'; $('success').style.display='none';
+  updateBookingFormState();
   const list=document.getElementById('slotList'); if(list) list.scrollIntoView({behavior:'smooth',block:'center'});
 };
 window.keepBooking=function(){
@@ -904,10 +1046,19 @@ async function reserve(){
   const last=$('lastInitial').value.trim().slice(0,1).toUpperCase();
   const email=$('email').value.trim(); const pregnantAnswer=$('pregnant').value;
   const pregnantDetail=$('pregnantDetail').value.trim();
+  const acknowledgmentInputs=bookingAcknowledgmentInputs();
   if(!first || !last || !email || !email.includes('@')) return alert('Please enter your name and a valid work email.');
   if(!pregnantAnswer) return alert('Please answer the medical condition question.');
   if(pregnantAnswer==='Yes' && !pregnantDetail) return alert('Please tell us about your medical condition.');
+  if(acknowledgmentInputs.some(el=>!el.checked)) return alert('Please confirm each acknowledgment before reserving your appointment.');
   const pregnancy = pregnantAnswer==='Yes' ? `Yes: ${pregnantDetail}` : 'No';
+  const acknowledgedBy=`${first} ${last}.`;
+  const acknowledgments={
+    accurate_today:true,
+    not_medical_diagnosis_or_treatment:true,
+    may_stop_anytime:true,
+    statements:BOOKING_ACKNOWLEDGMENT_STATEMENTS
+  };
   if(!rescheduleMode){
     const prior=await findBookingByEmail(email);
     if(prior){ existingBooking=prior; showExistingNotice(prior); return; }
@@ -919,9 +1070,15 @@ async function reserve(){
   const open=state.slots.find(s=>s.start===selectedStart && !slotBlockedByBreak(s) && !state.bookings.some(b=>b.slotId===s.id));
   if(!open){ alert('That time was just reserved. Please choose another time.'); await loadBookings(mode!=='client'); renderSlots(); return; }
   $('book').disabled=true;
-  const { error } = await sb.from('bookings').insert({ event_id:state.event.id, slot_id:open.id, therapist:open.therapist, slot_start:open.start, first_name:first, last_initial:last, email, pregnancy, attendance:'Scheduled' });
+  const { error } = await sb.from('bookings').insert({
+    event_id:state.event.id, slot_id:open.id, therapist:open.therapist, slot_start:open.start,
+    first_name:first, last_initial:last, email, pregnancy, attendance:'Scheduled',
+    acknowledgment_version:BOOKING_ACKNOWLEDGMENT_VERSION,
+    acknowledgments,
+    acknowledged_by:acknowledgedBy
+  });
   if(error){
-    $('book').disabled=false;
+    updateBookingFormState();
     if(error.code==='23505'){ alert('That time was just reserved. Please choose another time.'); }
     else { alert('Something went wrong saving your booking. Please try again.'); console.error(error); }
     await loadBookings(mode!=='client'); renderSlots(); return;
@@ -931,14 +1088,16 @@ async function reserve(){
     const del=await sb.from('bookings').delete().eq('id', existingBooking.id);
     if(del.error){ console.error(del.error); } else { rescheduled=true; }
   }
-  $('book').disabled=false;
   const startVal=open.start;
   rescheduleMode=false; existingBooking=null; hideExistingNotice();
   await loadBookings(mode!=='client'); selectedStart=null; refreshUI();
   const lead=rescheduled?`Your time has been changed. `:``;
   $('confirmationText').innerHTML=`${lead}${esc(first)} ${esc(last)}. is booked for <strong>${clock(startVal)}</strong> on ${esc(prettyDate(state.event.date))}. Please arrive five minutes early.<br><br><strong>Screenshot this screen now — no confirmation email is sent.</strong>`;
+  $('confirmationTimestamp').textContent=`Submitted ${new Date().toLocaleString(undefined,{month:'long',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'})}`;
   $('success').style.display='block'; $('selectionSummary').style.display='none';
-  $('firstName').value=''; $('lastInitial').value=''; $('email').value=''; $('pregnant').value=''; $('pregnantDetail').value=''; $('pregnantDetail').style.display='none';
+  $('firstName').value=''; $('lastInitial').value=''; $('email').value='';
+  resetBookingAcknowledgments();
+  updateBookingFormState();
 }
 
 function renderTherapistLinks(){
@@ -1583,7 +1742,7 @@ async function startAdmin(preEventId){
 async function startClient(id){
   mode='client';
   if(!await loadEvent(id)){ showPublicError(); return; }
-  showApp(); lockTo('signup'); await loadBookings(false); computeSlots(); subscribe(); refreshUI();
+  showApp(); lockTo('signup'); await loadBookings(false); computeSlots(); subscribe(); refreshUI(); updateBookingFormState();
   document.title=`${state.event.company} booking | Rosters`;
   const canonical=employeeBookingUrl();
   if(location.href!==canonical) history.replaceState(null,'',canonical);
@@ -1675,11 +1834,15 @@ $('ownerMasterCode').addEventListener('keydown',e=>{
 ['tiFirst','tiLast','tiPhone','tiEmail'].forEach(id=>$(id).addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); tiSubmit(); } }));
 $('book').addEventListener('click',reserve);
 $('email').addEventListener('blur',checkExisting);
-$('pregnant').addEventListener('change',()=>{
-  const show=$('pregnant').value==='Yes';
+['firstName','lastInitial','email','pregnantDetail'].forEach(id=>$(id).addEventListener('input',updateBookingFormState));
+bookingAcknowledgmentInputs().forEach(el=>el.addEventListener('change',updateBookingFormState));
+document.querySelectorAll('input[name="medicalConcern"]').forEach(radio=>radio.addEventListener('change',()=>{
+  $('pregnant').value=radio.value;
+  const show=radio.value==='Yes';
   $('pregnantDetail').style.display=show?'block':'none';
   if(!show) $('pregnantDetail').value='';
-});
+  updateBookingFormState();
+}));
 $('therapistSelect').addEventListener('change',renderRoster);
 $('refreshRoster').addEventListener('click',async()=>{ await loadBookings(mode!=='client'); refreshUI(); });
 $('reset').addEventListener('click',async()=>{
