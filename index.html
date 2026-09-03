@@ -89,6 +89,51 @@
     #events .events-page-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap}
     #events .events-archive-toggle{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
     #events .events-archive-toggle input{width:auto;margin:0}
+    #events .events-view-tabs{display:flex;gap:5px;border-bottom:1px solid var(--line);margin-bottom:18px}
+    #events .events-view-tabs button{position:relative;border:0;background:transparent;padding:11px 14px 13px;color:var(--muted);font-size:12px;font-weight:800;cursor:pointer}
+    #events .events-view-tabs button.active{color:var(--accent)}
+    #events .events-view-tabs button.active:after{content:"";position:absolute;left:10px;right:10px;bottom:-1px;height:3px;background:var(--accent);border-radius:3px 3px 0 0}
+    #events .events-deleted-count{display:inline-grid;place-items:center;min-width:21px;height:21px;margin-left:6px;padding:0 6px;border-radius:999px;background:var(--soft);font-size:9px}
+    #events .events-view-tabs button.active .events-deleted-count{background:var(--accent-2)}
+    #events .events-trash-safety{display:flex;align-items:flex-start;gap:12px;background:#edf4ee;border:1px solid #c6d6c9;border-radius:13px;padding:14px 16px;margin-bottom:16px}
+    #events .events-trash-safety-icon{width:32px;height:32px;flex:0 0 auto;display:grid;place-items:center;border-radius:9px;background:var(--accent);color:white;font-weight:900}
+    #events .events-trash-safety strong{display:block;font-size:12px;margin-bottom:3px}
+    #events .events-trash-safety span{display:block;color:#59665e;font-size:10px;line-height:1.5}
+    #events .events-trash-toolbar{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:19px 0 11px}
+    #events .events-trash-toolbar h3{font-family:Georgia,serif;font-size:22px;font-weight:500;margin:0}
+    #events .events-trash-toolbar p{color:var(--muted);font-size:10px;margin:4px 0 0}
+    #events .events-trash-search{width:250px;padding:9px 11px;font-size:11px}
+    #events .events-trash-list{display:grid;gap:10px}
+    #events .events-trash-card{display:grid;grid-template-columns:70px minmax(0,1fr) auto;align-items:center;gap:16px;background:white;border:1px solid var(--line);border-radius:14px;padding:15px 16px;box-shadow:var(--shadow)}
+    #events .events-trash-date{border-right:1px solid var(--line);padding-right:16px;text-align:center;color:var(--muted)}
+    #events .events-trash-date span{display:block;text-transform:uppercase;font-size:9px;font-weight:800;letter-spacing:.08em}
+    #events .events-trash-date strong{display:block;font-family:Georgia,serif;font-size:29px;font-weight:500;line-height:1;color:var(--ink);margin-top:3px}
+    #events .events-trash-main{min-width:0}
+    #events .events-trash-title{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    #events .events-trash-title h4{font-size:14px;margin:0}
+    #events .events-trash-tag{border-radius:999px;padding:4px 7px;background:#fff0ee;color:#9b3d35;font-size:8px;font-weight:850}
+    #events .events-trash-meta{display:flex;flex-wrap:wrap;gap:6px 14px;color:var(--muted);font-size:10px;margin-top:6px}
+    #events .events-trash-when{color:#8d867d;font-size:9px;margin:7px 0 0}
+    #events .events-trash-actions{display:flex;gap:7px}
+    #events .events-trash-empty{text-align:center;padding:54px 20px;background:white;border:1px dashed #cfc8be;border-radius:14px;color:var(--muted);font-size:11px}
+    #events .events-trash-empty strong{display:block;font-family:Georgia,serif;font-size:22px;font-weight:500;color:var(--ink);margin-bottom:6px}
+    .event-trash-modal-backdrop{position:fixed;inset:0;z-index:70;display:none;place-items:center;padding:18px;background:rgba(24,22,19,.4);backdrop-filter:blur(3px)}
+    .event-trash-modal-backdrop.show{display:grid}
+    .event-trash-modal{width:min(470px,100%);background:white;border-radius:17px;padding:22px;box-shadow:0 28px 80px rgba(0,0,0,.22)}
+    .event-trash-modal-icon{width:40px;height:40px;display:grid;place-items:center;border-radius:11px;background:#fff0ee;color:var(--danger);font-size:19px;margin-bottom:13px}
+    .event-trash-modal.restore .event-trash-modal-icon,.event-trash-modal.move .event-trash-modal-icon{background:var(--accent-2);color:var(--accent)}
+    .event-trash-modal h3{font-family:Georgia,serif;font-size:27px;font-weight:500;margin:0 0 7px}
+    .event-trash-modal p{color:var(--muted);font-size:12px;line-height:1.5;margin:0 0 13px}
+    .event-trash-warning{background:#fff0ee;border:1px solid #edceca;border-radius:11px;padding:11px 13px;color:#723a35;font-size:10px;line-height:1.55}
+    .event-trash-modal.restore .event-trash-warning,.event-trash-modal.move .event-trash-warning{background:#edf4ee;border-color:#c6d6c9;color:#405248}
+    .event-trash-confirm{display:none;margin-top:14px}
+    .event-trash-confirm.show{display:block}
+    .event-trash-confirm label{display:block;font-size:10px;margin-bottom:6px}
+    .event-trash-confirm code{background:var(--soft);border-radius:4px;padding:2px 5px}
+    .event-trash-confirm input{margin-top:7px}
+    .event-trash-modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:17px}
+    .event-trash-modal-actions .btn.danger{background:var(--danger);border-color:var(--danger);color:white}
+    .event-trash-toast{position:fixed;right:20px;bottom:20px;z-index:80;display:none;background:var(--accent);color:white;border-radius:11px;padding:12px 14px;font-size:11px;font-weight:750;box-shadow:0 12px 30px rgba(28,48,38,.25)}
     #events .events-workspace{display:grid;grid-template-columns:minmax(650px,1fr) 310px;gap:16px;align-items:start}
     #events .events-panel{background:white;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
     #events .events-calendar-toolbar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 18px;border-bottom:1px solid var(--line)}
@@ -377,6 +422,13 @@
       #events .events-page-head{align-items:flex-start;flex-direction:column}
       #events .events-page-actions{width:100%;justify-content:space-between}
       #events .events-page-actions .btn{margin-left:auto}
+      #events .events-trash-toolbar{align-items:flex-start;flex-direction:column}
+      #events .events-trash-search{width:100%}
+      #events .events-trash-card{grid-template-columns:54px minmax(0,1fr);gap:11px}
+      #events .events-trash-date{padding-right:11px}
+      #events .events-trash-date strong{font-size:26px}
+      #events .events-trash-actions{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr}
+      #events .events-trash-actions .btn{width:100%;font-size:11px;padding:10px}
       #events .events-workspace{grid-template-columns:1fr}
       #events .events-agenda{position:static}
       #events .events-calendar-toolbar{padding:12px}
@@ -630,7 +682,7 @@
         <div>
           <p class="label">SCHEDULE</p>
           <h2>Events</h2>
-          <p class="sub">Select a date, then open the event you need.</p>
+          <p class="sub" id="evPageDescription">Select a date, then open the event you need.</p>
         </div>
         <div class="events-page-actions">
           <label class="events-archive-toggle"><input type="checkbox" id="evArchToggle">Show archived<span id="evArchCount"></span></label>
@@ -638,32 +690,49 @@
         </div>
       </div>
 
-      <div class="events-workspace">
-        <section class="events-panel" aria-label="Event calendar">
-          <div class="events-calendar-toolbar">
-            <div class="events-month-controls">
-              <button class="mini" id="evPrevMonth" type="button" aria-label="Previous month">←</button>
-              <button class="mini" id="evNextMonth" type="button" aria-label="Next month">→</button>
-              <div class="events-month-title" id="evMonthTitle">Month</div>
-            </div>
-            <button class="mini" id="evToday" type="button">Today</button>
-          </div>
-          <div class="events-calendar-weekdays" aria-hidden="true">
-            <div class="events-weekday">Sun</div><div class="events-weekday">Mon</div><div class="events-weekday">Tue</div><div class="events-weekday">Wed</div><div class="events-weekday">Thu</div><div class="events-weekday">Fri</div><div class="events-weekday">Sat</div>
-          </div>
-          <div class="events-month-grid" id="evMonthGrid"></div>
-        </section>
+      <nav class="events-view-tabs" aria-label="Event views">
+        <button class="active" id="evCalendarTab" type="button">Calendar</button>
+        <button id="evDeletedTab" type="button">Deleted events <span class="events-deleted-count" id="evDeletedCount">0</span></button>
+      </nav>
 
-        <aside class="events-panel events-agenda" aria-label="Selected day agenda">
-          <div class="events-agenda-head">
-            <p class="label">DAILY AGENDA</p>
-            <div class="events-agenda-date" id="evAgendaDate">Select a date</div>
-            <div class="events-agenda-count" id="evAgendaCount"></div>
-          </div>
-          <div class="events-agenda-list" id="evAgendaList"></div>
-        </aside>
+      <div id="evActiveEventsPanel">
+        <div class="events-workspace">
+          <section class="events-panel" aria-label="Event calendar">
+            <div class="events-calendar-toolbar">
+              <div class="events-month-controls">
+                <button class="mini" id="evPrevMonth" type="button" aria-label="Previous month">←</button>
+                <button class="mini" id="evNextMonth" type="button" aria-label="Next month">→</button>
+                <div class="events-month-title" id="evMonthTitle">Month</div>
+              </div>
+              <button class="mini" id="evToday" type="button">Today</button>
+            </div>
+            <div class="events-calendar-weekdays" aria-hidden="true">
+              <div class="events-weekday">Sun</div><div class="events-weekday">Mon</div><div class="events-weekday">Tue</div><div class="events-weekday">Wed</div><div class="events-weekday">Thu</div><div class="events-weekday">Fri</div><div class="events-weekday">Sat</div>
+            </div>
+            <div class="events-month-grid" id="evMonthGrid"></div>
+          </section>
+
+          <aside class="events-panel events-agenda" aria-label="Selected day agenda">
+            <div class="events-agenda-head">
+              <p class="label">DAILY AGENDA</p>
+              <div class="events-agenda-date" id="evAgendaDate">Select a date</div>
+              <div class="events-agenda-count" id="evAgendaCount"></div>
+            </div>
+            <div class="events-agenda-list" id="evAgendaList"></div>
+          </aside>
+        </div>
+        <div id="evEmpty" class="empty" style="display:none;margin-top:16px">No events yet. Use Create event above.</div>
       </div>
-      <div id="evEmpty" class="empty" style="display:none;margin-top:16px">No events yet. Use Create event above.</div>
+
+      <div id="evDeletedEventsPanel" hidden>
+        <div class="events-trash-safety"><div class="events-trash-safety-icon">↺</div><div><strong>Accidental deletion is now recoverable</strong><span>Deleting an event moves it here. Restore returns the same event and booking URL. Nothing is permanently removed unless you choose Delete forever.</span></div></div>
+        <div class="events-trash-toolbar">
+          <div><h3>Recently deleted</h3><p>Deleted events stay here until you remove them forever.</p></div>
+          <input class="events-trash-search" id="evDeletedSearch" type="search" placeholder="Search deleted events" aria-label="Search deleted events">
+        </div>
+        <div class="events-trash-list" id="evDeletedList"></div>
+        <div class="events-trash-empty" id="evDeletedEmpty" hidden><strong>No deleted events</strong>Your deleted-events area is clear.</div>
+      </div>
     </div>
 
     <div class="events-detail-view" id="evDetailView">
@@ -867,6 +936,24 @@
     </div>
   </section>
 </div>
+
+<div class="event-trash-modal-backdrop" id="evTrashModalBackdrop" aria-hidden="true">
+  <div class="event-trash-modal" id="evTrashModal" role="dialog" aria-modal="true" aria-labelledby="evTrashModalTitle">
+    <div class="event-trash-modal-icon" id="evTrashModalIcon">↺</div>
+    <h3 id="evTrashModalTitle">Move event to Deleted events?</h3>
+    <p id="evTrashModalText"></p>
+    <div class="event-trash-warning" id="evTrashWarning"></div>
+    <div class="event-trash-confirm" id="evTrashConfirm">
+      <label for="evTrashConfirmInput">Type <code id="evTrashConfirmName"></code> to confirm</label>
+      <input id="evTrashConfirmInput" autocomplete="off">
+    </div>
+    <div class="event-trash-modal-actions">
+      <button class="btn ghost" id="evTrashCancel" type="button">Cancel</button>
+      <button class="btn" id="evTrashConfirmButton" type="button">Move to Deleted events</button>
+    </div>
+  </div>
+</div>
+<div class="event-trash-toast" id="evTrashToast" role="status"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -1713,9 +1800,11 @@ window.tiDelete = async function(id){
 };
 
 /* ---------- Events line-up + ledger ---------- */
-let allEvents=[], evSelId=null, evCalMonth=new Date(), evSelectedDate='', evDetailTab='overview', evShowArchived=false;
+let allEvents=[], evSelId=null, evCalMonth=new Date(), evSelectedDate='', evDetailTab='overview', evShowArchived=false, evListMode='calendar', evDeletedQuery='';
 let evRecord=null, evRecordNotes=[], evRecordRenderToken=0;
-function visibleEvents(){ return allEvents.filter(e=>!e.archived||evShowArchived); }
+function activeEvents(){ return allEvents.filter(e=>!e.deletedAt); }
+function visibleEvents(){ return activeEvents().filter(e=>!e.archived||evShowArchived); }
+function deletedEvents(){ return allEvents.filter(e=>!!e.deletedAt); }
 const fmtMoney=n=>{ const v=Math.round(n); return (v<0?'-$':'$')+Math.abs(v).toLocaleString(); };
 const fmtH=x=> (Math.round(x*10)/10);
 async function loadAllEvents(){
@@ -1735,6 +1824,7 @@ async function loadAllEvents(){
       session:e.session_minutes||15, buffer:e.buffer_minutes||0,
       therapists:therapistCount, therapistNames, therapistCode:e.therapist_code||'',
       breaks:Array.isArray(e.breaks)?e.breaks:[], finance:(e.finance&&typeof e.finance==='object')?e.finance:{}, archived:!!e.archived,
+      deletedAt:e.deleted_at||null, deletedBy:e.deleted_by||null,
       calendarInvitesEnabled:!!e.calendar_invites_enabled,
       client:(e.client&&typeof e.client==='object'&&!Array.isArray(e.client))?e.client:{}
     };
@@ -1786,8 +1876,9 @@ function eventSummaryText(ev){
 
 async function renderEventsView(){
   await Promise.all([loadAllEvents(),loadTherapistsInfo()]);
-  const arch=allEvents.filter(e=>e.archived).length;
+  const arch=activeEvents().filter(e=>e.archived).length;
   if($('evArchCount')) $('evArchCount').textContent = arch ? ` (${arch})` : '';
+  if($('evDeletedCount')) $('evDeletedCount').textContent=String(deletedEvents().length);
   const vis=visibleEvents();
   if(!vis.length){
     evSelId=null;
@@ -1806,8 +1897,47 @@ async function renderEventsView(){
   if(evSelId&&!vis.some(ev=>ev.id===evSelId)) evSelId=null;
   renderEvCalendar();
   renderEvAgenda();
+  renderDeletedEvents();
   if(evSelId) renderEvDetail();
   else showEvCalendar();
+}
+function setEventsListMode(nextMode){
+  evListMode=nextMode==='deleted'?'deleted':'calendar';
+  evSelId=null;
+  showEvCalendar();
+}
+function applyEventsListMode(){
+  const showingDeleted=evListMode==='deleted';
+  $('evActiveEventsPanel').hidden=showingDeleted;
+  $('evDeletedEventsPanel').hidden=!showingDeleted;
+  $('evCalendarTab').classList.toggle('active',!showingDeleted);
+  $('evDeletedTab').classList.toggle('active',showingDeleted);
+  $('evArchToggle').parentElement.hidden=showingDeleted;
+  $('evPageDescription').textContent=showingDeleted
+    ? 'Deleted events are kept separately so accidental deletion can be reversed.'
+    : 'Select a date, then open the event you need.';
+}
+function deletedEventDateText(value){
+  if(!value) return 'Deletion time unavailable';
+  const date=new Date(value);
+  if(Number.isNaN(date.getTime())) return 'Deletion time unavailable';
+  return `Deleted ${date.toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'})}`;
+}
+function renderDeletedEvents(){
+  const query=evDeletedQuery.trim().toLowerCase();
+  const events=deletedEvents()
+    .filter(ev=>!query||`${ev.company} ${ev.location}`.toLowerCase().includes(query))
+    .sort((a,b)=>String(b.deletedAt).localeCompare(String(a.deletedAt)));
+  $('evDeletedList').innerHTML=events.map(ev=>`<article class="events-trash-card">
+    <div class="events-trash-date"><span>${esc(evMonLabel(ev)||'—')}</span><strong>${esc(evDayNum(ev))}</strong></div>
+    <div class="events-trash-main"><div class="events-trash-title"><h4>${esc(ev.company)}</h4><span class="events-trash-tag">● Booking link paused</span></div>
+      <div class="events-trash-meta"><span>${esc(evTimeLabel(ev))}</span><span>${esc(ev.location||'Location not added')}</span><span>${ev.therapists} therapist${ev.therapists===1?'':'s'}</span></div>
+      <p class="events-trash-when">${esc(deletedEventDateText(ev.deletedAt))}</p></div>
+    <div class="events-trash-actions"><button class="btn" type="button" onclick="restoreEv('${ev.id}')">Restore</button><button class="btn danger" type="button" onclick="deleteForeverEv('${ev.id}')">Delete forever</button></div>
+  </article>`).join('');
+  $('evDeletedEmpty').hidden=events.length!==0;
+  $('evDeletedList').hidden=events.length===0;
+  applyEventsListMode();
 }
 window.openBookingPage=function(id){
   const ev=allEvents.find(item=>item.id===id); if(!ev) return;
@@ -1894,6 +2024,7 @@ window.evMonthShift=function(amount){
 function showEvCalendar(){
   $('evCalendarView').classList.remove('hidden');
   $('evDetailView').classList.remove('active');
+  applyEventsListMode();
 }
 window.openEvDetail=function(id){
   if(!allEvents.some(ev=>ev.id===id)) return;
@@ -2277,14 +2408,60 @@ window.archiveEv=async function(id){
   if(error){ alert('Could not update the event.'); return; }
   evSelId=null; renderEventsView();
 };
-window.deleteEv=async function(id){
-  const ev=allEvents.find(e=>e.id===id);
-  if(!confirm(`Delete "${ev?ev.company:id}" and all of its bookings? This cannot be undone.`)) return;
-  await sb.from('bookings').delete().eq('event_id', id);
-  const { error } = await sb.from('events').delete().eq('id', id).eq('organization_id',currentOrganizationId);
-  if(error){ alert('Could not delete the event.'); return; }
-  evSelId=null; renderEventsView();
-};
+let evTrashAction='', evTrashEventId='', evTrashToastTimer=null;
+function closeEvTrashModal(){
+  $('evTrashModalBackdrop').classList.remove('show');
+  $('evTrashModalBackdrop').setAttribute('aria-hidden','true');
+  evTrashAction=''; evTrashEventId=''; $('evTrashConfirmInput').value='';
+}
+function showEvTrashToast(message){
+  const toast=$('evTrashToast'); toast.textContent=message; toast.style.display='block';
+  clearTimeout(evTrashToastTimer); evTrashToastTimer=setTimeout(()=>toast.style.display='none',3000);
+}
+function openEvTrashModal(action,id){
+  const ev=allEvents.find(item=>item.id===id); if(!ev) return;
+  evTrashAction=action; evTrashEventId=id;
+  const modal=$('evTrashModal'), warning=$('evTrashWarning'), confirmWrap=$('evTrashConfirm'), button=$('evTrashConfirmButton');
+  modal.className='event-trash-modal '+action;
+  confirmWrap.classList.toggle('show',action==='forever');
+  $('evTrashConfirmInput').value=''; $('evTrashConfirmName').textContent=ev.company;
+  if(action==='move'){
+    $('evTrashModalIcon').textContent='↺'; $('evTrashModalTitle').textContent='Move event to Deleted events?';
+    $('evTrashModalText').textContent=`${ev.company} will leave the calendar and its booking link will be paused.`;
+    warning.innerHTML='<strong>Nothing is permanently removed.</strong><br>The event, bookings, ledger, URL, and protected records are kept for restoration.';
+    button.textContent='Move to Deleted events'; button.className='btn'; button.disabled=false;
+  } else if(action==='restore'){
+    $('evTrashModalIcon').textContent='↺'; $('evTrashModalTitle').textContent='Restore this event?';
+    $('evTrashModalText').textContent=`${ev.company} will return to the calendar. Its original booking URL will work again.`;
+    warning.innerHTML='<strong>The same event returns.</strong><br>The event ID, booking link, bookings, ledger, and records do not change.';
+    button.textContent='Restore event'; button.className='btn'; button.disabled=false;
+  } else {
+    $('evTrashModalIcon').textContent='!'; $('evTrashModalTitle').textContent='Delete event forever?';
+    $('evTrashModalText').textContent=`You are about to permanently delete ${ev.company}.`;
+    warning.innerHTML='<strong>This action cannot be undone.</strong><br>The live event setup, bookings, and booking link will be removed. Any locked compliance record remains protected in the Records archive.';
+    button.textContent='Delete forever'; button.className='btn danger'; button.disabled=true;
+    setTimeout(()=>$('evTrashConfirmInput').focus(),60);
+  }
+  $('evTrashModalBackdrop').classList.add('show'); $('evTrashModalBackdrop').setAttribute('aria-hidden','false');
+}
+window.deleteEv=id=>openEvTrashModal('move',id);
+window.restoreEv=id=>openEvTrashModal('restore',id);
+window.deleteForeverEv=id=>openEvTrashModal('forever',id);
+async function performEvTrashAction(){
+  const ev=allEvents.find(item=>item.id===evTrashEventId); if(!ev) return closeEvTrashModal();
+  const action=evTrashAction, button=$('evTrashConfirmButton'), originalLabel=button.textContent;
+  button.disabled=true; button.textContent=action==='restore'?'Restoring…':(action==='forever'?'Deleting…':'Moving…');
+  const rpcName=action==='restore'?'restore_event_from_trash':(action==='forever'?'delete_event_forever':'move_event_to_trash');
+  const { error }=await sb.rpc(rpcName,{p_event_id:ev.id});
+  if(error){
+    button.disabled=action==='forever'&&$('evTrashConfirmInput').value.trim()!==ev.company; button.textContent=originalLabel;
+    alert(error.message||'Could not update the event.'); return;
+  }
+  closeEvTrashModal(); evSelId=null;
+  if(action==='move') evListMode='deleted';
+  await renderEventsView();
+  showEvTrashToast(action==='restore'?`${ev.company} restored with the same booking URL.`:(action==='forever'?`${ev.company} deleted forever.`:`${ev.company} moved to Deleted events.`));
+}
 function evLedgerRecalc(){
   const ev=allEvents.find(e=>e.id===evSelId); if(!ev) return;
   ev.finance={ fee:Number($('finFee').value)||0, taxi:Number($('finTaxi').value)||0, rate:($('finRate').value===''?70:Number($('finRate').value)) };
@@ -2484,9 +2661,20 @@ $('editorCopySummary').addEventListener('click',()=>copy(eventSummaryText(eventE
 $('evPrevMonth').addEventListener('click',()=>evMonthShift(-1));
 $('evNextMonth').addEventListener('click',()=>evMonthShift(1));
 $('evToday').addEventListener('click',()=>selectEvDate(dateKey(new Date())));
+$('evCalendarTab').addEventListener('click',()=>setEventsListMode('calendar'));
+$('evDeletedTab').addEventListener('click',()=>setEventsListMode('deleted'));
+$('evDeletedSearch').addEventListener('input',event=>{ evDeletedQuery=event.target.value; renderDeletedEvents(); });
 $('evBackCalendar').addEventListener('click',()=>{ evSelId=null; showEvCalendar(); window.scrollTo({top:0,behavior:'smooth'}); });
 document.querySelectorAll('[data-ev-detail-tab]').forEach(button=>button.addEventListener('click',()=>setEvDetailTab(button.dataset.evDetailTab)));
 $('evArchToggle').addEventListener('change',e=>{ evShowArchived=e.target.checked; evSelId=null; renderEventsView(); });
+$('evTrashCancel').addEventListener('click',closeEvTrashModal);
+$('evTrashConfirmButton').addEventListener('click',performEvTrashAction);
+$('evTrashConfirmInput').addEventListener('input',event=>{
+  const ev=allEvents.find(item=>item.id===evTrashEventId);
+  $('evTrashConfirmButton').disabled=evTrashAction==='forever'&&event.target.value.trim()!==(ev?.company||'');
+});
+$('evTrashModalBackdrop').addEventListener('click',event=>{ if(event.target===$('evTrashModalBackdrop')) closeEvTrashModal(); });
+window.addEventListener('keydown',event=>{ if(event.key==='Escape'&&$('evTrashModalBackdrop').classList.contains('show')) closeEvTrashModal(); });
 $('tiAdd').addEventListener('click',tiSubmit);
 $('tiCancel').addEventListener('click',tiResetForm);
 $('tiShowArchived').addEventListener('change',e=>{ tiShowArchived=e.target.checked; renderTherapistsInfo(); });
